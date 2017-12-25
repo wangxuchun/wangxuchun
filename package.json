@@ -1,0 +1,19 @@
+{
+  "name": "wangxuchun",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wangxuchun/wangxuchun.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wangxuchun/wangxuchun/issues"
+  },
+  "homepage": "https://github.com/wangxuchun/wangxuchun#readme"
+}
