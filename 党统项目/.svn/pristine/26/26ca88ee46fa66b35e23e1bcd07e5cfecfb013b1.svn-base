@@ -1,0 +1,361 @@
+<template>
+    <div class="tables" style="width: 1000px;">
+        <div class="title text-center">
+           <h3 class="text-center" style="margin: 10px 0;">党的基层组织数量情况和换届情况</h3>
+           <p>截至日期：2016年12月31日</p>
+        </div>
+
+        <div class="start-box box-pack" style="position: relative; top: -16px;">
+            <p>填报单位：天房科技党总支</p>
+            <p>第二十四表</p>
+        </div>
+        <div class="table-outer">
+            <table align=center cellspacing=0 cellpadding=0 width="100%">
+                <tr>
+                    <td width="150" colspan=3>项目</td>
+                    <td width="60" colspan=2>总数</td>
+                    <td width="60">党委</td>
+                    <td width="60">总支部</td>
+                    <td width="60">支部</td>
+                    <td width="150" colspan=3>项目</td>
+                    <td width="60" colspan=2>总数</td>
+                    <td width="60">党委</td>
+                    <td width="60">总支部</td>
+                    <td width="60">支部</td>
+                    <!--<td width="60">2012年11<br>月及以后</td>-->
+                </tr>
+                <tr>
+                   <td colspan=3><strong>甲</strong></td>
+                   <td colspan=2><strong>A</strong></td>
+                   <td><strong>B</strong></td>
+                   <td><strong>C</strong></td>
+                   <td><strong>D</strong></td>
+                   <td  width="150" colspan=3><strong>甲</strong></td>
+                   <td colspan=2><strong>A</strong></td>
+                   <td><strong>B</strong></td>
+                   <td><strong>C</strong></td>
+                   <td><strong>D</strong></td>
+                   <!--<td><strong>J</strong></td>-->
+                </tr>
+                <tr>
+                  <td class="bb0 br0"></td>
+                  <td colspan=2 class="text-left"><strong>党的基层组织数</strong></td>
+                  <td width="20">1</td>
+                  <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                  <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                  <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                  <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                  <td colspan=3><strong>党的基层组织数</strong></td>
+                  <td  width="20">9</td>
+                  <td width="60" class="bg-class1"><input class="bg-class1" type="text"></td>
+                  <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                  <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                  <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                </tr>
+              <tr>
+                <td width="20" rowspan="4"></td>
+                <td width="20" class="bb0 br0"></td>
+                <td class="text-left"><strong>任届期满</strong></td>
+                <td width="20">2</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td colspan=3 class="text-left text-index"><strong>机关</strong></td>
+                <td width="20">10</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+              </tr>
+              <tr>
+                <td width="20" class="bl0 bb0"></td>
+                <td><strong>本年换届</strong></td>
+                <td width="20">3</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="20" class="bb0"></td>
+                <td colspan=2><strong>中央一级</strong></td>
+                <td width="20">11</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+              </tr>
+              <tr>
+                <td width="20" class="bl0 bb0"></td>
+                <td class="bl0"><strong>城市街道</strong></td>
+                <td width="20">4</td>
+                <td width="60" class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="20" class="bb0"></td>
+                <td colspan=2><strong>省（区、市）一级</strong></td>
+                <td>12</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+              </tr>
+              <tr>
+                <td width="20" class="bl0"></td>
+                <td class="bl0"><strong>乡镇</strong></td>
+                <td width="20">5</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="20" class="bb0"></td>
+                <td colspan=2><strong>市（地、州、盟）一级</strong></td>
+                <td>13</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+              </tr>
+              <tr>
+                <td rowspan="3">企<br>业</td>
+                <td colspan="2"><strong>国有经济控制</strong></td>
+                <td width="20">6</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="20"></td>
+                <td colspan=2><strong>县（市、区、旗）一级</strong></td>
+                <td>14</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+              </tr>
+              <tr>
+                <td colspan="2" class="bl0"><strong>集体经济控制</strong></td>
+                <td width="20">7</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td colspan=3><strong>其他</strong></td>
+                <td>15</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+              </tr>
+              <tr>
+                <td colspan="2" class="bl0"><strong>非公有经济控制</strong></td>
+                <td width="20">8</td>
+                <td class="bg-class1"><input class="bg-class1" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td width="60" class="bg-class2"><input class="bg-class2" type="text"></td>
+                <td colspan=8></td>
+              </tr>
+
+                <!--<tr v-for="(item, index) in tablesData">-->
+
+                    <!--<td colspan=3 v-if="item.type == 1">{{item.label}}</td>-->
+
+                    <!--<td width='20' v-if="item.type == 3"></td>-->
+                    <!--<td colspan=2 v-if="item.type == 3">{{item.label}}</td>-->
+
+                    <!--<td width='20'  v-if="item.type == 2" rowspan=7>{{item.title}}</td>-->
+                    <!--<td colspan=2  v-if="item.type == 2">{{item.label}}</td>-->
+
+                    <!--<td  v-if="item.type == 4" style="border-left: none;" colspan=2>{{item.label}}</td>-->
+
+                    <!--<td v-if="item.type == 5" width="20" style="border:none;"></td>-->
+                    <!--<td v-if="item.type == 5" style="border-left: none;">{{item.label}}</td>-->
+
+                    <!--<td v-if="item.type == 6" width="20" style="border-left: none;"></td>-->
+                    <!--<td v-if="item.type == 6" style="border-left: none;">{{item.label}}</td>-->
+
+                    <!--<td width=30><strong>{{index+1}}</strong></td>-->
+
+                    <!--<td v-for="(inner, inx) in item.lists" :style="{'backgroundColor': '#E7F4FE'}"><input type="text" :disabled="inner.disabled" v-model="inner.value" :style="{'color': inner.disabled ? '#ccc' : '', 'backgroundColor': (index == 0 || index == 1 || index == 2 ||index == 10 || inx == 0) ? '#E7F4FE' : ''}"></td>-->
+
+                <!--</tr>-->
+            </table>
+            <div class="tips-outer start-box">
+                <p>补充资料：</p>
+                <div class="tips box-flex">
+                    <p>1.党组<input class="bg-class2" type="text">个，其中中央一级机关<input class="bg-class2" type="text">个，省（区、市）一级机关<input class="bg-class2" type="text">市（地、州、盟）一级机关<input class="bg-class2" type="text">个、县（市、区、旗）一级机关<input class="bg-class2" type="text">个。</p>
+                    <p>2.中央和各级地方党委派出工委<input class="bg-class2" type="text">个，其中省（区、市）委派出工委<input class="bg-class2" type="text">个、省辖市（州）委派出工委<input class="bg-class2"
+                      type="text">个，   县（市、区、旗）委派出工委<input class="bg-class2" type="text">个。</p>
+                    <p>3.国务院和地方政府工作部门中有基层党组织<input class="bg-class1" type="text">个，其中党委<input class="bg-class3" type="text">个、  总支部<input class="bg-class3" type="text">个、支部<input class="bg-class3" type="text">个。</p>
+                    <p>4.建制村中有党组织<input class="bg-class1" type="text">个，其中党委<input class="bg-class2" type="text">个、总支部<input class="bg-class2" type="text">个、支部<input class="bg-class2" type="text">个。</p>
+                    <p>5.农民专业合作社<input class="bg-class3" type="text">个，共有党组织<input class="bg-class1" type="text">个，其中党委<input class="bg-class3" type="text">个、总支部<input class="bg-class3" type="text">个、 支部
+                      <input class="bg-class3" type="text">个；  农民专业合作社 <input class="bg-class3" type="text">个，共有党组织 <input class="bg-class3" type="text">个、其中党委<input class="bg-class3"
+                        type="text">个、总支部<input class="bg-class3" type="text">支部<input class="bg-class3" type="text">个，家庭农场 <input class="bg-class3" type="text">个、共有党组织<input class="bg-class3"
+                        type="text">个、<input class="bg-class3" type="text">其中党委 <input class="bg-class3" type="text">个，总支部<input class="bg-class3" type="text">个、支部<input class="bg-class3" type="text">个。</p>
+
+
+                </div>
+            </div>
+        </div>
+        <router-view></router-view>
+    </div>
+</template>
+<script>
+	export default {
+		name: 'form2',
+		data() {
+			return {
+                msg: 'this is table',
+                tablesData: [
+                    {type: 1,title: '', label: '总计', disabled: false, bgcolor: "#222", lists: [{disabled: true,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 1,title: '', label: '一、在岗职工', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 3,title: '', label: '合计', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 2, title: '公共制单位', label: '党政机关工作人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 4, title: '', label: '事业单位管理人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+
+                    {type: 4, title: '', label: '事业单位专业技术人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 4, title: '', label: '企业管理人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 4, title: '', label: '企业专业技术人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 5, title: '', label: '工勤技能人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 6, title: '', label: '农民工', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 2,title: '非公有制单位', label: '合计', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 4, title: '', label: '企业管理人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 4, title: '', label: '企业专业技术人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 4, title: '', label: '民办非企业 单位管理人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 4, title: '', label: '民办非企业 专业技术人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 5, title: '', label: '工勤技能人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 6, title: '', label: '农民工', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 1, title: '', label: '二、农牧渔民', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 3, title: '', label: '外出务工经商人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 1, title: '', label: '三、军人、武警', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 1, title: '', label: '四、学 生', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 1, title: '', label: '五、离退休人员', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+                    {type: 1, title: '', label: '其它', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52},{disabled: false,value: 5}]},
+
+                ]
+			}
+		},
+        computed: {
+
+        },
+		watch: {
+
+		},
+		methods: {
+
+		},
+		created() {
+
+		},
+		mounted() {
+            this.tablesData.forEach(item => {
+                item.lists.forEach(it => {
+                    it.disabled = true;
+                })
+            })
+	    },
+	}
+</script>
+<style scoped>
+    .tips.box-flex input{
+      outline: none;
+      border: none;
+      border:1px solid #333;
+    }
+    .table-outer {
+        width: 100%;
+        overflow: auto;
+    }
+    table tr:first-child td{
+        border-top: 1px solid #222;
+    }
+    table tr td{
+        border-bottom: 1px solid #222;
+        border-right: 1px solid #222;
+        text-align: center;
+    }
+    table tr td input {
+        display: inline-block;
+        display: table-cell;
+        border: none;
+        width: 50px;
+        padding-left: 3px;
+        text-align: center;
+    }
+    table tr td:first-child {
+        border-left: 1px solid #222;
+    }
+    table tr td:first-child.bl0{
+      border-left:0;
+    }
+    .tips-outer {
+        margin-top: 15px;
+    }
+    .tips input {
+        width: 60px;
+        height: 18px;
+        margin: 0 3px;
+        padding-left: 3px;
+    }
+    .tips p {
+        line-height: 32px;
+    }
+    .tables-containter div {
+        text-align: center;
+    }
+    .comm-left {
+        width: 120px;
+        border: 1px solid #222;
+        border-width: 0 1px 0 0;
+        height: 100%;
+    }
+    .wh100 {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+    .text-left{
+      text-align: left;
+    }
+    .br0{
+      border-right: 0;
+    }
+    .bb0{
+      border-bottom: 0 !important;
+    }
+    .bl0{
+      border-left: 0;
+    }
+    .text-index{
+      text-indent: 5px;
+    }
+    .tables {
+        padding: 15px;
+    }
+    .tables-containter {
+        border: 1px solid #222;
+    }
+    .tables-header {
+        height: 60px;
+    }
+    .header-top {
+        height: 40px;
+        border-bottom: 1px solid #222;
+        line-height: 40px;
+    }
+    .header-bottom {
+        height: 20px;
+        line-height: 20px;
+        border-bottom: 1px solid #222;
+    }
+    .bg-class1{
+      background: rgb(231, 244, 254)
+    }
+    .bg-class2{
+      background: rgb(204, 204, 204);
+    }
+  .bg-class3{
+    background: rgb(255, 236, 226);
+  }
+
+</style>

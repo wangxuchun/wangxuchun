@@ -1,0 +1,235 @@
+<template>
+  <div id="login">
+    <div class="login-title">
+      <img src="../assets/login-logo.png" alt="logo" />
+      <span>天津市党内统计信息系统</span>
+    </div>
+    <div class="login-body">
+      <div class="login-left">
+        <img src="../assets/login-left.png" alt="" class="login-left-img">
+      </div>
+      <div class="login-right">
+        <h3>欢迎使用</h3>
+        <div class="input-wrap">
+          <div class="input-group">
+            <Icon type="android-person" class="fz30"></Icon>
+            <div class="vertical"></div>
+            <input type="text" v-model="loginForm.username" class="input-text" placeholder="请输入用户名">
+          </div>
+          <div class="input-group">
+            <Icon type="android-unlock fz30 fz32"></Icon>
+            <div class="vertical ml12"></div>
+            <input type="text" class="input-text" v-model="loginForm.passwd" @keyup.enter="handleSubmit" placeholder="请输入密码">
+          </div>
+          <Button type="primary" class="w100p" @click="handleSubmit">登录</Button>
+          <div class="forget-password"><a href="javascript:">忘记密码</a></div>
+          <p class="footer-text">天津市党内统计信息系统 | 网络版（单机版）</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>
+<style scoped>
+  #login{
+    width:100%;
+  }
+  .footer-text{
+    margin-top: 88px;
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+  }
+  .w100p{
+    width: 100%;
+    height: 47px;
+    font-size:18px;
+    margin-top: 10px;
+  }
+  .forget-password{
+    margin-top:10px;
+    text-align: right;
+  }
+  .forget-password a{
+    color: #454545;
+  }
+  .forget-password a:hover{
+    text-decoration: underline;
+  }
+  .fz30{
+    font-size: 30px;
+    color: #c8c8c8;
+    margin-left: 10px;
+    margin-top: 4px;
+    float: left;
+  }
+  .fz32{
+    font-size: 32px;
+  }
+  .vertical{
+    display: inline-block;
+    width: 1px;
+    height: 20px;
+    background: #dddddd;
+    margin-left: 12px;
+    float: left;
+    margin-top: 10px;;
+  }
+  .ml12{
+    margin-left: 15px;
+  }
+  .input-text{
+    float: left;
+    width: 275px;
+    height: 38px;
+    line-height:40px;
+    text-indent: 13px;
+    border:none;
+    outline: none;
+    position: relative;
+    top: 0px;
+  }
+  .input-group{
+    border:1px solid #ddd;
+    border-radius:4px;
+    width: 100%;
+    height: 40px;
+    margin-bottom:20px;
+  }
+  .login-title{
+    width:100%;
+    height: 80px;
+    background: rgb(219, 36, 11);
+    text-align: center;
+    overflow: hidden;
+  }
+  .login-title span{
+    font-size: 30px;
+    color: #fff;
+    line-height: 80px;
+    font-weight: bold;
+    font-family: "Microsoft YaHei";
+    vertical-align: middle;
+    margin-left: 12px;
+  }
+  .login-title img{
+    vertical-align: middle;
+  }
+  .login-body{
+    width: 826px;
+    height: 499px;
+    margin: 155px auto;
+    background: url("../assets/login-bg.png");
+  }
+  .login-body .login-left,.login-body .login-right{
+    width: 399px;
+    height: 472px;
+    float: left;
+    margin-left: 14px;
+    margin-top:0;
+  }
+  .login-body .login-left img.login-left-img{
+    width: 303px;;
+    height: 290px;
+    margin-left: 60px;
+    margin-top: 78px;
+    display: block;
+  }
+  .input-wrap{
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    margin-top: 42px;;
+  }
+
+  .login-body .login-right{
+    margin-left:0;;
+    padding-left: 39px;
+    padding-right: 34px;
+  }
+  .login-body .login-right h3{
+    text-align: center;
+    margin-top: 56px;
+    font-size: 24px;
+    color: #333;
+  }
+</style>
+<script>
+  export default {
+    name: 'login',
+    data () {
+      const validateUser = (rule, value, callback) =>{
+        if (value === '') {
+          callback(new Error('请输入用户名'));
+        }
+        callback();
+      }
+      const validatePass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码'));
+        }
+        callback();
+      };
+      return {
+        loginForm: {
+          username: '',
+          passwd: '',
+        },
+        formValidate: {
+          username: [
+            { validator: validateUser, trigger: 'blur'}
+          ],
+          passwd: [
+            { validator: validatePass, trigger: 'blur' }
+          ]
+        }
+      }
+    },
+    methods: {
+      getUrl() {
+        let result = window.location.hash;
+        let re = /redirect=/;
+        if (re.test(result)) {
+          return decodeURIComponent(result.split('redirect=')[1]);
+        } else {
+          return null;
+        }
+      },
+      handleSubmit (name) {
+        let that = this;
+        let qs = require('qs');
+        this.axios({
+            method: 'post',
+            url: '/v1/user/login',
+            data: qs.stringify({
+              username: that.loginForm.username,
+              password: that.loginForm.passwd
+            })
+          })
+          .then(res => {
+          let needData = res.data;
+        if (needData.code == 200) {
+          that.$Message.success('登录成功!');
+          this.$store.commit('setToken', 'this is token');
+          setTimeout(function() {
+            let redirect = that.getUrl() ? that.getUrl('redirect') : '/';
+            window.location = '#'+redirect;
+          }, 1000)
+        } else {
+          that.$Message.error(needData.msg);
+        }
+      })
+      .catch(err => {
+          that.$Message.error("网络请求错误");
+      })
+      },
+      handleReset (name) {
+        localStorage.removeItem("djwtoken");
+        this.$refs[name].resetFields();
+      }
+    },
+    mounted() {
+      var that = this;
+    }
+  }
+</script>

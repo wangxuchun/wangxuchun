@@ -1,0 +1,71 @@
+<!--工作岗位新增的弹窗-->
+<template>
+  <div class="WorkPost">
+    <Modal
+      v-model="modal1"
+      title="直统多表"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+      class-name="vertical-center-modal"
+      @on-ok="handleSubmit('WorkerFormItem')"
+      @on-cancel="cancel">
+      <div class="">
+          <p style="margin: 0 0 10px 0">请选择需要直统的报表</p>
+          <Table border :columns="columns4" :data="data1"></Table>
+      </div>   
+    </Modal>
+  </div>
+</template>
+<script>
+  export default {
+    name:'WorkPost',
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading: true,
+        columns4: [
+            {
+                type: 'selection',
+                width: 60,
+                align: 'center'
+            },
+            {
+                title: '报表',
+                key: 'name'
+            },
+        ],
+        data1: [
+            {
+                name: '表一，党员基本情况表',
+                id: 12
+            },
+            {
+                name: '表二，党员入党时间情况表',
+                id: 12
+            },
+           
+        ]
+      }
+    },
+
+    methods: {
+      handleSubmit(name) {
+        this.$router.push('/countForm')
+      },
+      cancel () {
+        this.$router.push('/countForm')
+      }
+    }
+  }
+</script>
+<style>
+  .TeamMember{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+  /*.TeamMember .ivu-modal{*/
+    /*width: 950px !important;*/
+  /*}*/
+</style>

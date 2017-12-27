@@ -1,0 +1,81 @@
+<!-- 学历学位新增弹窗 -->
+<template>
+  <div class="Degree">
+    <Modal
+      v-model="modal1"
+      title="重复人员查询"
+      width="1000"
+      :mask-closable = "false"
+      @on-cancel="cancel"
+      class-name="max-height">
+      <Table ref="repeattable" border :columns="tableModel" :data="lists"></Table>
+      <div slot="footer"></div>
+    </Modal>
+  </div>
+</template>
+<script>
+  export default {
+    name:'Degree',
+    props : {
+      viewdata : null
+    },
+    data () {
+      return {
+        modal1:true,
+        loading:true,
+        currentData : this.viewdata,
+        tableModel: [
+          {
+              title: '姓名',
+              key: 'real_name',
+          },
+          {
+              title: '人员状态',
+              key: 'member_status',
+          },
+          {
+              title: '组织关系所在党支部',
+              key: 'full_name',
+          },
+          {
+              title: '组织办公电话',
+              key: 'contact_phone',
+          },
+          {
+              title: '联系人',
+              key: 'real_name',
+          },
+          {
+              title: '上级党组织',
+              key: 'real_name',
+          },
+          {
+              title: '组织办公电话',
+              key: 'real_name',
+          },
+          {
+              title: '联系人',
+              key: 'real_name',
+          }
+        ],
+        lists: []
+      }
+    },
+    methods: {
+      cancel(){
+        this.$router.push({
+          name : 'repeatmemberlist',
+          params : {
+            dept : this.$route.params.dept
+          }
+        })
+      }
+    },
+    mounted(){
+      console.log(this.currentData);
+    }
+  }
+</script>
+<style>
+
+</style>

@@ -1,0 +1,249 @@
+<template>
+<div class="memberinfo-grouprelation" style="padding-top:20px">
+    <!-- <table class="drag-table">
+        <colgroup>
+            <col width="120"></col>
+            <col width="120"></col>
+            <col width="120"></col>
+            <col></col>
+        </colgroup>
+        <thead>
+            <tr>
+                <th v-for="item in tableCol">{{ item.title }}</th>
+            </tr>
+        </thead>
+        <draggable element="tbody" :options="dragOption" v-model="lists">
+            <tr v-for="(item, index) in lists">
+                <td>{{ item.name }}</td>
+                <td>{{ item.in_date }}</td>
+                <td>{{ item.in_type_desc }}</td>
+                <td>{{ item.out_date }}</td>
+                <td>{{ item.out_type_desc }}</td>
+                <td>
+                    <Button v-show="index+1>=lists.length" :disabled="!dragOption.disabled" style="padding: 6px;" type="text" @click="edit(item)"><Icon type="compose"></Icon> 编辑</Button>
+                </td>
+            </tr>
+        </draggable>
+    </table> -->
+    <div class="memberinfo-form">
+        <Form :label-width="160" ref="infoform" :model="infoform" :rules="ruleValidate">
+            <!-- <FormItem label="所在党支部" prop="name">
+                <Input :disabled="!editing" v-model="infoform.name"></Input>
+            </FormItem> -->
+            <FormItem label="进入党支部日期" prop="in_date">
+                <DatePicker v-model="infoform.join_dept_time" :disabled="!editing" type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="进入党支部类型" prop="in_type">
+                <Select :disabled="!editing" v-model="infoform.join_dept_type">
+                    <Option v-for='item in join_dept_type_list' :key="item.id" :value="item.id" :disabled="item.choosed==0">{{item.name}}</Option>
+                </Select>
+            </FormItem>
+            <!-- <FormItem label="转离党支部日期" prop="out_date">
+                <DatePicker v-model="infoform.out_date" :disabled="!editing" type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="转离党支部类型" prop="out_type_desc">
+                <Select :disabled="!editing" v-model="infoform.out_type_desc">
+                    <Option v-for='item in out_type_desc_list' :key="item.id" :value="item.id" :disabled="item.choosed==0">{{item.name}}</Option>
+                </Select>
+            </FormItem> -->
+        </Form>
+    </div>
+    <div class="aside-bottom">
+        <Button v-show="!editing" @click="toggleEdit" type="primary">编辑</Button>
+        <Button v-show="editing" @click="cancelEdit" type="ghost">取消</Button>
+        <Button v-show="editing" @click="save('infoform')" type="primary">保存</Button>
+    </div>
+    <!-- <component v-bind:is="modal" @add='refurbish'></component> -->
+</div>
+</template>
+<script>
+// import draggable from 'vuedraggable'
+// import add from '../pop/partymember/memberinfo-grouprelation-add.vue';
+export default {
+    name : 'memberinfo-grouprelation',
+    props: {
+        viewdata : null
+    },
+    data(){
+        return {
+            infoform : {
+                join_dept_time:'',
+                join_dept_type:'',
+            },
+            oldData:{},
+            join_dept_type_list:[],
+            editing : false, // 编辑状态
+            url:'/v1/member/org-relation-edit',
+            uid:this.$route.params.uid,
+            ruleValidate: {
+                join_dept_type: [
+                    {required: true, message: '进入党支部类型', trigger: 'change'}
+                ],
+                join_dept_time:[
+                    {required: true,type:'date', message: '进入党支部日期不能为空', trigger: 'change'}
+                ],
+            },
+            filters:{
+                dateFormat(value){
+                    if(value==''){return}
+                    var date = new Date(+value),
+                        Y = date.getFullYear(),
+                        m = date.getMonth() + 1,
+                        d = date.getDate(),
+                        H = date.getHours(),
+                        i = date.getMinutes(),
+                        s = date.getSeconds();
+                    if (m < 10) {
+                        m = '0' + m;
+                    }
+                    if (d < 10) {
+                        d = '0' + d;
+                    }
+                    if (H < 10) {
+                        H = '0' + H;
+                    }
+                    if (i < 10) {
+                        i = '0' + i;
+                    }
+                    if (s < 10) {
+                        s = '0' + s;
+                    }
+                    var t = Y+'-'+ m +'-'+ d;
+                    return t;
+                }
+            }
+        }
+    },
+    methods:{
+        getList(type,arr){
+            let that = this;
+            let qs = require('qs');
+            if(that[arr].length>1){
+                return
+            }
+            that.axios({
+                method : 'get',
+                url : 'v1/dictionary/get-list-by-type',
+                params:{
+                    type:type
+                },
+            })
+            .then(res=>{
+                let needData = res.data;
+                if (needData.code == 200) {
+                setTimeout(()=>{
+                    that[arr] = needData.data;
+                },200)
+                } else {
+                    that.$Message.error(needData.msg);
+                }
+            })
+            .catch(err => {
+                this.$Message.error('网络请求异常');
+            });
+        },
+        getData(){
+            let that = this;
+            that.axios({
+                url:'/v1/member/org-relation-detail',
+                method:'get',
+                params:{
+                    uid:that.$route.params.uid,
+                },
+            })
+            .then(res=>{
+                let needData = res.data;
+                if (needData.code == 200) {
+                    let _needData = Object.assign({},needData.data);
+                    for (var key in _needData ) {
+                       if(key.indexOf('date')>=0||key.indexOf('time')>=0){
+                           _needData[key] = new Date(_needData[key]);
+                       }
+                    }
+                    that.infoform = Object.assign({},_needData);
+                    that.oldData =  Object.assign({},_needData);
+                } else {
+                    that.Message.error(needData.msg);
+                }
+            })
+            .catch(err=>{
+                this.Message.error('网络请求异常');
+            })
+        },
+        toggleEdit(){
+            this.editing = !this.editing
+        },
+        cancelEdit(){
+            // 延迟改变默认值
+            setTimeout(() => {
+                this.infoform = Object.assign({}, this.oldData);
+            }, 300)
+            this.toggleEdit();
+        },
+        save(name){
+            // TODO save request
+            let that = this;
+            this.$refs[name].validate((valid) => {
+                if (valid) {
+                    let qs = require('qs');
+                    let _data = Object.assign({},this.infoform);
+                    _data['uid'] = that.uid;
+                    for (var key in _data ) {
+                        if(key.indexOf('date')>=0||key.indexOf('time')>=0){
+                           _data[key] = that.filters.dateFormat( _data[key]);
+                        }
+                    }
+                    that.axios({
+                        method : 'post',
+                        url : that.url,
+                        data:qs.stringify(_data)
+                    })
+                    .then(res=>{
+                        let needData = res.data;
+                        if (needData.code == 200) {
+                        setTimeout(()=>{
+                            that.$Message.success('提交成功!');
+                            that.toggleEdit();
+                            that.getData();
+                        },200)
+                        } else {
+                            that.$Message.error(needData.msg);
+                        }
+                    })
+                    .catch(err => {
+                        this.$Message.error('网络请求异常');
+                    });
+                
+                } else {
+                    this.$Message.error('表单验证失败!');
+                }
+            });
+        },
+    },  
+    mounted(){
+        this.getList('C03043','join_dept_type_list');
+        this.getData();
+    },
+    watch: {
+        '$route' (to, from) {
+            if (to.query.model) {
+                this.modal = to.query.model
+            }
+            else {
+                this.modal = null;
+            }
+        }
+    }
+}
+</script>
+<style scoped>
+.memberinfo-grouprelation{
+    min-height: 400px;
+    height: 100%;
+    padding: 8px;
+}
+.aside-bottom{
+  
+    text-align: right;
+}
+</style>

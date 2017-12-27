@@ -1,0 +1,309 @@
+<!--党组织管理/查询统计/组合查询弹窗-->
+<template>
+  <div class="CombinationQuery">
+    <Modal
+      v-model="modal1"
+      title="组合查询"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+      :closable=false
+      class-name="max-height vertical-center-modal"
+      @on-ok=""
+      @on-cancel="cancel">
+      <Form ref="CombinationQueryForm" :model="CombinationQueryForm" :rules="ruleValidate"  inline label-position="top">
+        <Row>
+          <Col span="20">
+            <p class="bold">条件设置</p>
+            <Row style="margin-top: 20px">
+              <Col span="6">
+                <FormItem label="选择信息集：" prop="map"  style="width: 95%;">
+                  <Select v-model="CombinationQueryForm.map" placeholder="请选择信息集">
+                    <Option value="基本信息">基本信息</Option>
+                    <Option value="1">联系方式</Option>
+                  </Select>
+                </FormItem>
+              </Col>
+              <Col span="6">
+              <FormItem label="选择信息项：" prop="option"  style="width: 95%;">
+                <Select v-model="CombinationQueryForm.option" placeholder="请选择信息项">
+                  <Option value="年龄">年龄</Option>
+                  <Option value="1">党组织代码</Option>
+                  <Option value="2">党组织类型</Option>
+                </Select>
+              </FormItem>
+              </Col> <Col span="6">
+              <FormItem label="操作符：" prop="operator" style="width: 95%;">
+                <Select v-model="CombinationQueryForm.operator" placeholder="请选择信息项">
+                  <Option value="0">并且</Option>
+                  <Option value="1">或者</Option>
+                  <Option value="2">等于</Option>
+                  <Option value="大于">大于</Option>
+                  <Option value="2">小于</Option>
+                </Select>
+              </FormItem>
+              </Col>
+              <Col span="6">
+              <FormItem label="查询值：" prop="value" style="width: 95%;">
+                <Input v-model="CombinationQueryForm.value" placeholder="请输入"></Input>
+              </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Button class="mr-5">并且</Button>
+              <Button class="mr-5">或者</Button>
+              <Button class="mr-5" @click="addLeft">(+</Button>
+              <Button class="mr-5"  @click="addRight">+)</Button>
+              <Button class="mr-5" @click="removeLeft">(-</Button>
+              <Button class="mr-5" @click="removeRight">-)</Button>
+              <Button class="mr-5 fr" @click="add">添加</Button>
+            </Row>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="20">
+            <div class="box-wrap">
+              <li v-for="(item,index) in condition" class="line-option" @click="clickMe(index)" :class="{ selectClass: item.checked==='1' }" >{{item.singleCondition}}</li>
+
+            </div>
+            <Row style="text-align: right;margin-top: 10px">
+              <Button type="error" size="large">查询</Button>
+              <Button type="warning" size="large" class="ml-10">保存为固定条件</Button>
+            </Row>
+          </Col>
+          <Col span="4">
+            <Row style="text-align: center;margin-top: 35px">
+              <Button class="mb10 w100" @click="upMove">上移</Button>
+              <Button class="mb10 w100" @click="downMove">下移</Button>
+              <Button class="mb10 w100">删除</Button>
+              <Button class="mb10 w100">全删</Button>
+            </Row>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="20">
+            <p class="bold">固定查询条件</p>
+            <Table border :columns="columns1" :data="data1"></Table>
+          </Col>
+          <Col span="4">
+            <Row style="text-align: center;margin-top: 30px">
+              <Button class="mb10 w100">删除条件</Button>
+              <Button class="mb10 w100">导出条件</Button>
+              <Button class="mb10 w100">导入条件</Button>
+            </Row>
+          </Col>
+        </Row>
+      </Form>
+    </Modal>
+  </div>
+</template>
+<script type="text/ecmascript-6">
+  export default {
+    name:'CombinationQuery',
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading: true,
+        isClass:false,
+        singleCondition:'',
+        condition:[],//保存用户的条件
+        itemIndex:'',//保存条件item的index
+        CombinationQueryForm: {  //form的绑定
+          map:'',//信息集
+          option:'',//信息项
+          operator:'',//操作符
+          value:'',//查询值
+        },
+        ruleValidate: {
+          map: [
+            {required: true, message: '请选择信息集', trigger: 'change'}
+          ],
+          option: [
+            {required: true, message: '请选择信息项', trigger: 'change'}
+          ],
+          operator: [
+            {required: true, message: '请选择操作符', trigger: 'change'}
+          ],
+          value: [
+            {required: true, message: '查询值不能为空', trigger: 'blur'}
+          ],
+        },
+        columns1: [
+          {
+            title: '固定条件类型',
+            key: 'fixedType'
+          },
+          {
+            title: '定义类别',
+            key: 'definedCategory'
+          },
+        ],
+        data1: [
+          {
+            fixedType: '系统条件一',
+            definedCategory: '系统定义',
+          },
+          {
+            fixedType: '系统条件二',
+            definedCategory: '自定义',
+          },
+        ]
+      }
+    },
+
+    methods: {
+      handleSubmit(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.$Message.success('提交成功!');
+            this.modal1=false;
+            this.$router.go(-1)
+          } else {
+            this.loading=false;
+        this.$Message.error('表单验证失败!');
+        setTimeout(() => {
+          this.loading=true;
+      }, 20);
+      }
+      })
+      },
+      addLeft(){
+        //console.log(obj.target.innerText);
+        //条件的索引
+        if(this.itemIndex===''){
+          return
+        }
+        let index = this.itemIndex;
+        //将原有的条件前添加 (
+        if(this.condition[index].singleCondition.indexOf("(")>-1){
+          return ;
+        }
+        let data ='( '+this.condition[index].singleCondition;
+        this.condition[index].singleCondition=data;
+        console.log(this.condition[index],index);
+      },
+      addRight(){
+        //console.log(obj.target.innerText);
+        //条件的索引
+        if(this.itemIndex===''){
+          return
+        }
+        let index = this.itemIndex;
+        //将原有的条件前添加 (
+        if(this.condition[index].singleCondition.indexOf(")")>-1){
+          return ;
+        }
+        let data =this.condition[index].singleCondition+" )";
+        this.condition[index].singleCondition=data;
+        console.log(this.condition[index],index);
+      },
+      removeLeft(){
+        //条件的索引
+        if(this.itemIndex===''){
+          return
+        }
+        let index = this.itemIndex;
+        //将原有的条件前添加 (
+        let len = this.condition[index].singleCondition.length;
+        let data =this.condition[index].singleCondition.substring(1,len)
+        this.condition[index].singleCondition=data;
+      },
+      removeRight(){
+        //条件的索引
+        if(this.itemIndex===''){
+          return
+        }
+        let index = this.itemIndex;
+        //将原有的条件前添加 (
+        let len = this.condition[index].singleCondition.length;
+        let data =this.condition[index].singleCondition.substring(0,len-1)
+        this.condition[index].singleCondition=data;
+      },
+      //添加单个条件
+      add(){
+        this.singleCondition = this.CombinationQueryForm.map+" "+
+          this.CombinationQueryForm.option+" "+this.CombinationQueryForm.operator+" "+this.CombinationQueryForm.value+"并且";
+
+          let singleConditionObj = {singleCondition:this.singleCondition,checked:0};// checked 0 未选中 1 选中
+          this.condition.push( singleConditionObj);
+      },
+      //点击选中的条件
+      clickMe(index){
+        this.condition.forEach(item=>{
+          item.checked='0'
+        });
+        this.itemIndex=index;
+        this.condition[index].checked='1';
+      },
+      //上移方法
+      upMove(){
+        let index = this.itemIndex;
+        if (index<=0)
+          return
+        let spliceArr =this.condition.splice(index,1)[0];
+        this.condition.splice(index-1,0,spliceArr);
+        this.itemIndex=index-1
+      },
+      //下移方法
+      downMove(){
+        let index = this.itemIndex;
+        let spliceArr =this.condition.splice(index,1)[0];
+        this.condition.splice(index+1,0,spliceArr);
+        this.itemIndex=index+1>= this.condition.length ? this.condition.length-1 :index+1;
+      },
+      cancel () {
+        this.$Message.info('点击了取消');
+        this.$router.go(-1)
+      }
+    }
+  }
+</script>
+<style>
+  .max-height .ivu-modal-body{
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .box-wrap{
+    width: 100%;
+    height: 180px;
+    overflow: auto;
+    border: 1px solid #dddee1;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;;
+    margin-top: 20px;
+  }
+  .bold{
+    font-weight: bold;
+    font-size: 14px;
+  }
+  .fr{
+    float: right;
+  }
+  .mr-5{
+    margin-right: 10px;
+    padding-left:25px ;
+    padding-right:25px ;
+  }
+  .ml-10{
+    margin-left: 10px;
+  }
+  .mb10{
+    margin-bottom: 10px;
+  }
+ .w100{
+   width: 100px;
+ }
+ .line-option{
+  padding: 5px 10px;
+   font-size: 14px;
+   list-style:none;
+   line-height: 18px;
+   cursor: pointer;
+ }
+ .line-option.selectClass{
+   background: #d73826;
+   color: #fff;
+ }
+</style>

@@ -1,0 +1,515 @@
+<template>
+    <div class="app-main" :style="{'width':'100%','height':'100%'}" @click="closeDefault">
+        <div class="layout start-box box-orient" :style="{'width':'100%','height':'100%'}">
+            <!-- 头部 -->
+            <top></top>
+            <Row type="flex" class="box-flex">
+                <!-- 侧边栏树结构 -->
+                <i-col span="5" class="layout-menu-left">
+                    <Slide ref="slide" 
+                        @reflashList="reflashList" 
+                        @getnode="getnode"
+                        @slideDown="slideDown"
+                        :url="url"
+                        :openitem="openitem"
+                        :currentnode="currentnode"
+                        :openlist="openlist"
+                        >
+                    </Slide>
+                </i-col>
+                <i-col span="19" class="start-box box-orient">
+                    <div class="set-com">
+                       <Button type="ghost">重新计算</Button><Button type="ghost">导出本页到word</Button><Button type="ghost">导出全部到word</Button> 
+                    </div>
+                    <div class="tabs demo-tabs-style1 box-flex">
+                        <Tabs type="card" @on-click="getMsg" style="height:100%;">
+                            <TabPane label="党组织党员基本情况">
+                                <div class="items">
+                                    <h3>党组织基本情况</h3>
+                                    <p>目前共建立基层党组织 {{deptsData.depts}} 个，其中：党委 {{deptsData.party_committees}} 个，党总支 {{deptsData.partys}} 个，党支部 {{deptsData.branchs}} 个。</p>
+                                    <p>另有工委 {{deptsData.committees}} 个（其中：其中省一级 {{deptsData.region_committees}} 个，地一级 {{deptsData.city_committees}} 个， 县一级 {{deptsData.country_committees}} 个 ）；党组 {{deptsData.centro_party_groups}} 个（其中：中央一级机关 {{deptsData.region_party_groups}} 个，市一级 {{deptsData.region_party_groups}} 个，地一级 {{deptsData.city_party_groups}} 个，县一级 {{deptsData.country_committees}} 个 ）。</p>
+                                </div>
+                                <div class="items">
+                                    <h3>党员基本情况</h3>
+                                    <p>目前共有党员 {{memberData.party_members}} 名，其中预备党员 {{memberData.prepare_party_members}} 名；女党员 {{memberData.women_party_members}} 名，占党员总数的 {{memberData.women_party_members_ratio}} %；少数民族党员 {{memberData.ethnic_party_members}} 名，占党员总数的 {{memberData.ethnic_party_members_ratio}} %；大专及以上学历的党员{{memberData.education_party_members}}名，占党员总数的 {{memberData.education_party_members_ratio}} %；35岁以下的党员 {{memberData.age35_party_members}} 名，占党员总数的 {{memberData.age35_party_members_ratio}} %；60以上党员 {{memberData.age60_party_members}} 名，占党员总数的 {{memberData.age60_party_members_ratio}} %。</p>
+                                    <p>党员职业分布情况：公有制在岗职工党员 {{memberData.gy_career_party_members}} 名，占党员总数的 {{memberData.gy_career_party_ratio}} %； 非公有制在岗职工党员 {{memberData.fgy_career_party_members}} 名，占党员总数的 {{memberData.fgy_career_party_ratio}} %； 农牧渔民党员 {{memberData.nmym_career_party_members}} 名，占党员总数的 {{memberData.nmym_career_party_ratio}} %； 军人、武警党员 {{memberData.police_career_party_members}} 名，占党员总数的 {{memberData.police_career_party_ratio}} %； 学生党员 {{memberData.student_career_party_members}} 名，占党员总数的 {{memberData.student_career_party_ratio}} %； 离退休党员 {{memberData.retired_career_party_members}} 名，占党员总数的 {{memberData.retired_career_party_ratio}} %； 其他职业党员 {{memberData.other_career_party_members}} 名，占党员总数的 {{memberData.other_career_party_ratio}}  %；</p>
+                                    <p>共有生活困难党员 {{memberData.hard_party_members}} 名， 其中享受城镇最低生活保障费的 {{memberData.hardsp_party_members}} 名；</p>
+                                    <p>共有建国前入党没有工作老党员 {{memberData.before_country_party_members}} 名， 其中享受优抚的 {{memberData.before_country_sp_party_members}} 名；</p>
+                                    <p>共有流动党员 {{memberData.abroad_party_members}} 名， 其中流出党员 {{memberData.flow_party_members}}  名，接收流入党员  {{memberData.flow_in_party_members}} 名；</p>
+                                    <p>共有长期出国（境）党员 {{memberData.flow_out_party_members}} 名。</p>
+                                </div>
+                            </TabPane>
+                            <TabPane label="发展党员基本情况">
+                                <div class="items">
+                                    <h3>发展党员情况</h3>
+                                    <p>上年度发展党员     名，其中发展女党员 名，占党员发展总数的     % ；发展少数民族党员       名，占党员发展总数的      % ；发展大专以上学历的党员       名，占党员发展总数的      % ；发展35岁以下的党员 名，占党员发展总数的      % ；发展农牧渔民党员，占党员发展总数的      % ；</p>
+                                    <p>发展生产工作一线党员 名，占党员发展总数的      %；从共青团员中发展党员 名，占党员发展总数的      % 从学生中发展党员 名，占党员发展总数的      %  。本年度截止目前发展党员        名。</p>
+                                </div>
+                                <div class="items">
+                                    <h3>申请入党入队伍情况</h3>
+                                    <p>上年度发展党员     名，其中发展女党员 名，占党员发展总数的     % ；发展少数民族党员       名，占党员发展总数的      % ；发展大专以上学历的党员       名，占党员发展总数的      % ；发展35岁以下的党员 名，占党员发展总数的      % ；发展农牧渔民党员，占党员发展总数的      % ；</p>
+                                </div>
+                            </TabPane>
+                            <TabPane label="党建基本情况">
+                                <div class="items">
+                                    <h3>发展党员情况</h3>
+                                    <p>国家机关、政党机关、人民团体机关单位共计 {{jiguanData.institution.total}} 个， 在岗职工人数为 {{jiguanData.institution.workers}} 人，党员数量为 {{jiguanData.institution.workers}} 名；其中建立独立党组织的 {{jiguanData.institution.single_party_num}} 个，建立联合党支部的 {{jiguanData.institution.union_party_num}} 个 ，未建立党组织的 {{jiguanData.institution.none_party_num}} 个 。</p>   
+                                    <p>目前共有事业单位 {{jiguanData.organ.total}} 个；在岗职工人数为 {{jiguanData.organ.workers}} 人，党员数量为 {{jiguanData.organ.party_num}} 名；其中建立独立党组织的 {{jiguanData.organ.single_party_num}} 个 ，建立联合党支部的 {{jiguanData.organ.union_party_num}} 个，未建立党组织的 {{jiguanData.organ.none_party_num}} 个 。</p>
+                                </div>
+                                <div class="items">
+                                    <h3>企业党建情况</h3>
+                                    <p>目前共有公有经济控制的企业 {{orgData.public.total}} 家；从业人数为 {{orgData.public.workers}} 人，党员数量为 {{orgData.public.party_number}} 名。建立党委的 {{orgData.public.construct_party}} 家，建立党总支的 {{orgData.public.construct_branch}} 家，建立独立党支部的 {{orgData.public.construct_single}} 家 ，建立联合党支部的 {{orgData.public.construct_union}} 家 ，未建立党组织的 {{orgData.public.construct_none}} 家 。</p>
+                                    <p>目前共有非公有经济控制的企业 {{orgData.private.total}} 家；从业人数为 {{orgData.private.workers}} 人，党员数量为 {{orgData.private.party_number}}  名。其中从业50－99人且营业收入500万以上的 {{orgData.public["500_party_number"]}} 家，党员数量为 {{orgData.private.party_number}} 名。建立党委的 {{orgData.private.construct_party}} 家，建立党总支的 {{orgData.private.construct_branch}} 家，建立独立党支部的 {{orgData.private.construct_single}} 家 ，建立联合党支部的 {{orgData.private.construct_union}} 家 ，未建立党组织的 {{orgData.private.construct_none}} 家 ；从业100人以上的 {{orgData.private.construct_none}} 家，党员数量为 {{orgData.private.construct_none}} 名。建立党委的 {{orgData.private.construct_none}} 家，建立党总支的 {{orgData.private.construct_none}} 家，建立独立党支部的 {{orgData.private.construct_none}} 家，建立联合党支部的 {{orgData.private.construct_none}} 家，未建立党组织的 {{orgData.private.construct_none}} 家 。</p>
+                                </div>
+                                <div class="items">
+                                    <h3>两新党组织党建情况</h3>
+                                    <p>目前共有民办非企业 {{doubleData.middleware.total}} 个。已经建立党组织的 {{doubleData.middleware.construct_dept}} 个，建立党委的 {{doubleData.middleware.construct_party}} 个，建立党总支的 {{doubleData.middleware.construct_branch}} 个，建立党支部的 {{doubleData.middleware.construct_single}} 个。从业党员 {{doubleData.middleware.party_number}} 名。</p>
+                                    <!-- <p>目前共有中介组织 {{doubleData.middleware.total}} 个。已经建立党组织的 {{doubleData.middleware.construct_dept}} 个，建立党委的 {{doubleData.middleware.construct_party}} 个，建立党总支的 {{doubleData.middleware.construct_branch}} 个，建立党支部的 {{doubleData.middleware.construct_single}} 个(其中联合支部 {{doubleData.middleware.construct_union}} 个)。从业党员 {{doubleData.middleware.party_number}} 名。</p>
+                                    <p>目前共有社团组织 {{doubleData.social.total}} 个 ，已经建立党组织的 {{doubleData.social.construct_dept}} 个，建立党委的 {{doubleData.social.construct_party}} 个，建立党总支的 {{doubleData.social.construct_branch}} 个，建立党支部的 {{doubleData.social.construct_single}} 个。从业党员 {{doubleData.social.party_number}} 名。</p> -->
+                                </div>
+                                <div class="items">
+                                    <h3>城市社区党建情况</h3>
+                                    <p>共有城市社区 {{cityData.summary.total}} 个，建立党委的 {{cityData.summary.construct_party}} 个，建立总支的 {{cityData.summary.construct_branch}} 个，建立独立党支部的 {{cityData.summary.construct_single}} 个，建立联合党支部的 {{cityData.summary.construct_union}} 个，未建立党组织的 {{cityData.summary.construct_none}} 个。</p>
+                                    <p>城市社区党组织书记共计 {{cityData.clerk.total}} 名 其中：高中学历及以上的书记 {{cityData.clerk.primary}} 名，45岁以下的 {{cityData.clerk.under45}} 名，60岁以上的 {{cityData.clerk.over60}} 名。</p>
+                                    <p>组织关系在城市社区的党员 {{cityData.relation.total}} 名。 其中女党员 {{cityData.relation.women}} 名，占社区党员总数的 {{cityData.relation.women_percent}} %。高中学历及以上的党员 {{cityData.relation.primary}} 名，占社区党员总数的 {{cityData.relation.primary_percent}} %。45岁以下的党员 {{cityData.relation.under45}} 名，占社区党员总数的 {{cityData.relation.under45_percent}} %。60以上 {{cityData.relation.over60}} 人，占社区党员总数的 {{cityData.relation.over60_percent}}  %</p>
+                                </div>
+                                <div class="items">
+                                    <h3>建制村党建情况</h3>
+                                    <p>建制村 {{villageData.summary.total}} 个，建立党委的 {{villageData.summary.construct_party}} 个，建立党总支的 {{villageData.summary.construct_branch}} 个，建立独立党支部的 {{villageData.summary.construct_single}} 个，建立联合党支部的 {{villageData.summary.construct_union}} 个，未建立党组织的 {{villageData.summary.construct_none}} 个。</p>
+                                    <p>建制村党组织书记共计 {{villageData.clerk.total}}  名 其中：女书记 {{villageData.clerk.women}} 名，高中及以上学历的书记 {{villageData.clerk.primary}} 名，35岁以下的 {{villageData.clerk.under35}} 名，60岁以上的 {{villageData.clerk.over60}} 名 。</p>
+                                    <p>建制村党支部委员与村委会委员交叉任职 {{villageData.pluralism.total}} 名，其中：村党支部书记、村委会主任一人兼的 {{villageData.pluralism.both}} 名</p>
+                                    <p>建制村党员共计 {{villageData.distribute.total}} 名，占全部党员总数的 {{villageData.distribute.total_percent}} %。其中女党员 {{villageData.distribute.women}} 名，占建制村党员总数的 {{villageData.distribute.women_percent}} %。高中学历及以上的党员 {{villageData.distribute.primary}} 名，占建制村党员总数的 {{villageData.distribute.primary_percent}} %。35岁以下的党员 {{villageData.distribute.under35}} 名，占建制村党员总数的 {{villageData.distribute.under35_percent}} %。</p>
+                                    <p>三年以上未发展党员的村党组织有 {{villageData.distribute.three_years}} 个。</p>
+                                </div>
+                            </TabPane>
+                        </Tabs>
+                    </div>
+                    
+                </i-col>
+            </Row>
+        </div>
+    </div>
+</template>
+<script>
+    import top from '@/components/top.vue'
+    import Slide from '@/components/slide.vue'
+
+    export default {
+        name: 'baseSituation',
+        data() {
+            return {
+                url: '/v1/trees/list',
+                openitem: [],
+                openlist: [],
+                currentnode: '',
+                slideBar: false,
+                remberGroup: false,
+                lists: [],
+                remberId: '', //记住点击的列
+                remberRow: {},
+                deptsData: {},
+                memberData: {},
+                jiguanData: {
+                    "institution": {
+                      "total": "1",
+                      "workers": "55",
+                      "party_num": "10241",
+                      "single_party_num": "1",
+                      "union_party_num": "0",
+                      "none_party_num": "1"
+                    },
+                    "organ": {
+                      "total": "1",
+                      "workers": "55",
+                      "party_num": "10241",
+                      "single_party_num": "1",
+                      "union_party_num": "0",
+                      "none_party_num": "1"
+                    }
+                },
+                orgData: {
+                    "public": {
+                      "total": "0",
+                      "workers": 0,
+                      "party_number": "0",
+                      "construct_party": "0",
+                      "construct_branch": "0",
+                      "construct_single": "0",
+                      "construct_union": "0",
+                      "construct_none": "0"
+                    },
+                    "private": {
+                      "total": "1",
+                      "workers": "22",
+                      "party_number": "9",
+                      "over500": 0,
+                      "500_party_number": 0,
+                      "construct_party": "0",
+                      "construct_branch": "0",
+                      "construct_single": "1",
+                      "construct_union": "0",
+                      "construct_none": "0",
+                      "100_total": "0",
+                      "100_party_number": "0",
+                      "100_construct_party": "0",
+                      "100_construct_branch": "0",
+                      "100_construct_single": "0",
+                      "100_construct_union": "0",
+                      "100_construct_none": "0"
+                    }
+                },
+                doubleData: {
+                    "middleware": {
+                      "total": "1",
+                      "construct_dept": 1,
+                      "construct_party": "0",
+                      "construct_branch": "0",
+                      "construct_single": "1",
+                      "construct_union": "0",
+                      "party_number": "9"
+                    },
+                    "social": {
+                      "total": "1",
+                      "construct_dept": 1,
+                      "construct_party": "0",
+                      "construct_branch": "0",
+                      "construct_single": "1",
+                      "party_number": "9"
+                    }
+                },
+                cityData: {
+                    "summary": {
+                      "total": "0",
+                      "construct_party": "0",
+                      "construct_branch": "0",
+                      "construct_single": "0",
+                      "construct_union": "0",
+                      "construct_none": "0"
+                    },
+                    "clerk": {
+                      "total": 0,
+                      "primary": 0,
+                      "under45": 0,
+                      "over60": 0
+                    },
+                    "relation": {
+                      "total": "0",
+                      "women": "0",
+                      "women_percent": "0",
+                      "primary": 0,
+                      "primary_percent": "0",
+                      "under45": 0,
+                      "under45_percent": "0",
+                      "over60": 0,
+                      "over60_percent": "0"
+                    }
+                },
+                villageData: {
+                    "summary": {
+                      "total": "0",
+                      "construct_party": "0",
+                      "construct_branch": "0",
+                      "construct_single": "0",
+                      "construct_union": "0",
+                      "construct_none": "0"
+                    },
+                    "clerk": {
+                      "total": 0,
+                      "women": 0,
+                      "primary": 0,
+                      "under35": 0,
+                      "over60": 0
+                    },
+                    "pluralism": {
+                      "total": 11,
+                      "both": 0
+                    },
+                    "distribute": {
+                      "total": "0",
+                      "total_percent": 0,
+                      "women": "0",
+                      "women_percent": "0",
+                      "primary": 0,
+                      "primary_percent": "0",
+                      "under35": 0,
+                      "under35_percent": "0"
+                    },
+                    "three_years": "100"
+                },
+            }
+        },
+        computed: {
+        },
+        watch: {
+        },
+        components: {
+            top,
+            Slide,
+        },
+        methods: {
+            getMsg(res) {
+                // console.log(res)
+            },
+            slideDown() {
+                console.log('jieshu')
+            },
+            closeDefault() {
+                if (this.$route.name == 'info' || this.$route.name == 'group') {
+                    this.$router.go(-1);
+                };
+            },
+            // tree emit events（events up）
+            reflashList(item) {
+                this.deptsinfo(item.id, 0);
+                this.memberinfo(item.id, 1);
+                this.jiguan(item.id, 1);
+                this.org(item.id, 1);
+                this.double(item.id, 1);
+                this.city(item.id, 1);
+                this.village(item.id, 1);
+            },
+            getnode(node) {
+                
+            },
+            reflash() {
+                 this.openlist = [798, 797, 792, 796];
+            },
+            deptsinfo(id, type) {
+                let that = this;
+                this.axios({
+                    method: 'get',
+                    url: '/v1/deptstatistics/depts-stat',
+                    params: {
+                        dept_id: id ? id : '',
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.deptsData = needData.data;
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+            memberinfo(id, type) {
+                let that = this;
+                this.axios({
+                    method: 'get',
+                    url: '/v1/deptstatistics/members-stat',
+                    params: {
+                        dept_id: id ? id : '',
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.memberData = needData.data;
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+            jiguan(id, type) {
+                let that = this;
+                this.axios({
+                    method: 'get',
+                    url: '/v1/construct/institutions',
+                    params: {
+                        dept_id: id ? id : '',
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.jiguanData = needData.data;
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+            org(id, type) {
+                let that = this;
+                this.axios({
+                    method: 'get',
+                    url: '/v1/construct/org',
+                    params: {
+                        dept_id: id ? id : '',
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.orgData = needData.data;
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+            double(id, type) {
+                let that = this;
+                this.axios({
+                    method: 'get',
+                    url: '/v1/construct/double',
+                    params: {
+                        dept_id: id ? id : '',
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.doubleData = Object.assign({},needData.data);
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+            city(id, type) {
+                let that = this;
+                this.axios({
+                    method: 'get',
+                    url: '/v1/construct/city',
+                    params: {
+                        dept_id: id ? id : '',
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.cityData = needData.data;
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+            village(id, type) {
+                let that = this;
+                this.axios({
+                    method: 'get',
+                    url: '/v1/construct/city',
+                    params: {
+                        dept_id: id ? id : '',
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.villageData = needData.data;
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+        },
+        created() {
+                
+        },
+        mounted() {
+            this.deptsinfo(68, 1);
+            this.memberinfo(68, 1);
+            this.jiguan(68, 1);
+            this.org(68, 1);
+            this.double(68, 1);
+            this.city(68, 1);
+            this.village(68, 1);
+            console.log(this.$store.state.remberId)
+        },
+    }
+</script>
+<style scoped>
+    .items h3 {
+        font-size: 16px;
+        font-weight: bold;
+        color: #222;
+        margin: 15px 0px;
+    }
+    .items p {
+        font-size: 16px;
+        color: #222;
+        line-height: 26px;
+        margin: 6px 0px;
+    }
+    .tabs {
+        border: 1px solid #e2e2e2;
+        /*height: 500px;*/
+        /*height: calc(100% - 77px);
+        height: -webkit-calc(100% - 77px);*/
+        margin: 20px;
+        background: #fff;
+        overflow: auto;
+    }
+    .ivu-tabs.ivu-tabs-card>.ivu-tabs-bar .ivu-tabs-tab {
+        margin-right: 0px;
+        border-radius: 0px;
+        border-top: 0px;
+    }
+    .ivu-tabs.ivu-tabs-card>.ivu-tabs-bar .ivu-tabs-tab-active {
+        /*border: 0px;*/
+        color: #222;
+    }
+    .ivu-tabs{
+      height: 100%;
+    }
+    .ivu-tabs-bar {
+        background: #f7f7f7;
+    }
+    .ivu-tabs .ivu-tabs-content {
+        height: 100%;
+    }
+    .ivu-tabs .ivu-tabs-tabpane {
+        padding: 0px 20px;
+        height: calc(100% - 42px);
+        height: -webkit-calc(100% - 42px);
+        overflow: auto;
+    }
+    .set-com {
+        margin-top: 20px;
+        margin-left: 10px;
+    }
+    .set-com button {
+        background: #fff;
+        margin-left: 10px;
+    }
+    .ivu-tabs { 
+        background-color: #fff;
+    }
+    .slides-enter-active {
+      transition: all .3s ease;
+    }
+    .slides-leave-active {
+      transition: all .8s ease;
+    }
+    .slides-enter, .slides-leave-to
+    {
+      transform: translateX(800px);
+      opacity: 0;
+    }
+</style>

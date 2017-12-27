@@ -1,0 +1,33 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+Vue.use(Vuex)
+
+const store = new Vuex.Store({
+    state: {
+       token: '',
+       isClose: false,
+       infoData: {},
+    },
+    mutations: {
+      switchs (state) {
+        state.isClose = !state.isClose;
+      },
+      setToken(state, data) {
+        localStorage.setItem('djwtoken', data);
+        state.token = data;
+      },
+      delToken(state) {
+        state.token = ''; 
+        localStorage.removeItem("djwtoken");
+      }
+    },
+    getters: {
+    	myResult: state => state.isClose
+    },
+    // actions: {
+    // 	switchs(context) {
+    // 		context.commit('switchs');
+    // 	}
+    // }
+})
+export default store

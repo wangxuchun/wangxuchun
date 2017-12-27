@@ -1,0 +1,201 @@
+<template>
+    <div class="tables" style="width: 1000px;">
+        <div class="title text-center">
+           <h3 class="text-center" style="margin: 10px 0;">城市街道、社区（居委会）、社会组织发展党员工作情况（二）</h3> 
+           <p>截至日期：2017年12月31日</p>
+        </div>
+        
+        <div class="start-box box-pack" style="position: relative; top: -16px;">
+            <p>填报单位：天房科技党总支</p>
+            <p>第二十三表</p>
+        </div>
+        <div class="table-outer">
+            <table align=center cellspacing=0 cellpadding=0 width="100%">
+                <tr>
+                    <td width="140" colspan=3 rowspan=2>项目</td>
+                    <td style="border-right: none;border-bottom: none;" colspan=2></td>
+                    <td colspan=5></td>
+                    <td colspan=10>年纪</td>
+                </tr>
+                <tr>
+                    <td style="border-left:none;" colspan=2>总数</td>
+                    <td width="50">本  年</td>
+                    <td width="50">女</td>
+                    <td width="50">少数民族</td>
+                    <td width="50">大专及以上学历</td>
+                    <td width="50">中专、高中、中技学历</td>
+                    <td width="50">35岁及<br>以  下</td>
+                    <td width="50">36岁至<br>59  岁</td>
+                    <td width="50">60岁及<br>以上</td>
+                </tr>
+                <tr>
+                   <td colspan=3>甲</td> 
+                   <td></td>
+                   <td><strong>A</strong></td>
+                   <td><strong>B</strong></td>
+                   <td><strong>C</strong></td>
+                   <td><strong>D</strong></td>
+                   <td><strong>E</strong></td>
+                   <td><strong>F</strong></td>
+                   <td><strong>G</strong></td>
+                   <td><strong>H</strong></td>
+                   <td><strong>I</strong></td>
+                </tr>
+                <tr v-for="(item, index) in tablesData">
+                    <td width='20' v-if="item.type == 3"></td>
+                    <td colspan=2 v-if="item.type == 3">{{item.label}}</td>
+                    <td width='20'  v-if="item.type == 2" rowspan=10>{{item.title}}</td>
+                    <td colspan=2  v-if="item.type == 2">{{item.label}}</td>
+                    <td  v-if="item.type == 4" style="border-left: none;" colspan=2>{{item.label}}</td>
+                    <td v-if="item.type == 5"  width="20" style="border:none;"></td>
+                    <td v-if="item.type == 5"  style="border-left: none;">{{item.label}}</td>
+                    <td v-if="item.type == 6"  width="20" style="border-left: none;"></td>
+                    <td v-if="item.type == 6"  style="border-left: none;">{{item.label}}</td>
+                    <td width='20'  v-if="item.type == 7" rowspan=9>{{item.title}}</td>
+                    <td width='20' v-if="item.type == 7" style="border: none;"></td>
+                    <td v-if="item.type == 7">{{item.label}}</td>
+                    <td width=30><strong>{{index+1}}</strong></td>
+                    <td v-for="(inner, inx) in item.lists" :style="{'backgroundColor': '#E7F4FE'}"><input type="text" :disabled="inner.disabled" v-model="inner.value" :style="{'color': inner.disabled ? '#ccc' : '', 'backgroundColor': (index == 0 || index == 1 || index == 2 ||index == 10 || inx == 0) ? '#E7F4FE' : (index == 5 || index == 8 || index==13||index==17)? '#ffece2' : ''}"></td>
+                </tr>  
+                <tr v-for="(item, index) in tablesData2">
+                    <td width='20' v-if="item.type == 3"></td>
+                    <td colspan=2 v-if="item.type == 3">{{item.label}}</td>
+                    <td width='20'  v-if="item.type == 2" rowspan=10>{{item.title}}</td>
+                    <td colspan=2  v-if="item.type == 2">{{item.label}}</td>
+                    <td  v-if="item.type == 4" style="border-left: none;" colspan=2>{{item.label}}</td>
+                    <td v-if="item.type == 5"  width="20" style="border:none;"></td>
+                    <td v-if="item.type == 5"  style="border-left: none;">{{item.label}}</td>
+                    <td v-if="item.type == 6"  width="20" style="border-left: none;"></td>
+                    <td v-if="item.type == 6"  style="border-left: none;">{{item.label}}</td>
+                    <td width='20'  v-if="item.type == 7" rowspan=9>{{item.title}}</td>
+                    <td width='20' v-if="item.type == 7" style="border: none;"></td>
+                    <td v-if="item.type == 7">{{item.label}}</td>
+                    <td width=30><strong>{{index+1}}</strong></td>
+                    <td v-for="(inner, inx) in item.lists" :style="{'backgroundColor': '#E7F4FE'}"><input type="text" :disabled="inner.disabled" v-model="inner.value" :style="{'color': inner.disabled ? '#ccc' : '', 'backgroundColor': (index == 0 || index == 1 || index == 2 ||index == 10 || inx == 0) ? '#E7F4FE' : (index == 5 || index == 8 || index==13||index==17)? '#ffece2' : ''}"></td>
+                </tr> 
+            </table>
+        </div>
+        <router-view></router-view>
+    </div>
+</template>
+<script>
+	export default {
+		name: 'form2',
+		data() {
+			return {
+                msg: 'this is table',
+                tablesData: [  
+                    {type: 7, title: '入党积极分子', label: '城市街道', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 6, title: '', label: '城市社区（居委会）', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '乡镇社区（居委会）', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '社会团体', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '基金会', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '民办非企业单位', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '律师事务所', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '会计师事务所', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '税务师事务所', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                ],
+                tablesData2: [  
+                    {type: 7, title: '入党申请人', label: '城市街道', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 6, title: '', label: '城市社区（居委会）', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '乡镇社区（居委会）', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '社会团体', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '基金会', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '民办非企业单位', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '律师事务所', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '会计师事务所', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                    {type: 4, title: '', label: '税务师事务所', disabled: false, bgcolor: "#222", lists: [{disabled: false,value: 4},{disabled: false,value:7},{disabled: false,value:67},{disabled: false,value:3},{disabled: false,value:9},{disabled: false,value:6},{disabled: false,value:89},{disabled: false,value:78},{disabled: false,value:52}]},
+                ]
+			}
+		},
+        computed: {
+           
+        },
+		watch: {
+
+		},
+		methods: {
+
+		},
+		created() {
+
+		},
+		mounted() {
+            this.tablesData.forEach(item => {
+                item.lists.forEach(it => {
+                    it.disabled = true;
+                })
+            })
+	    },
+	}
+</script>
+<style scoped>
+    .table-outer {
+        width: 100%;
+        overflow: auto; 
+    }
+    table tr:first-child td{
+        border-top: 1px solid #222;
+    }
+    table tr td{
+        border-bottom: 1px solid #222;
+        border-right: 1px solid #222;
+        text-align: center;
+    }
+    table tr td input {
+        display: inline-block;
+        display: table-cell;
+        border: none;
+        width: 50px;
+        padding-left: 3px;
+        text-align: center;
+    }
+    table tr td:first-child {
+        border-left: 1px solid #222;
+    }
+    .tips-outer {
+        margin-top: 15px;
+    }
+    .tips input {
+        width: 60px;
+        height: 18px;
+        margin: 0 3px;
+        padding-left: 3px;
+    }
+    .tips p {
+        line-height: 24px;
+    }
+    .tables-containter div {
+        text-align: center;
+    }
+    .comm-left {
+        width: 120px;
+        border: 1px solid #222;
+        border-width: 0 1px 0 0;
+        height: 100%;
+    }
+    .wh100 {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+    .tables {
+        padding: 15px;
+    }
+    .tables-containter {
+        border: 1px solid #222;
+    }
+    .tables-header {
+        height: 60px;
+    }
+    .header-top {
+        height: 40px;
+        border-bottom: 1px solid #222;
+        line-height: 40px;
+    }
+    .header-bottom {
+        height: 20px;
+        line-height: 20px;
+        border-bottom: 1px solid #222;
+    }
+</style>

@@ -1,0 +1,343 @@
+<!- 党支部/党支部拆分新增弹窗-->
+<template>
+  <div class="PartySplit">
+    <Modal
+      v-model="modal1"
+      title="党支部拆分"
+      width="950"
+      :mask-closable=false
+      :loading="loading"
+      class-name="max-height"
+      :closable=false
+      @on-ok="handleSubmit('PartySplitForm')"
+      @on-cancel="cancel">
+      <Row>
+        <Form ref="PartySplitForm" :model="PartySplitForm"  :label-width="150" :rules="ruleValidate">
+          <Col span="12">
+          <FormItem label="新拆分党支部编码：" prop="code">
+            <Input v-model="PartySplitForm.code" placeholder="请输入新拆分党支部编码"></Input>
+          </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="设置委员数：" prop="setCommitteeNum">
+              <Input v-model="PartySplitForm.setCommitteeNum" placeholder="请输入"></Input>
+            </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="新拆分党支部名称：" prop="PartyName">
+            <Input v-model="PartySplitForm.PartyName" placeholder="请输入"></Input>
+          </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="实有委员数：" prop="CommitteeNum">
+            <Input v-model="PartySplitForm.CommitteeNum"  placeholder="请输入"></Input>
+          </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="党组织类型：" prop="type">
+            <Select v-model="PartySplitForm.type" placeholder="请选择">
+              <Option value="0">类型A</Option>
+              <Option value="1">类型B</Option>
+            </Select>
+          </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="党组织办公电话：" prop="tel">
+            <Input v-model="PartySplitForm.tel"  placeholder="请输入"></Input>
+          </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="党组织属地关系：" prop="relations">
+            <Select v-model="PartySplitForm.relations" placeholder="请选择">
+              <Option value="0">关系A</Option>
+              <Option value="1">关系B</Option>
+            </Select>
+          </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="传真号码：" prop="faxnum">
+              <Input v-model="PartySplitForm.faxnum"  placeholder="请输入传真号码"></Input>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="批准建立党组织日期：" prop="partyDate">
+              <DatePicker style="width: 100%;"  type="date" placeholder="选择日期" v-model="PartySplitForm.partyDate"></DatePicker>
+            </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="流动党员党支部标识：" prop="Identification">
+            <Input v-model="PartySplitForm.Identification"  placeholder="请输入"></Input>
+          </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="所在地区：" prop="region">
+            <Cascader :data="PartySplitForm.data" v-model="PartySplitForm.region"></Cascader>
+          </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="详细地址：" prop="address">
+            <Input v-model="PartySplitForm.address"  placeholder="请输入"></Input>
+          </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="本届班子当选日期：" prop="electionDate">
+              <DatePicker style="width: 100%;"  type="date" placeholder="选择日期" v-model="PartySplitForm.electionDate"></DatePicker>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="邮政编码：" prop="postalCode">
+              <Input v-model="PartySplitForm.postalCode"  placeholder="请输入"></Input>
+            </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="任期年限：" prop="year">
+            <Input v-model="PartySplitForm.year"  placeholder="请输入"></Input>
+          </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="本届届满日期：" prop="endDate">
+            <DatePicker style="width: 100%;"  type="date" placeholder="选择日期" v-model="PartySplitForm.endDate"></DatePicker>
+          </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="选举方式：" prop="mode">
+            <Select v-model="PartySplitForm.mode" placeholder="请选择">
+              <Option value="0">方式A</Option>
+              <Option value="1">方式B</Option>
+            </Select>
+          </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="选举应到会人数：" prop="tobeNum">
+              <Input v-model="PartySplitForm.tobeNum"  placeholder="请输入"></Input>
+            </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="选举实到人数：" prop="actualNum">
+            <Input v-model="PartySplitForm.actualNum"  placeholder="请输入"></Input>
+          </FormItem>
+          </Col>
+        </Form>
+      </Row>
+      <Row>
+        <p>新拆分党支部的党员</p>
+        <Table border :columns="columns4" :data="data1"></Table>
+      </Row>
+    </Modal>
+  </div>
+</template>
+<script TYPE="text/ecmascript-6">
+  export default {
+    name:'PartySplit',
+    data () {
+      return {
+        modal1: true,
+        loading: true,
+        PartySplitForm: {
+          code:"",//党组织代码
+          setCommitteeNum:"",//设置委员数
+          PartyName:"",//党组织全称
+          CommitteeNum:"",//实际委员数
+          type:"",//党组织类型
+          tel:"",//党组织办公室电话
+          relations:"",//党组织属地关系
+          faxnum:"",//传真
+          partyDate:'',//批准建立党组织日期
+          Identification:'',//流动党员党支部标识
+          address:'',//详细地址
+          electionDate:'',//本届班子当选日期：
+          postalCode:'',//邮政编码
+          year:'',//任期年限
+          endDate:'',//本届班子当选日期：
+          mode:'',//选举方式
+          tobeNum:'',//应到人数
+          actualNum:'',//实到人数
+          region: [],//所在地区
+          data: [{
+            value: 'beijing',
+            label: '北京',
+            children: [
+              {
+                value: 'gugong',
+                label: '故宫'
+              },
+              {
+                value: 'tiantan',
+                label: '天坛'
+              },
+              {
+                value: 'wangfujing',
+                label: '王府井'
+              }
+            ]
+          }, {
+            value: 'jiangsu',
+            label: '江苏',
+            children: [
+              {
+                value: 'nanjing',
+                label: '南京',
+                children: [
+                  {
+                    value: 'fuzimiao',
+                    label: '夫子庙',
+                  }
+                ]
+              },
+              {
+                value: 'suzhou',
+                label: '苏州',
+                children: [
+                  {
+                    value: 'zhuozhengyuan',
+                    label: '拙政园',
+                  },
+                  {
+                    value: 'shizilin',
+                    label: '狮子林',
+                  }
+                ]
+              }
+            ],
+          }]
+        },
+        ruleValidate: {
+          code: [
+            {required: true, message: '党组织代码不能为空', trigger: 'blur'}
+          ],
+          PartyName: [
+            {required: true, message: '党组织全称不能为空', trigger: 'blur'}
+          ],
+          type: [
+            {required: true, message: '党组织类型不能为空', trigger: 'change'}
+          ],
+          relations: [
+            {required: true, message: '党组织属地关系不能为空', trigger: 'change'}
+          ],
+          tel: [
+            {required: true, message: '党组办公电话不能为空', trigger: 'blur'}
+          ],
+          partyDate: [
+            {required: true,type:'date', message: '批准建立党组织日期', trigger: 'change'}
+          ]
+        },
+        columns4: [
+          {
+            type: 'selection',
+            width: 40,
+            align: 'center'
+          },
+          {
+            title: '姓名',
+            key: 'name'
+          },
+          {
+            title: '身份证号',
+            key: 'nameId',
+            width:200
+          },
+          {
+            title: '性别',
+            key: 'sex'
+          },
+          {
+            title: '民族',
+            key: 'nation'
+          },
+          {
+            title: '出生日期',
+            key: 'birthday'
+          },
+          {
+            title: '籍贯',
+            key: 'origin'
+          },
+          {
+            title: '参加工作日期',
+            key: 'jobDate'
+          },
+        ],
+        data1: [
+          {
+            name: '王叙淳',
+            nameId: '120102199207217772',
+            address: '北京市朝阳区芍药居',
+            sex:'男',
+            nation:'汉族',
+            birthday:'1992-07-21',
+            origin:'天津市',
+            jobDate:'2012-05-11',
+          },
+          {
+            name: '王叙淳',
+            nameId: '120102199207217772',
+            address: '北京市朝阳区芍药居',
+            sex:'男',
+            nation:'汉族',
+            birthday:'1992-07-21',
+            origin:'天津市',
+            jobDate:'2012-05-11',
+          },
+          {
+            name: '王叙淳',
+            nameId: '120102199207217772',
+            address: '北京市朝阳区芍药居',
+            sex:'男',
+            nation:'汉族',
+            birthday:'1992-07-21',
+            origin:'天津市',
+            jobDate:'2012-05-11',
+          },
+          {
+            name: '王叙淳',
+            nameId: '120102199207217772',
+            address: '北京市朝阳区芍药居',
+            sex:'男',
+            nation:'汉族',
+            birthday:'1992-07-21',
+            origin:'天津市',
+            jobDate:'2012-05-11',
+          },
+          {
+            name: '王叙淳',
+            nameId: '120102199207217772',
+            address: '北京市朝阳区芍药居',
+            sex:'男',
+            nation:'汉族',
+            birthday:'1992-07-21',
+            origin:'天津市',
+            jobDate:'2012-05-11',
+          },
+        ]
+      };
+    },
+
+    methods: {
+      handleSubmit(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.$Message.success('提交成功!');
+            this.modal1=false;
+            this.$router.go(-1)
+          } else {
+            this.loading=false;
+            this.$Message.error('表单验证失败!');
+            setTimeout(() => {
+              this.loading=true;
+            }, 20);
+          }
+        })
+      },
+      cancel () {
+        this.$Message.info('点击了取消');
+        this.$router.go(-1)
+      }
+    }
+  }
+</script>
+<style>
+  .max-height{
+    /*max-height: 600px;*/
+    /*overflow-y: auto;*/
+  }
+</style>

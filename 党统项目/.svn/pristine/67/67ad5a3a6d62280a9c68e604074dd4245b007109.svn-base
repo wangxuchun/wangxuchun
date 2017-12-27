@@ -1,0 +1,150 @@
+<template>
+    <div class="check-form">
+        <h4>报表校核结果</h4>
+        <Table 
+            border 
+            highlight-row 
+            :columns="resultHeader" 
+            :data="resultList"
+            @on-row-click="resultF"></Table> 
+        <h4>反查对照</h4>
+        <Table 
+            border 
+            highlight-row 
+            :columns="compareHeader" 
+            :data="compareList"
+            @on-row-click="compareF"></Table> 
+    </div>
+</template>
+<script>
+	export default {
+		name: 'tables',
+		data() {
+			return {
+                resultHeader: [
+                    {
+                        type: 'index',
+                        width: 80,
+                        title: '序号',
+                        align: 'center'
+                    },
+                    {
+                        title: '统计报表名称',
+                        key: 'name',
+                    },
+                    {
+                        title: '审核类型',
+                        key: 'type'
+                    },
+                    {
+                        title: '左边值',
+                        key: 'leftcode'
+                    },
+                    {
+                        title: '关系',
+                        key: 'realtive'
+                    },
+                    {
+                        title: '右边值',
+                        key: 'rightcode'
+                    },
+                    {
+                        title: '结果',
+                        key: 'result',
+                    },
+                    {
+                        title: '备注',
+                        key: 'remark'
+                    }
+                ],
+                resultList: [
+                    {
+                        name: '二表，党员基本情况',
+                        type: '表内',
+                        leftcode: '2',
+                        realtive: '第二表.A11栏 <= 第三十五表,J栏',
+                        rightcode: '21',
+                        result: '错误',
+                        remark: 'A列',
+                        _highlight: true,
+                    },
+                    {
+                        name: '三表，党员入党时间情况',
+                        type: '表内',
+                        leftcode: '2',
+                        realtive: '第二表.A11栏 <= 第三十五表,J栏',
+                        rightcode: '21',
+                        result: '错误',
+                        remark: 'A列'
+                    },
+                    {
+                        name: '四表，党员学历情况',
+                        type: '表内',
+                        leftcode: '2',
+                        realtive: '第二表.A11栏 <= 第三十五表,J栏',
+                        rightcode: '21',
+                        result: '错误',
+                        remark: 'A列'
+                    },
+                ],
+                compareHeader: [
+                    {title: '党支部名称', key: 'alias'},
+                    {title: '党组织编码', key: 'code'},
+                    {title: '姓名', key: 'name'},
+                    {title: '身份证号', key: 'card'},
+                    {title: '年龄', key: 'age'},
+                    {title: '性别', key: 'sex'},
+                    {title: '民族', key: 'nation'},
+                ],
+                compareList: [
+                    {
+                        alias: '天房科技党总支软件党支部',
+                        code: '245612252',
+                        name: '天方科技',
+                        card: '2455616516453154',
+                        age: '20',
+                        sex: '男',
+                        nation: '哈萨克斯坦',
+                    },
+                    {
+                        alias: '天房科技党总支软件党支部',
+                        code: '245612252',
+                        name: '天方科技',
+                        card: '2455616516453154',
+                        age: '20',
+                        sex: '男',
+                        nation: '哈萨克斯坦',
+                    }
+                ]
+			}
+		},
+        computed: {
+           
+        },
+		watch: {
+
+		},
+		methods: {
+            resultF(row) {
+                console.log(row)
+            },
+            compareF() {
+                // this.$router.push();
+            }
+		},
+		created() {
+
+		},
+		mounted() {
+            
+	    },
+	}
+</script>
+<style scoped>
+	.check-form {
+        padding: 15px;
+    }
+    .check-form h4{
+        margin: 15px 0 6px 0;
+    }
+</style>

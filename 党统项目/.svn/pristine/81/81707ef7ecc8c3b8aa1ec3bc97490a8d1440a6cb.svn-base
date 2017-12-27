@@ -1,0 +1,110 @@
+<template>
+    <div class="info-content start-box box-orient" @click="stopP">
+        <div class="info-title start-box box-align box-pack info-padding">
+            <p>软件党支部</p>
+            <i class="cursor-point ivu-icon ivu-icon-close"  @click="closeInfo"></i>  
+        </div>
+        <Switchs :switchs="switchs" @changSwitch="changSwitch"></Switchs>
+        <Info v-if="switchOpen == 0" :infodata="infodata"></Info>
+        <Copy v-if="switchOpen == 1" :infodata="infodata"></Copy>
+        <!-- <Info v-if="switchOpen"></Info> -->
+    </div>
+</template>
+<script>
+    
+    import Switchs from '@/components/switchs.vue'
+    import Info from '@/components/forms/baseInfo.vue'
+    import Copy from '@/components/forms/copy.vue'
+
+    export default {
+        name: 'info',
+        data() {
+            return {
+                switchOpen: 0,
+                buttonType: 'ghost',
+                switchs: [{name: '基本情况', active: true},
+                    {name: '联系方式', active: false},
+                    {name: '班子成员', active: false},
+                    {name: '奖惩情况', active: false},
+                    {name: '单位信息', active: false},
+                    {name: '支部民主评议', active: false},
+                    {name: '历史党支部信息', active: false},
+                ],
+                infodata: {}
+            }
+        },
+        computed: {
+        },
+        watch: {
+            '$route' (to, from) {
+                if (/copy/.test(to.path)) {
+                    this.getInfo(this.$route.query.id);      
+                } else if(/info/.test(to.path)) {
+                    this.getInfo(this.$route.query.id);      
+                }
+            }
+        },
+        components: {
+           Info,
+           Switchs,
+           Copy,
+        },
+        methods: {
+            stopP() {
+                event.stopPropagation();
+            },
+            switchButton() {
+                this.buttonType = 'error'
+            },
+            closeInfo() {
+                this.$router.go(-1);
+            },
+            // events up tableswitch change
+            changSwitch(data) {
+                let that = this;
+                if (!this.switchs[data.index].active) {
+                    for (let i = 0; i < this.switchs.length; i++) {
+                         this.switchs[i].active = false;
+                    };
+                    that.switchs[data.index].active = true;
+                };
+                that.switchOpen = data.index;
+            },
+            getInfo(id, type) {
+                let that = this;
+                let qs = require('qs');
+                this.axios({
+                    method: 'get',
+                    url: '/v1/dept/detail',
+                    params: {
+                        dept_id: id ? id : 0,
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.infodata = needData.data;
+                        // that.$store.infoData = needData.data;
+                        // console.log(that.$store.infoData.name)
+                        // console.log(that.infodata)
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })    
+            },
+        },
+        created() {
+           this.getInfo(this.$route.query.id);      
+        },
+        mounted() { 
+                     
+        },
+    }
+</script>
+<style scope>
+    
+</style>

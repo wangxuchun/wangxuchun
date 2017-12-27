@@ -1,0 +1,255 @@
+<!--民主评议新增的弹窗-->
+<template>
+  <div class="DemocraticReview">
+    <Modal
+      v-model="modal1"
+      title="民主评议"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+      @on-ok="handleSubmit('DemocraticFormItem')"
+      @on-cancel="cancel">
+      <Row>
+        <Form class=nosel ref="DemocraticFormItem" :model="DemocraticFormItem" label-position="left" :label-width="84" :inline=true>
+          <Col span="12">
+            <FormItem label="开展评议日期">
+                <DatePicker style="width: 355px"   type="date" placeholder="选择日期" v-model="DemocraticFormItem.startDate" :disabled="disabled"></DatePicker>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="结束评议日期" style="float: right;margin-right: 0">
+              <DatePicker style="width: 355px"  type="date" placeholder="选择日期" v-model="DemocraticFormItem.endDate" :disabled="disabled"></DatePicker>
+            </FormItem>
+          </Col>
+        </Form>
+      </Row>
+      <Row>
+        <p>新拆分的党支部党员</p>
+      </Row>
+      <Row>
+        <div class="newdangyuan-list">
+          <table>
+            <thead>
+              <th>姓名</th>
+              <th>评议结果</th>
+              <th>评议奖惩情况</th>
+              <th>评议奖惩原因</th>
+            </thead>
+            <tbody>
+            <tr v-for="(inner,index) in newlist">
+              <td width="100px">{{inner.name}}</td>
+              <td><Select v-model="inner.id" style="width:200px" @on-change="setNext(inner, index)">
+                  <Option v-for="item in resultList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+              </Select></td>
+              <td><Select v-model="hehe" style="width:200px">
+                  <Option v-for="item in publishStu" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select></td>
+              <td><Select v-model="hehe" style="width:200px">
+                  <Option v-for="item in publishRes" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </Row>
+    </Modal>
+  </div>
+</template>
+<script>
+  export default {
+    name:'DemocraticReview',
+    data () {
+      return {
+        hehe: '',
+        modal1: true,//是否显示弹窗
+        loading: true,
+        disabled: true,
+        resultList: [],
+        publishStu: [],
+        publishRes: [],
+        DemocraticFormItem: {  //form的绑定
+          startDate:Date.now(),//开始时间
+          endDate:Date.now(),//结束时间
+        },
+        options1:{
+          disabledDate: (date)=> {
+            console.log(this);
+            return date > this.DemocraticFormItem.endDate.getTime();
+          }
+        },
+        options2:{
+          disabledDate: (date)=> {
+            console.log(this);
+            return date < this.DemocraticFormItem.startDate.getTime();
+          }
+        },
+        newlist:[
+          {name:'张三',result:'良好',situation:'该党员没有不良记录',cause:'该党员取到优异成绩',id: '3957'},
+          {name:'李四',result:'合格',situation:'该党员没有不良记录',cause:'该党员取到优异成绩', id: '3956'},
+          {name:'王五',result:'不合格',situation:'该党员没有不良记录',cause:'该党员取到优异成绩',id: '3959'},
+          {name:'赵六',result:'优秀',situation:'该党员没有不良记录',cause:'该党员取到优异成绩',id: '3958'},
+        ]
+
+      }
+    },
+
+    methods: {
+      setNext(item, index) {
+        console.log(item, index)
+        console.log(this.newlist)
+      },
+      //民主评议结果
+      getResult() {
+          let that = this;
+          let qs = require('qs');
+          this.axios({
+              method: 'get',
+              url: '/v1/dictionary/get-list-by-type',
+              params: {
+                  type: 'C06007',
+              }
+          })
+          .then(res => {
+              let needData = res.data;
+              if (needData.code == 200) {
+                console.log(needData.data)
+                that.resultList = needData.data;
+                // needData.data.forEach(item => {
+                //   that.resultList.push(item);
+                // })
+                // console.log(that.resultList)
+              } else {
+                  that.$Message.error(needData.msg);
+              }
+          })
+          .catch(err => {
+              this.$Message.error('网络请求异常');
+          })
+      },
+      handleSubmit(name) {
+        let that = this;
+        if(this.$route.params.type == 2) {
+          this.$router.go(-1)
+          return
+        }
+        this.RewardFormItem.ratifyDate = new Date(this.RewardFormItem.ratifyDate)
+        this.$refs[name].validate((valid) => {
+            if (valid) {
+              let postData = {};
+              let url = '';
+              postData.dept_id = this.$route.params['id'];
+              postData.type_id = this.RewardFormItem.rewardName;
+              postData.approval_dept_id = this.$store.state.remberId;
+              postData.approval_dept_level = this.RewardFormItem.leval;
+              postData.time = this.getDate(this.RewardFormItem.ratifyDate);
+              postData.remark = this.RewardFormItem.rewardDesc;
+              if (this.$route.params.type == 1) { //编辑
+                url = "/v1/deptrule/modify-record"
+                postData.id = this.$route.params.recodeId
+              } else if(this.$route.params.type == 2) { //查看
+
+              } else { // 新增
+                url = '/v1/deptrule/add-record'
+              }
+              let qs = require('qs');
+              this.axios({
+                  method: 'post',
+                  url: url,
+                  data: qs.stringify(postData),
+              })
+              .then(res => {
+                  let needData = res.data;
+                  if (needData.code == 200) {
+                    that.$Message.success('成功提交');
+
+                    that.$router.go(-1);
+                  } else {
+                    that.loading = true
+                    that.$Message.error(needData.msg);
+                  }
+              })
+              .catch(err => {
+                  this.$Message.error('网络请求异常');
+              })
+            } else {
+              this.loading=false;
+              this.$Message.error('表单验证失败!');
+              setTimeout(() => {
+                  this.loading=true;
+              }, 20);
+            }
+        })
+      },
+      cancel () {
+        this.$router.go(-1);
+      },
+      getDetail(id) {
+        let that = this;
+        let qs = require('qs');
+        this.axios({
+            method: 'get',
+            url: '/v1/discuss/detail',
+            params: {id: id, opt: 1}
+        })
+        .then(res => {
+            let needData = res.data;
+            if (needData.code == 200) {
+                
+            } else {
+                that.$Message.error(needData.msg);
+            }
+        })
+        .catch(err => {
+            this.$Message.error('网络请求异常');
+        })
+      }
+    },
+    mounted() {
+      this.getResult();
+      switch(parseInt(this.$route.params.type)) {
+        case 1: 
+          // 编辑
+          this.disabled = false
+          this.getDetail(this.$route.params.recodeId);
+        break;
+        case 2: 
+          // 查看
+          this.disabled = true
+          this.getDetail(this.$route.params.recodeId);
+        break;
+        default: this.disabled = false
+      }
+    }
+  }
+</script>
+<style>
+  .nosel{
+    user-select: none;
+  }
+  .newdangyuan-list{
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom:100px;
+  }
+  .newdangyuan-list table{
+    border-collapse: collapse;
+    text-align: center;
+    width: 100%;
+    color: #333;
+  }
+  .newdangyuan-list table thead{
+    background: #f2f2f2;
+  }
+  .newdangyuan-list table thead th,.newdangyuan-list table tr td{
+    border:1px solid #e2e2e2;
+    height: 40px;
+    line-height: 40px;
+  }
+  .newdangyuan-list table tr td input{
+    width: 100%;
+    height: 100%;
+    border:none;
+    outline: none;
+    text-align: center;
+  }
+</style>

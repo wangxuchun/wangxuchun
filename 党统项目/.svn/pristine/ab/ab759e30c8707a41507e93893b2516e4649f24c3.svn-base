@@ -1,0 +1,77 @@
+<!--党组织管理/党支部委会/党支部撤销弹窗-->
+<template>
+  <div class="PartyRevoke">
+    <Modal
+      v-model="modal1"
+      title="党支部撤销"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+      class-name="vertical-center-modal"
+      :closable=false
+      @on-ok="handleSubmit('PartyRevokeFormItem')"
+      @on-cancel="cancel">
+      <Row>
+        <Col span="12">
+          <Form :model="PartyRevokeFormItem" ref="PartyRevokeFormItem" :label-width="120" :rules="ruleValidate">
+            <FormItem label="撤销日期：" prop="revoketDate">
+              <DatePicker style="width:100%" type="date" placeholder="选择撤销日期" v-model="PartyRevokeFormItem.revoketDate"></DatePicker>
+            </FormItem>
+          </Form>
+        </Col>
+      </Row>
+    </Modal>
+  </div>
+</template>
+<script>
+  export default {
+    name:'PartyRevoke',
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading: true,
+        PartyRevokeFormItem: {  //form的绑定
+          revoketDate:'',//撤销时间
+        },
+        ruleValidate: {
+          revoketDate: [
+            {required: true,type:'date', message: '撤销日期不能为空', trigger: 'change'}
+          ],
+
+        }
+      }
+    },
+
+    methods: {
+      handleSubmit(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.$Message.success('提交成功!');
+            this.modal1=false;
+            this.$router.go(-1)
+          } else {
+            this.loading=false;
+        this.$Message.error('表单验证失败!');
+        setTimeout(() => {
+          this.loading=true;
+      }, 20);
+      }
+      })
+      },
+      cancel () {
+        this.$Message.info('点击了取消');
+        this.$router.go(-1)
+      }
+    }
+  }
+</script>
+<style>
+  .TeamMember{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+  /*.TeamMember .ivu-modal{*/
+    /*width: 950px !important;*/
+  /*}*/
+</style>

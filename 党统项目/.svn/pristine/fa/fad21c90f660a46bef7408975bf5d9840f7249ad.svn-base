@@ -1,0 +1,47 @@
+<!--党员停止党籍弹窗-->
+<template>
+  <div class="PartyMemberDeath">
+    <Modal
+      v-model="modal1"
+      title="党员停止党籍"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+
+      @on-cancel="cancel">
+      <Form>
+        <Row>
+            <Col span="8">
+                <FormItem label="停止党籍日期：">
+                    <DatePicker type="datetime"  v-model="PartyMemberOuter.outer_time" format="yyyy-MM-dd" placeholder="选择日期" style=""></DatePicker>
+                </FormItem>
+            </Col>
+        </Row>
+      </Form>
+    </Modal>
+  </div>
+</template>
+<script TYPE="text/ecmascript-6">
+  export default {
+    name:'PartyMemberDeath',
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading: true,
+       PartyMemberOuter:{
+           outer_type:"",
+           outer_reason :'',
+           outer_time :'',
+       },
+
+      }
+    },
+
+    methods: {
+      cancel () {
+ 				this.$router.push('/dangyuan');
+
+      }
+    }
+  }
+</script>

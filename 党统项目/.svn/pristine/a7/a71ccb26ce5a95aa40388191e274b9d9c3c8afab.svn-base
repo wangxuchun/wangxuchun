@@ -1,0 +1,71 @@
+<template>
+<div class="toolbar">
+    <Button type="ghost" @click='toolOpt("Modal-to-add")'>申请人增加</Button>
+    <Dropdown @on-click="toolOpt" trigger="click" placement="bottom-start">
+        <Button type="ghost">批量处理 <Icon type="arrow-down-b"></Icon></Button>
+        <DropdownMenu slot="list">
+            <DropdownItem name="Modal-group-batchedit">批量修改</DropdownItem>
+            <DropdownItem name="Modal-group-batchadd">批量增加</DropdownItem>
+        </DropdownMenu>
+    </Dropdown>
+    <Button type="ghost" @click="toolOpt('Modal-to-history')">转为历史党员</Button>
+    <Dropdown @on-click="toolOpt" trigger="click" placement="bottom-start">
+        <Button type="ghost">查询／统计 <Icon type="arrow-down-b"></Icon></Button>
+        <DropdownMenu slot="list">
+            <DropdownItem name="Modal-search-combos">组合查询</DropdownItem>
+            <!-- <DropdownItem name="Modal-search-random">随机统计</DropdownItem>
+            <DropdownItem name="Modal-search-single">一个党组织的组合统计</DropdownItem>
+            <DropdownItem name="Modal-search-multi">多个党组织的组合统计</DropdownItem> -->
+        </DropdownMenu>
+    </Dropdown>
+    <Button type="ghost">信息校核</Button>
+</div>
+</template>
+
+<script>
+export default {
+    name: 'opt-nav',
+    props: {
+        currentRow: null
+    },
+    data() {
+        return {
+            modal: this.modalname,
+            Row: this.currentRow,
+        }
+    },
+    watch: {
+        currentRow(newVal, oldVal) {
+            this.Row = newVal
+        }
+    },
+    methods: {
+        toolOpt(name) {
+            let menuName = name.split('-');
+            // let uid = this.Row ? this.Row.id : null;
+            if (menuName.length < 3) {
+                return
+            }
+            this.$emit('select');
+            this.$router.push({
+                path: '/applicantManage/modal/' + menuName[2],
+                query: {
+                    dept_id: this.$route.params.dept,
+                }
+            });
+        }
+    },
+    created() {
+
+    },
+    mounted() {
+
+    }
+}
+</script>
+
+<style scope>
+.toolbar .ivu-btn-ghost {
+    background-color: #fff;
+}
+</style>

@@ -1,0 +1,326 @@
+<template>
+    <div class="app-main" :style="{'width':'100%','height':'100%'}" @click="closeDefault">
+        <div class="layout start-box box-orient" :style="{'width':'100%','height':'100%'}">
+            <!-- 头部 -->
+            <top></top>
+            <Row type="flex" class="box-flex">
+                <!-- 侧边栏树结构 -->
+                <i-col span="4" class="layout-menu-left">
+                    <Slide ref="slide" 
+                        @reflashList="reflashList" 
+                        @getnode="getnode"
+                        @slideDown="slideDown"
+                        :url="url"
+                        :openitem="openitem"
+                        :currentnode="currentnode"
+                        :openlist="openlist"
+                        >
+                    </Slide>
+                </i-col>
+                <i-col span="20" class="start-box box-orient">
+                    <!-- 筛选结构 -->
+                    <div class="form-set-nav layout-breadcrumb clearfix">
+                        <Dropdown trigger="click" placement="bottom-start" @on-click="clearTable">
+                            <Button type="ghost">报表清空 <Icon type="arrow-down-b"></Icon></Button>
+                            <DropdownMenu slot="list">
+                                <DropdownItem v-for="item in tableClearList" :name="item.value" :key="item.value">{{item.name}}</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                        <Dropdown trigger="click" placement="bottom-start" @on-click="tableCountF"> 
+                            <Button type="ghost">报表直统 <Icon type="arrow-down-b"></Icon></Button>
+                            <DropdownMenu slot="list">
+                                <DropdownItem v-for="item in tableCountList" name="countMore" :key="item.value">{{item.name}}</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                        <Dropdown trigger="click" placement="bottom-start">
+                            <Button type="ghost">报表汇总 <Icon type="arrow-down-b"></Icon></Button>
+                            <DropdownMenu slot="list">
+                                <DropdownItem v-for="item in tableAllList" :name="item.value" :key="item.value">{{item.name}}</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                        <Dropdown trigger="click" placement="bottom-start" @on-click="checkF">
+                            <Button type="ghost">报表校核 <Icon type="arrow-down-b"></Icon></Button>
+                            <DropdownMenu slot="list">
+                                <DropdownItem v-for="item in checkTableList" name="/checkForm" :key="item.value">{{item.name}}</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                        
+                        <Dropdown trigger="click" placement="bottom-start">
+                            <Button type="ghost">打印 <Icon type="arrow-down-b"></Icon></Button>
+                            <DropdownMenu slot="list">
+                                <DropdownItem v-for="item in prientList" :name="item.value"  :key="item.value">{{item.name}}</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                        <Dropdown trigger="click" placement="bottom-start">
+                            <Button type="ghost">导出 <Icon type="arrow-down-b"></Icon></Button>
+                            <DropdownMenu slot="list">
+                                <DropdownItem v-for="item in exportList" :name="item.value" :key="item.value">{{item.name}}</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                        <Button type="ghost">上报锁定</Button>
+                        <Button type="ghost">上报解锁</Button>
+                        <div class="right-set fr">
+                            <Button type="error">开始录制</Button>
+                            <Button type="ghost" @click="saveTable">保存</Button>
+                            <Dropdown trigger="click" placement="bottom-start">
+                                <Button type="ghost">查询 <Icon type="arrow-down-b"></Icon></Button>
+                                <DropdownMenu slot="list">
+                                    <DropdownItem v-for="item in exportList" :name="item.value"  :key="item.value">{{item.name}}</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Button type="ghost">取数条件</Button>
+
+                        </div>
+                    </div>
+                    <!-- 表单主结构 -->
+                    <div class="content-padding start-box box-flex">
+                        <div class="form-slides start-box box-orient">
+                            <div class="slides-top start-box box-pack">
+                                <Select style="width:100px" placeholder="年度报表" v-model="classify">
+                                    <Option v-for="item in classifyList" :value="item.value" :key="item.value">{{ item.name }}</Option>
+                                </Select>
+                                <Select style="width:100px" placeholder="2017年度">
+                                     <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                </Select>
+                            </div>
+                            <div class="slides-content box-flex">
+                                <ul class="slide-list">
+                                    <li class="item" v-for="(item, index) in paperList" :class="{'item-active': item.active}" @click="goDetail(item, index)">{{item.label}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="form-table box-flex" style="position:realtive;overflow:auto;">
+                            <router-view ></router-view>
+                        </div>
+                    </div>
+                </i-col>
+            </Row>
+        </div>
+        <pop :controls="controls" @cancel="cancel"></pop>
+    </div>
+</template>
+<script>
+    import top from '@/components/top.vue'
+    import Slide from '@/components/slide.vue'
+    import subNav from '@/components/subNav.vue'
+    import tbs from '@/components/tables/tables.vue'
+    import pop from '@/components/pop/countMore.vue'
+    export default {
+        name: 'countForm',
+        data() {
+            return {
+                controls: false,
+                classify: '',
+                classifyList: [{name: '年度报表', value: 1},{name: '自定义报表', value: 2}],
+                tableClear: '',
+                tableClearList: [{name: '清空本表', value: 1},{name: '清空多表', value: 2},{name: '清空全部',value: 3}],
+                tableCountList:  [{name: '直统本表', value: 1},{name: '直统多表', value: 2},{name: '直统全部',value: 3}],
+                tableAllList:  [{name: '汇总本表', value: 1},{name: '汇总多表', value: 2},{name: '汇总全部',value: 3}],
+                checkTableList:  [{name: '校验本表', value: 1},{name: '校验多表', value: 2},{name: '校验全部',value: 3}],
+                searchModel: 1,
+                prientList: [{name: '打印报表', value: 1}, {name: '打印空报表', value: 2}],
+                exportList: [{name: '导出报表', value: 1}, {name: '导出空报表', value: 2}],
+                url: '/v1/trees/list',
+                openitem: [],
+                openlist: [],
+                currentnode: '',
+                searchString: '',
+                cityList: [
+                    {
+                        value: 'beijing',
+                        label: '北京市'
+                    },
+                    {
+                        value: 'shanghai',
+                        label: '上海市'
+                    },
+                    {
+                        value: 'shenzhen',
+                        label: '深圳市'
+                    },
+                    {
+                        value: 'hangzhou',
+                        label: '杭州市'
+                    },
+                    {
+                        value: 'nanjing',
+                        label: '南京市'
+                    },
+                    {
+                        value: 'chongqing',
+                        label: '重庆市'
+                    }
+                ],
+                model1: '',
+                paperList: [{label: '封面', active: true, id: 1, path: 'form1'}, 
+                    {label: '一表：党员数量变化情况一表：党员数量变化情况', active: false, id: 1,path: 'form2'}]
+
+            }
+        },
+        computed: {
+        },
+        watch: {
+            '$route' (to, from) {
+                
+            }
+        },
+        components: {
+            top,
+            Slide,
+            subNav,
+            tbs,
+            pop
+        },
+        methods: {
+            cancel() {
+                this.controls = false;
+            },
+            clearTable(val) {
+                console.log(val)
+            },
+            saveTable() {
+                console.log(this)
+            },
+            checkF(val) {
+                let url = window.location.port ? window.location.hostname+':'+window.location.port : window.location.hostname;
+                window.open('http://'+url+'/#'+val);
+                // window.open('http://www.baidu.com');
+
+            },
+            tableCountF(val) {
+                this.controls = true;
+                // this.$router.push({name:'countMore',params: {id: 1}});
+            },
+            slideDown() {
+                console.log('jieshu')
+            },
+            closeDefault() {
+                if (this.$route.name == 'info' || this.$route.name == 'group') {
+                    this.$router.go(-1);
+                };
+            },
+            //查看详情
+            goDetail(row, index) {
+                event.stopPropagation();
+                this.paperList.forEach(item => item.active = false)
+                row.active = true;
+                this.$router.push({'name':'form-'+(index+1)});
+            },
+            //search
+            searchbar() {
+                let that = this;
+                let qs = require('qs');
+                if (that.searchString == '') {
+                    that.$Message.error('请输入搜索关键字');
+                };
+                this.axios({
+                    method: 'get',
+                    url: '/v1/dept/search-list',
+                    params: {
+                        dept_id: that.$store.state.remberId,
+                        keyword: that.searchString,
+                        opt: 0
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.lists = [];
+                        needData.data.forEach(item => {
+                            that.lists.push(item);
+                        });
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+
+            // tree emit events（events up）
+            reflashList(item) {
+
+            },
+
+
+            getnode(node) {
+                // console.log(node)
+            },
+            reflash() {
+
+            }
+
+        },
+        created() {
+                
+        },
+        mounted() {
+
+            let params = this.$route.name.split('-')[1];
+            if (params) {
+                this.paperList.forEach(item => item.active = false)
+                this.paperList[params-1].active = true;
+            };    
+        },
+    }
+</script>
+<style scope>
+    .ivu-select-placeholder {
+        color: #495060 !important;
+    }
+    .form-slides {
+        width: 220px;
+        border: 1px solid #dddee1;
+    }
+    .form-slides .slides-top {
+        padding: 5px;
+        border-bottom: 1px solid #dddee1;
+    }
+    .slide-list .item {
+        /*width: 200px;*/
+        height: 40px;
+        line-height: 40px;
+        padding-left: 8px;
+        background-color: #fff;
+        border-bottom: 1px solid #dddee1;
+        width: 100%;
+        white-space: nowrap;
+        text-overflow:ellipsis;
+        overflow: hidden;
+        cursor: pointer;
+    }
+    .slide-list .item.item-active {
+        background: #edf7ff;
+    }
+    .slide-list .item:hover {
+        background: #edf7ff;
+    }
+    .form-slides .slides-content {
+        padding-bottom: 20px;
+        background: #fff;
+        overflow: auto;
+    }
+    .form-table {
+        border: 1px solid #dddee1;
+        margin-left: 6px;
+        background: #fff;
+    }
+    .togoole-enter-active {
+        transition: all 0.3s;
+    }
+    .togoole-leave-active {
+        transition: all 0.3s;
+    }
+    .slides-enter-active {
+      transition: all .3s ease;
+    }
+    .slides-leave-active {
+      transition: all .8s ease;
+    }
+    .slides-enter, .slides-leave-to
+    {
+      transform: translateX(800px);
+      opacity: 0;
+    }
+</style>

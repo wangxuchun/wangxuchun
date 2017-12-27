@@ -1,0 +1,127 @@
+<!--民主评议新增的弹窗-->
+<template>
+  <div class="DemocraticReview">
+    <Modal
+      v-model="modal1"
+      title="奖惩情况"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+
+      @on-cancel="cancel">
+      <Row>
+        <Form class=nosel ref="DemocraticFormItem" :model="DemocraticFormItem" label-position="left" :label-width="84" :inline=true>
+          <Col span="12">
+            <FormItem label="开展评议日期">
+                <DatePicker style="width: 355px"   type="date" placeholder="选择日期" v-model="DemocraticFormItem.startDate"></DatePicker>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="结束评议日期" style="float: right;margin-right: 0">
+              <DatePicker style="width: 355px"  type="date" placeholder="选择日期" v-model="DemocraticFormItem.endDate"></DatePicker>
+            </FormItem>
+          </Col>
+        </Form>
+      </Row>
+      <Row>
+        <p>新拆分的党支部党员</p>
+      </Row>
+      <Row>
+        <div class="newdangyuan-list">
+          <table>
+            <thead>
+              <th>姓名</th>
+              <th>评议结果</th>
+              <th>评议奖惩情况</th>
+              <th>评议奖惩原因</th>
+            </thead>
+            <tbody>
+            <tr v-for="item in newlist">
+              <td>{{item.name}}</td>
+              <td><input type="text" v-model="item.result"></td>
+              <td><input type="text" v-model="item.situation"></td>
+              <td><input type="text" v-model="item.cause"></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </Row>
+    </Modal>
+  </div>
+</template>
+<script TYPE="text/ecmascript-6">
+  export default {
+    name:'DemocraticReview',
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading: true,
+        DemocraticFormItem: {  //form的绑定
+          startDate:Date.now(),//开始时间
+          endDate:Date.now(),//结束时间
+        },
+        options1:{
+          disabledDate: (date)=> {
+            console.log(this);
+            return date > this.DemocraticFormItem.endDate.getTime();
+          }
+        },
+        options2:{
+          disabledDate: (date)=> {
+            console.log(this);
+            return date < this.DemocraticFormItem.startDate.getTime();
+          }
+        },
+        newlist:[
+          {name:'张三',result:'良好',situation:'该党员没有不良记录',cause:'该党员取到优异成绩'},
+          {name:'李四',result:'合格',situation:'该党员没有不良记录',cause:'该党员取到优异成绩'},
+          {name:'王五',result:'不合格',situation:'该党员没有不良记录',cause:'该党员取到优异成绩'},
+          {name:'赵六',result:'优秀',situation:'该党员没有不良记录',cause:'该党员取到优异成绩'},
+        ]
+
+      }
+    },
+
+    methods: {
+      okfn () {
+
+
+
+      },
+      cancel () {
+        this.$Message.info('点击了取消');
+      }
+    }
+  }
+</script>
+<style>
+  .nosel{
+    user-select: none;
+  }
+  .newdangyuan-list{
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom:100px;
+  }
+  .newdangyuan-list table{
+    border-collapse: collapse;
+    text-align: center;
+    width: 100%;
+    color: #333;
+  }
+  .newdangyuan-list table thead{
+    background: #f2f2f2;
+  }
+  .newdangyuan-list table thead th,.newdangyuan-list table tr td{
+    border:1px solid #e2e2e2;
+    height: 40px;
+    line-height: 40px;
+  }
+  .newdangyuan-list table tr td input{
+    width: 100%;
+    height: 100%;
+    border:none;
+    outline: none;
+    text-align: center;
+  }
+</style>

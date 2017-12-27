@@ -1,0 +1,156 @@
+<template>
+<Modal v-model="modal1" title="预备党员考察记实表" width="800" @on-ok="ok" @on-cancel="cancel">
+    <div class="onlinetable-wrap">
+        <h1>预备党员考察记实表</h1>
+        <table class="table1">
+            <tr>
+                <td width='100'>姓名</td>
+                <td><input v-model="table.B3" type="text"></td>
+                <td width='100'>性别</td>
+                <td><input v-model="table.D3" type="text"></td>
+                <td width='100'>籍贯</td>
+                <td><input v-model="table.F3" type="text"></td>
+            </tr>
+            <tr>
+                <td>出生年月</td>
+                <td><input v-model="table.B4" type="text"></td>
+                <td>民族</td>
+                <td><input v-model="table.D4" type="text"></td>
+                <td>文化程度</td>
+                <td><input v-model="table.F4" type="text"></td>
+            </tr>
+            <tr>
+                <td>现任职务<br/>职 称</td>
+                <td colspan="5"><input v-model="table.B5" type="text"></td>
+            </tr>
+            <tr>
+                <td>个人学习<br><br>工作简要<br><br>情　　况</td>
+                <td colspan="5">
+                    <textarea v-model="table.B6" cols="30" rows="10"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>党支部<br><br>意&nbsp;&nbsp;&nbsp;&nbsp;见<br></td>
+                <td colspan="5">
+                    <textarea v-model="table.B7" cols="30" rows="10"></textarea>
+                    <div class="text-right">负责人签字（盖章）：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </td>
+            </tr>
+            <tr>
+                <td>上级党委<br><br>备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;案</td>
+                <td colspan="5">
+                    <textarea v-model="table.B9" cols="30" rows="10"></textarea>
+                    <div class="text-right">（盖章）&nbsp;&nbsp;&nbsp;&nbsp;<br>年&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </td>
+            </tr>
+
+        </table>
+        <div class="text-right">中共天津市委组织部制</div>
+    </div>
+</Modal>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            modal1: true,
+            table: {
+                // table1
+                "B3": "姓名",
+                "B4": "出生年月",
+                "B5": "参加工作时间",
+                "B6": "现任职务及职称",
+                "B7": "党支部意见",
+                "B9": "上级党委备案",
+                "D3": "性别",
+                "D4": "民族",
+                "D5": "申请入党时间",
+                "F3": "籍贯",
+                "F4": "文化程度",
+                "F5": "确定积极分子时间",
+            }
+        }
+    },
+    computed: {
+        // g2(){
+        //     return this.tableDate.yyyy + '年' + this.tableDate.mm + '月' + this.tableDate.dd + '日';
+        // }
+    },
+    methods: {
+        ok() {
+            console.log(this.table);
+            this.$Message.info('点击了确定');
+        },
+        cancel() {
+            this.$Message.info('点击了取消');
+        }
+    },
+    watch: {
+
+    }
+}
+</script>
+
+<style scoped>
+table {
+    width: 100%;
+    font-size: 14px;
+    border: 1px solid #1c2438;
+    border-collapse: collapse;
+}
+
+table input {
+    display: block;
+    border: none;
+    height: 100%;
+    width: 100%;
+}
+
+table textarea {
+    display: block;
+    border: none;
+    width: 100%;
+    /* height: 100%; */
+    resize: none;
+}
+
+td {
+    height: 45px;
+    border: 1px solid #1c2438;
+    text-align: center;
+    vertical-align: middle;
+}
+
+h1 {
+    font-size: 22px;
+    text-align: center;
+}
+
+input,
+textarea {
+    outline: none;
+}
+
+div {
+    font-size: 14px;
+}
+
+.input-date {
+    width: 40px;
+    text-align: right;
+}
+
+.table2 {
+    margin-top: -1px;
+    margin-bottom: 20px;
+}
+
+.table2 input {
+    text-align: center;
+}
+
+.page-header input {
+    border: none;
+}
+</style>

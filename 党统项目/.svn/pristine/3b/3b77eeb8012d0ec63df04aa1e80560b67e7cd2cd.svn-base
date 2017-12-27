@@ -1,0 +1,30 @@
+@import '~iview/src/styles/index.less';
+
+// 下面是要覆盖的变量，例如：
+@primary-color: #e3392c;
+.vertical-center-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .ivu-modal {
+    top: 0;
+  }
+}
+body {
+	color: #222;
+  font-size: 14px;
+}
+.ivu-select-single .ivu-select-selection .ivu-select-placeholder, .ivu-select-single .ivu-select-selection .ivu-select-selected-value {
+  font-size: 14px;
+}
+.ivu-btn, .ivu-checkbox-wrapper, .ivu-table, .ivu-input, .ivu-dropdown-item, .ivu-form-item-label {
+  font-size: 14px !important;
+}
+input[type="text"]:disabled {
+	background-color: #f9f9f9;
+}
+.ivu-row::after {
+	content: '';
+	overflow: hidden;
+	display: block;
+}

@@ -1,0 +1,61 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import store from '@/store/store'
+import mainIndex from '@/pages/index'
+Vue.use(Router)
+
+
+const router = new Router({
+  routes: [
+    {
+      path: '/login',
+      name: 'login',
+      component: resolve => require(['@/pages/login.vue'], resolve)
+    },
+  	//首页
+    {
+      path: '/index',
+      name: 'mainIndex',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/index.vue'], resolve),
+    },
+    //org router
+    {
+      path: '/orgManage',
+      name: 'orgManage',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/orgManage/org.vue'], resolve),
+      children: [{
+        path: 'test',
+        name: 'test',
+        component: resolve => require(['@/components/infoDetail/info.vue'], resolve),
+      }]
+    },
+    //dangyuan router
+    {
+      path: '/dangyuan',
+      name: 'dangyuan',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/dangyuanManage/dangyuan.vue'], resolve),
+    },
+
+    { //默认首页
+       path: '/',
+       redirect: '/orgManage'
+    },
+    { //默认错误页
+      path: '*',
+      component: resolve => require(['@/pages/404.vue'], resolve),
+    },
+
+  ]
+})
+
+export default router;
+

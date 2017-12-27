@@ -1,0 +1,40 @@
+<template>
+<div class="memberinfo-adminjob">
+    <div class="text-right">
+        <Button type="ghost">表格排序</Button>
+        <Button type="primary">新增</Button>
+    </div>
+    <Table ref="memberinfopartyjobtable" :highlight-row="true" :style="{'marginTop':'8px'}" border :columns="tableCol" :data="lists"></Table>
+</div>
+</template>
+<script>
+export default {
+    name : 'memberinfo-adminjob',
+    props: {
+        viewdata : null
+    },
+    data(){
+        return {
+            tableCol :[{
+                title : '任职机构',
+                key : 'type'      
+            },{
+                title : '职务名称',
+                key : 'edu'      
+            },{
+                title : '职务级别',
+                key : 'date'      
+            },{
+                title : '操作'
+            }],
+            lists:[]
+        }
+    }
+}
+</script>
+<style scoped>
+.memberinfo-adminjob{
+    height: 100%;
+    padding: 8px;
+}
+</style>

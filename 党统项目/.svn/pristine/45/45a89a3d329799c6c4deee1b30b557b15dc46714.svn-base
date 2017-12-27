@@ -1,0 +1,238 @@
+<template>
+  <div>
+    <div style="width:100%; overflow-x: auto;">
+      <el-tree style="width:auto;"
+        :data="lists" 
+        :props="defaultProps"
+        node-key="nid" 
+        :default-expanded-keys="thatExpanded" 
+        accordion 
+        :indent='8'
+        :load="loadNode"
+        lazy
+        ref="tree"
+        :highlight-current="true" 
+        :current-node-key="thatCurrent"
+        @node-click="handleNodeClick" 
+        :render-content="renderContent"></el-tree>
+    </div>
+  </div>
+  
+</template>
+<script>
+  import Vue from 'vue'
+  import { Tree } from 'element-ui'
+  Vue.use(Tree)
+  export default {
+    name: 'slide',
+    data() {
+      return {
+        lists: [],
+        thatExpanded: this.openitem,
+        thatCurrent: this.currentnode,
+        thatOpenlist: this.openlist,
+        thaturl: this.url,
+        remberIndex: 0,
+        defaultProps: {
+          children: 'children',
+          label: 'name',
+          isLeaf: 'isLeaf'
+        }
+      }
+    },
+    props: {
+      openitem: {
+        type: Array,
+        default: function() {
+          return [];
+        }
+      },
+      currentnode: {
+        type: String,
+        default: 0
+      },
+      url: {
+        type: String,
+        default: ''
+      },
+      openlist: {
+        type: Array,
+        default: function() {
+          return [];
+        }
+      }
+    },
+    computed: {
+      setHistory() {
+        this.setDom(this.$store.state.isHistory);
+        return this.$store.state.isHistory;
+      }
+    },
+    watch: {
+      url(v) {
+        this.thaturl = v;
+      },
+      openitem(v) {
+        this.thatExpanded = v;
+      },
+      currentnode(v) {
+        this.thatCurrent = v;
+      }, 
+      openlist(v) {
+        this.thatOpenlist = v;
+      }
+    },
+    methods: {
+      setDom(res) {
+        console.log(res);
+      },
+      loadNode(node, resolve) {
+        let that = this;
+        if (node.level === 0) {
+          return;
+        }
+        setTimeout(function() {
+          that.axios({
+              method: 'get',
+              url: that.thaturl,
+              params: {'dept_id': node.data.nid}
+          })
+          .then(res => {
+              let needData = res.data;
+              if (needData.code == 200) {
+                  resolve(needData.data);
+                  that.thatExpanded = [that.thatOpenlist[that.remberIndex]];
+                  that.remberIndex ++;
+              } else {
+                  that.$Message.error(needData.msg);
+              }
+          })
+          .catch(err => {
+              that.$Message.error('网络请求异常');
+          });
+        }, 300)
+      },
+      setDefault() {
+        let that = this;
+        this.thatExpanded = [68];
+        setTimeout(function() {
+          that.thatCurrent = 798;
+        }, 700)
+      },
+      handleNodeClick(data) {
+        let that = this;
+        that.thatCurrent = data.nid;
+        that.$emit('reflashList',{id: data.nid})
+      },
+      getIcon(data) {
+        return 'tree-icons tree-icons-'+data.type_icon;
+      },
+      getStyle(data) {
+        return data.deleteflag == 0 ? '' : 'history-model';
+      },
+      findNode(bool) {
+        let obj = $('.history-model');
+        obj.each(function(index, el) {
+          if (bool) {
+            $(el).closest('.el-tree-node').css('display','block');
+          } else {
+            $(el).closest('.el-tree-node').css('display','none');
+          }
+        });
+      },
+      renderContent(h, { node, data, store }) {
+        if (!this.setHistory) {
+          if (data.deleteflag == 1) {node.visible = false; }
+        };
+        return (
+          <span class={this.getStyle(data)}>
+            <span>
+              <span class={this.getIcon(data)}></span>
+              <span>{node.label}</span>
+            </span>
+          </span>);
+      },
+      getTreeData() {
+        let qs = require('qs');
+        let that = this;   
+
+        this.axios({
+            method: 'get',
+            url: that.thaturl,
+            params: {'dept_id': ''}
+        })
+        .then(res => {
+            let needData = res.data;
+            if (needData.code == 200) {
+                needData.data.forEach(item => {
+                  that.lists.push(item);
+                })
+                that.$nextTick(function() {
+                  that.thatExpanded = [that.lists[0].nid];
+                })
+            } else {
+                that.$Message.error(needData.msg);
+            }
+        })
+        .catch(err => {
+            that.$Message.error('网络请求异常');
+        }) 
+      }
+    },
+    created() {
+      this.getTreeData();
+    },
+    mounted() {
+      this.$emit('getnode', this.$refs.tree);
+      // console.log(this.$parent.$parent)
+      // this.$parent.$on('setHistory', function(res) {
+      //   console.log(res)
+      // });
+    },
+  }
+</script>
+<style scope>
+  body,html,#app {
+    width: 100%;
+    height: 100%;
+  }
+
+  .layout{
+    border: 1px solid #d7dde4;
+    background: #f5f7f9;
+    position: relative;
+  }
+  .layout-breadcrumb{
+    padding: 10px 15px 0;
+  }
+  .layout-content{
+    min-height: 200px;
+    margin: 15px;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 4px;
+  }
+  .layout-content-main{
+    padding: 10px;
+  }
+  .layout-copy{
+    text-align: center;
+    padding: 10px 0 20px;
+    color: #9ea7b4;
+  }
+  .layout-menu-left{
+    background: #464c5b;
+  }
+  .layout-header{
+    height: 60px;
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(0,0,0,.1);
+  }
+  .layout-logo-left{
+    width: 90%;
+    height: 30px;
+    background: #5b6270;
+    border-radius: 3px;
+    margin: 15px auto;
+  }
+</style>

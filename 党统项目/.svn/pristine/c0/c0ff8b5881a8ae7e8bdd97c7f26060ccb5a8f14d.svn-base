@@ -1,0 +1,52 @@
+<!--党员死亡弹窗-->
+<template>
+  <div class="PartyMemberDeath">
+    <Modal
+      v-model="modal1"
+      title="党员出党"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+
+      @on-cancel="cancel">
+      <Form>
+        <Row>
+            <Col span="8">
+                <FormItem label="死亡日期：">
+                    <DatePicker type="datetime"  v-model="PartyMemberOuter.outer_time" format="yyyy-MM-dd" placeholder="选择日期" style=""></DatePicker>
+                </FormItem>
+                <FormItem label="死亡类型：" style="width: 100%;">
+                    <Select v-model="PartyMemberOuter.outer_type" placeholder="请选择">
+                    <Option value="0">男</Option>
+                    <Option value="1">女</Option>
+                    </Select>
+                </FormItem>
+            </Col>
+        </Row>
+      </Form>
+    </Modal>
+  </div>
+</template>
+<script TYPE="text/ecmascript-6">
+  export default {
+    name:'PartyMemberDeath',
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading: true,
+       PartyMemberOuter:{
+           outer_type:"",
+           outer_reason :'',
+           outer_time :'',
+       },
+
+      }
+    },
+
+    methods: {
+      cancel () {
+        this.$Message.info('点击了取消');
+      }
+    }
+  }
+</script>

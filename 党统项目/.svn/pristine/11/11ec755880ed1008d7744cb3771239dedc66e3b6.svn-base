@@ -1,0 +1,42 @@
+<template>
+<div class="memberinfo-rewardinfo">
+    <div class="text-right">
+        <Button type="primary">新增</Button>
+    </div>
+    <Table ref="memberinforewardinfotable" :highlight-row="true" :style="{'marginTop':'8px'}" border :columns="tableCol" :data="lists"></Table>
+</div>
+</template>
+<script>
+export default {
+    name : 'memberinfo-rewardinfo',
+    props: {
+        viewdata : null
+    },
+    data(){
+        return {
+            tableCol :[{
+                title : '奖惩名称',
+                key : 'type'      
+            },{
+                title : '奖惩原因',
+                key : 'edu'      
+            },{
+                title : '批准组织',
+                key : 'date'      
+            },{
+                title : '批准日期',
+                key : 'allow'      
+            },{
+                title : '操作'
+            }],
+            lists:[]
+        }
+    }
+}
+</script>
+<style scope>
+.memberinfo-rewardinfo{
+    height: 100%;
+    padding: 8px;
+}
+</style>

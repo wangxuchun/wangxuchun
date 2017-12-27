@@ -1,0 +1,185 @@
+<!--党组织管理/班子成员/选择内部人员-->
+<template>
+  <div class="partyOutStep2">
+    <Modal
+      v-model="modal1"
+      title="发起转出"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+      class-name="vertical-center-modal"
+      ok-text="确认转出"
+      @on-ok="handleSubmit('partyOutForm')"
+      @on-cancel="cancel">
+      <Row>
+        <Col span="15" >
+          <Form ref="partyOutForm" :model="partyOutForm" label-position="right" :label-width="120" :rules="ruleValidate">
+            <FormItem label="转出类型:" prop="outType">
+              <Select v-model="partyOutForm.outType">
+                <Option value="0">类型一</Option>
+                <Option value="1">类型二</Option>
+                <Option value="3">类型三</Option>
+              </Select>
+            </FormItem>
+            <FormItem label="转出组织关系日期:">
+              <DatePicker type="date" placeholder="选择日期" style="width: 100%;" v-model="partyOutForm.input2"></DatePicker>
+            </FormItem>
+            <Col span="21">
+              <FormItem label="目标党组织:">
+                <Input v-model="partyOutForm.input3"></Input>
+              </FormItem>
+            </Col>
+            <Col span="3">
+              <Button style="margin-left: 14px;" type="error" @click="search">查询</Button>
+            </Col>
+          </Form>
+        </Col>
+      </Row>
+      <Row>
+        <Col span="20" offset="1" v-if="isSearch">
+          <p style="margin-bottom: 24px;margin-left: 18px;">查询结果:</p>
+          <Table border :columns="columns7" :data="data6"></Table>
+        </Col>
+      </Row>
+    </Modal>
+  </div>
+</template>
+<script type="text/ecmascript-6">
+  export default {
+    name:'partyOutStep2',
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading: true,
+        isSearch:false,//是否显示table党员列表
+        radiosObj: {},
+        partyOutForm: {  //form的绑定
+          outType:'',//转出类型
+        },
+        ruleValidate: {
+          outType: [
+            { required: true, message: '请选择转出类型', trigger: 'change' },
+          ]
+        },
+        columns7: [
+          {
+            title: '选取',
+            key: 'selectParty',
+            width: 100,
+            align: 'center',
+            render:(h, params) => {
+              return h('div', {
+                  class: {
+                    'radio-outer': true
+                  },
+                  nativeOn: {
+                    click() {
+                      event.stopPropagation();
+                    }
+                  },
+                },
+                [
+                  h('Radio', {
+                    class: {
+                      'radio-check': true
+                    },
+                    props: {
+                      size: 'large',
+                      value: this.radiosObj['items'+params.row._index]
+                    },
+                    on: {
+                      'on-change': (val) => {
+                        event.stopPropagation()
+                        this.changeRadio(val, params);
+                      }
+                    },
+                    nativeOn: {
+                      click() {
+                        event.stopPropagation()
+                      }
+                    },
+                  }),
+                ]);
+            }
+          },
+
+
+
+
+          {
+            title: '党组织代码',
+            key: 'code',
+          },
+          {
+            title: '所属党组织',
+            key: 'party'
+          },
+          {
+            title: '联系方式',
+            key: 'tel'
+          }
+        ],
+        data6: [
+          {
+            code: '2563489633',
+            party: '天房科技党支部',
+            tel: '13202562563'
+          },
+          {
+            code: '2563489633',
+            party: '天房科技党支部',
+            tel: '13202562563'
+          },
+          {
+            code: '2563489633',
+            party: '天房科技党支部',
+            tel: '13202562563'
+          },
+          {
+            code: '2563489633',
+            party: '天房科技党支部',
+            tel: '13202562563'
+          },
+        ]
+      }
+    },
+    components:{
+    },
+    methods: {
+      //提交表单验证
+      handleSubmit (name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.$Message.success('提交成功!');
+            this.modal1=false;
+            this.$router.push({name:'partyLetter'});
+          } else {
+            this.loading=false;
+            this.$Message.error('表单验证失败!');
+            setTimeout(() => {
+              this.loading=true;
+            }, 20);
+          }
+        })
+      },
+      changeRadio(val, params) {
+        let that = this;
+        for(let i in that.radiosObj) {
+          that.$set(that.radiosObj, i, false);
+        }
+        that.$set(that.radiosObj, 'items'+params.row._index, true);
+        //this.remberRow = Object.assign({}, params);
+      },
+      search(){
+        this.isSearch=true;
+      },
+      cancel () {
+        this.$Message.info('点击了取消');
+        this.$router.push({name:'organizationManage'});
+      },
+    }
+  }
+</script>
+<style>
+
+</style>

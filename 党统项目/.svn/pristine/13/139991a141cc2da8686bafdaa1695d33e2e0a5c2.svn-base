@@ -1,0 +1,420 @@
+<!--奖惩中的批准树-->
+<template>
+  <div class="partyLetter">
+    <Modal
+      v-model="modal1"
+      title="介绍信编辑"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+      :closable="false"
+      class-name="max-height vertical-center-modal"
+      >
+      <div class="letter-title">
+        <p>姓名:  <span>王学柱</span></p>
+        <p>党组织:<span>中国共产党天津市宝坻区供销合作社联合社机关支部</span></p>
+      </div>
+      <div class="letter-top">
+        <div class="letter-top-left">
+          <span>党员证明信存根</span>
+        </div>
+        <div class="letter-top-right">
+          <div class="row-1">
+            <div class="formItem">
+              <span>编号:</span>
+              <input type="text" class="letter-number" readonly value="32423">
+            </div>
+          </div>
+          <div class="row-1 mt10">
+              <input type="text" class="input-long" readonly value="王雪柱">
+              <span class="w104">同志系中共</span>
+              <input type="text" class="input-sm" readonly value="正式">
+              <span class="w50">党员，</span>
+          </div>
+          <div class="row-1 mt10">
+            <span class="begin">由</span>
+            <input type="text" class="input-long w357" readonly value="中国共产党天津市宝坻区供销合作社联合社机关支部">
+            <span class="end">去</span>
+            <input type="text" class="input-sm w353" readonly value="大口屯镇党委">
+          </div>
+          <div class="row-1">
+            <span class="validity-date">(有效期&emsp;<label>7</label>&emsp;天)</span>
+            <div class="formItem">
+              <span class="fl">时间:</span>
+              <div class="wrap-data"style="margin-left: 10px">
+                <DatePicker type="date" :value="date" readonly  placeholder="选择日期" style="width: 146px"></DatePicker>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="letter-title">
+        <p style="text-align: center; width: 100%;margin-top: 16px;">中国共产党党员组织关系介绍信</span></p>
+      </div>
+      <div class="letter-body">
+        <div class="row-1 mt14">
+          <input type="text" class="w285">
+          <div class="formItem" style="margin-top: 0;margin-right: 0;">
+            <span>编号:</span>
+            <input type="text" class="letter-number">
+          </div>
+        </div>
+        <div class="row-1 mt10">
+          <input type="text" class="w536">
+          <span class="fz16 ml32">同志(<label>男</label>),<label>61</label>岁,<label>汉</label>族,</span>
+        </div>
+        <div class="row-1 mt10">
+          <span class="fl" style="line-height: 32px;margin-right: 12px;">系中共</span>
+          <div class="w445">
+            <Select style="width:100%">
+              <Option value="0">正式党员</Option>
+              <Option value="1">预备党员</Option>
+              <Option value="2">测试党员</Option>
+            </Select>
+          </div>
+          <span class="fl fz16" style="line-height: 32px;margin-left: 14px;">党员，身份证号码<label style="padding-left: 29px;padding-right: 0px;">120102195602012234</label></span>
+        </div>
+        <div class="row-1 mt10">
+          <span>由</span>
+          <input type="text" class="w390">
+          <span style="padding-left: 12px;padding-right: 12px;">到</span>
+          <input type="text" class="w390">
+        </div>
+        <div class="row-1 mt10">
+          <span>请转接组织关系。该同志已交党费</span>
+          <Select style="width:134px;margin-left: 12px;">
+            <Option value="2010">2010年</Option>
+            <Option value="2011">2011年</Option>
+            <Option value="2012">2012年</Option>
+          </Select>
+          <span style="padding: 0 16px">年</span>
+          <Select style="width:134px">
+            <Option value="1">1月</Option>
+            <Option value="2">2月</Option>
+            <Option value="3">3月</Option>
+            <Option value="4">4月</Option>
+            <Option value="5">5月</Option>
+            <Option value="6">6月</Option>
+            <Option value="7">7月</Option>
+            <Option value="8">8月</Option>
+            <Option value="9">9月</Option>
+            <Option value="10">10月</Option>
+            <Option value="11">11月</Option>
+            <Option value="12">12月</Option>
+          </Select>
+          <span>月</span>
+        </div>
+        <div class="row-1 mt10">
+          <span>有效期</span>
+          <input type="text" class="w73">
+          <span>天</span>
+          <span style="margin-left: 490px;">时间</span>
+          <DatePicker type="date" placeholder="选择日期" style="width: 146px"></DatePicker>
+        </div>
+        <div class="row-1 mt10">
+          <span>党员联系电话或其他联系方式:</span>
+          <input type="text" class="w622">
+        </div>
+        <div class="row-1 mt10">
+          <span>党员原所在基层党委通讯地址:</span>
+          <input type="text" class="w622">
+        </div>
+        <div class="row-1 mt10">
+          <span>联系电话:</span>
+          <input type="text" class="w186" maxlength="11">
+          <span style="margin-left: 60px;">传真:</span>
+          <input type="text" class="w186">
+          <span style="margin-left: 60px;">邮编:</span>
+          <input type="text" class="w186" maxlength="6">
+      </div>
+      </div>
+      <div class="letter-title">
+        <p style="text-align: center; width: 100%;margin-top: 16px;">中国共产党党员组织关系介绍信回执联</span></p>
+      </div>
+      <div class="letter-footer">
+        <div class="row-1 mt14">
+          <input type="text" class="w285">
+          <div class="formItem" style="margin-top: 0;margin-right: 0;">
+            <span>编号:</span>
+            <input type="text" class="letter-number">
+          </div>
+        </div>
+        <div class="row-1 mt10">
+          <input type="text" class="w397">
+          <span style="font-size: 16px; ">同志的党员组织关系已转达我处，特此回复。&emsp;&emsp;&emsp;（盖章）</span>
+        </div>
+        <div class="row-1 mt10">
+          <span class="fz16">经办人：</span>
+          <input type="text" class="w203" maxlength="5">
+          <span class="fz16">联系电话：</span>
+          <input type="text" class="w344" maxlength="11">
+          <input type="text" class="w45">
+          <span class="fz16">年</span>
+          <input type="text" class="w45">
+          <span class="fz16">月</span>
+          <input type="text" class="w45">
+          <span class="fz16">日</span>
+        </div>
+      </div>
+      <div slot="footer">
+        <Button type="primary" size="large">保存</Button>
+        <Button size="large" @click="ok">修改</Button>
+        <Button type="error" size="large"  >打印</Button>
+        <Button size="large">导出</Button>
+        <Button size="large" @click="close">关闭</Button>
+      </div>
+    </Modal>
+  </div>
+</template>
+<script>
+  export default {
+    name:'partyLetter',
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading: true,
+        date: '2017-04-05',
+        formInline:{
+
+        },
+      }
+    },
+    components: {
+    },
+    methods: {
+      close() {
+        this.$router.push({name:'organizationManage'});
+      },
+      ok() {
+        this.modal1=false;
+        this.$router.push({name:'organizationManage'});
+      }
+    },
+    mounted(){
+      //this.url=this.uri;
+    }
+  }
+</script>
+<style type="text/less">
+ .letter-title{
+   width: 100%;
+   overflow: hidden;
+  }
+ .letter-title p{
+   float: left;
+   margin-left: 40px;
+   font-weight: bold;
+   font-size: 18px;;
+ }
+.letter-top{
+  margin: 12px auto 0;
+  width: 886px;
+  height: 190px;
+  border:1px solid #666;
+  overflow: hidden;
+}
+ .letter-top input{
+   color: #999;
+ }
+.mt10{
+  margin-top: 10px;
+}
+ .letter-top .letter-top-left{
+   width: 60px;
+   border-right: 1px solid #666;
+   height: 190px;
+   float: left;
+   text-align: center;
+  }
+ .letter-top .letter-top-left span{
+   width: 20px;
+   padding-top: 20px;
+   font-size: 16px;
+   display: inline-block;
+   line-height: 22px;
+ }
+  .letter-top-right{
+    width: 823px;
+    height:100%;
+    float: left;
+  }
+ .row-1{
+   width:100%;
+   overflow: hidden;
+ }
+  .row-1 .formItem{
+   float: right;
+   margin-top:14px;
+   margin-right: 13px;
+   margin-left: 19px;
+ }
+.letter-top-right .row-1 .formItem span{
+  line-height: 20px;
+  color: #333;
+}
+ .letter-top-right .row-1 .formItem .letter-number{
+   width: 177px;
+   height: 34px;
+   border:1px solid #aaa;
+   border-radius: 2px;
+   outline: none;
+   line-height: 34px;
+   font-size: 12px;
+   text-indent:10px;
+ }
+ .begin,.end{
+   margin-left: 19px;
+   display: inline-block;
+ }
+ .end{
+   margin-right: 19px;
+ }
+ .letter-top-right .row-1 .input-long.w357{
+   width: 357px;
+   margin-left: 10px;
+ }
+ .letter-top-right .row-1 .input-long,.letter-top-right .row-1 .input-sm{
+   width: 379px;
+   height: 34px;
+   line-height: 34px;
+   text-indent: 10px;
+   font-size: 12px;
+   border:1px solid #aaa;
+   border-radius: 2px;
+   outline: none;
+   margin-left: 19px;
+ }
+ .row-1 span{
+   font-size: 16px;
+ }
+ .w73{
+   width: 73px;
+   text-align: center;
+ }
+ .w397{
+   width: 397px;
+ }
+ .w186{
+   width: 186px;
+ }
+ .w203{
+   border: none !important;
+   width: 203px;
+ }
+ .w344{
+   width: 280px;
+   border: none !important;
+ }
+ .w445{
+   width: 450px;
+   display: inline-block;
+   height: 32px;
+   float: left;
+ }
+ .w536{
+   width: 536px;
+ }
+ .w390{
+   width: 387px;
+ }
+ .w622{
+   width: 622px;
+ }
+ .w45{
+   width: 45px;
+   border: none !important;
+   text-align: center;
+ }
+ .fz16{
+   font-size: 16px;
+ }
+ .fz16 label{
+   padding-left: 22px;
+   padding-right: 22px;
+   display: inline-block;
+   color: #999;
+ }
+ .ml32{
+   margin-left: 32px;
+ }
+ .letter-top-right .row-1 .w104{
+   width: 104px;
+   display: inline-block;
+   font-size: 16px;
+   text-align: center ;
+ }
+ .letter-top-right .row-1 .w50{
+   width: 50px;
+   display: inline-block;
+   font-size: 16px;
+   text-align: center;
+ }
+ .letter-top-right .row-1 .input-sm{
+   width: 257px;
+   margin-left: 0;
+ }
+ .letter-top-right .row-1 .input-sm.w353{
+   width: 353px;
+ }
+
+ .letter-body{
+   width: 870px;
+   padding-left: 14px;
+   padding-right: 12px;
+   margin: 12px auto 0;
+   height: 421px;
+   border:1px solid #666;
+ }
+
+
+
+
+
+
+
+
+ .validity-date{
+   font-size: 14px;
+   margin-left: 40px;
+   margin-top: 16px;
+   display: inline-block;
+ }
+  input[disabled]{
+    cursor: no-drop;
+  }
+  .wrap-data{
+    width: 146px;
+    height: 32px;
+    float: left;
+  }
+ .letter-top-right .row-1 .formItem span.fl{
+    float: left;
+    line-height: 32px;
+
+  }
+
+
+ /*footer*/
+  .letter-footer{
+    padding-left: 14px;
+    padding-right: 12px;
+    width: 870px;
+    height: 146px;
+    border:1px solid #666;
+    margin: 12px auto 0;
+  }
+ .letter-footer input,.letter-body input{
+   line-height: 34px;
+   text-indent: 10px;
+   font-size: 12px;
+   border:1px solid #aaa;
+   border-radius: 2px;
+   outline: none;
+ }
+.w285{
+  width: 285px;
+}
+.mt14{
+  margin-top: 14px;
+}
+</style>

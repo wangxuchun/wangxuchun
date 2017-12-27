@@ -1,0 +1,213 @@
+<!-- 党支部/设置党小组弹窗-->
+<template>
+  <div class="PartyTeam">
+    <Modal
+      v-model="modal1"
+      title="设立党小组"
+      width="950"
+      :mask-closable=false
+      :closable=false
+      :loading="loading"
+      class-name="max-height vertical-center-modal"
+      @on-ok="handleSubmit('PartyTeamForm')"
+      @on-cancel="cancel">
+
+        <Form ref="PartyTeamForm" :model="PartyTeamForm"  :label-width="150" :rules="ruleValidate">
+          <Row>
+            <Col span="12">
+            <FormItem label="党小组名称：" prop="name">
+              <Input v-model="PartyTeamForm.name" placeholder="请输入党小组名称"></Input>
+            </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+            <FormItem label="党小组编码：" prop="code">
+              <Input v-model="PartyTeamForm.code" placeholder="请输入党小组编码" :maxlength="3">
+                <span slot="prepend">{{ids}}</span>
+              </Input>
+            </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <FormItem label="建立时间：" prop="createDate">
+                <DatePicker style="width: 100%;"  type="date" placeholder="选择建立时间" v-model="PartyTeamForm.createDate"></DatePicker>
+              </FormItem>
+            </Col>
+          </Row>
+        </Form>
+        <Row>
+          <p>新拆分党支部的党员</p>
+          <Table border :columns="columns4" :data="peopleList"  @on-selection-change="selectF"></Table>
+        </Row>
+    </Modal>
+  </div>
+</template>
+<script>
+  export default {
+    name:'AddOrganization',
+    data () {
+      return {
+        modal1: true,
+        loading: true,
+        peopleList: [],
+        ids: this.$route.params['id'],
+        selectList: [],
+        PartyTeamForm: {
+          name:'',//党小组名称
+          code: '',//党小组编码
+          createDate:'',//建立时间
+        },
+        ruleValidate: {
+          name: [
+            {required: true, message: '党小组名称不能为空', trigger: 'blur'}
+          ],
+          createDate: [
+            {required: true,type:'date', message: '建立时间日期', trigger: 'change'}
+          ],
+          code: [
+            {required: true, message: '党小组编码不能为空', trigger: 'blur'}
+          ],
+        },
+        columns4: [
+          {
+            type: 'selection',
+            width: 60,
+            align: 'center'
+          },
+          {
+            title: '姓名',
+            key: 'real_name'
+          },
+          {
+            title: '身份证号',
+            key: 'idcard',
+            width:200
+          },
+          {
+            title: '性别',
+            key: 'sex'
+          },
+          {
+            title: '民族',
+            key: 'nation'
+          },
+          {
+            title: '出生日期',
+            key: 'birthday'
+          },
+          {
+            title: '所属党小组',
+            key: 'group_name'
+          },
+        ],
+      };
+    },
+
+    methods: {
+      setStr(val) {
+        return val > 9 ? val : '0'+val;
+      },
+      getDate(obj) {
+        console.log(obj)
+        if (obj == '') {
+          return  '';
+        } else {
+          return obj.getFullYear()+'-'+( this.setStr( obj.getMonth()+1 ) )+'-'+this.setStr(obj.getDate());
+        }
+      },
+      selectF(selection) {
+        this.selectList = selection;
+        console.log(this.selectList)
+      },
+      handleSubmit(name) {
+        let qs = require('qs');
+        let that = this;
+
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            let temp = [];
+            this.selectList.forEach(item => {
+              temp.push(item.uid)
+            })
+            // this.$Message.success('提交成功!');
+            // this.modal1=false;
+            // this.$router.go(-1)
+            let postData = {
+              'dept_id': this.$route.params['id'],
+              name: this.PartyTeamForm.name,
+              code: this.$route.params['id']+this.PartyTeamForm.code,
+              adddate: this.getDate(this.PartyTeamForm.createDate),
+              uids: temp.join()
+            }
+            this.axios({
+                method: 'post',
+                url: '/v1/deptgroup/add',
+                data: qs.stringify(postData)
+            })
+            .then(res => {
+                let needData = res.data;
+                if (needData.code == 200) {
+                   that.$Message.success('设立党小组成功');
+                    setTimeout(() => {
+                      that.goback();
+                    }, 1000); 
+                } else {
+                    setTimeout(() => {
+                      that.loading = !that.loading;
+                    }, 1000); 
+                    that.$Message.error(needData.msg);
+                }
+            })
+            .catch(err => {
+                this.$Message.error('网络请求异常');
+            })
+          } else {
+            this.loading=false;
+            this.$Message.error('表单验证失败!');
+            setTimeout(() => {
+              this.loading=true;
+            }, 20);
+          }
+        })
+      },
+      cancel () {
+        this.$Message.info('点击了取消');
+        this.$router.go(-1)
+      },
+      //党员列表
+      getPeople() {
+        let qs = require('qs');
+        let that = this;
+        this.axios({
+            method: 'get',
+            url: '/v1/deptgroup/user-list',
+            params: {'dept_id': this.$route.params['id']}
+        })
+        .then(res => {
+            let needData = res.data;
+            if (needData.code == 200) {
+                needData.data.forEach(item => {
+                  that.peopleList.push(item);
+                })
+            } else {
+                that.$Message.error(needData.msg);
+            }
+        })
+        .catch(err => {
+            this.$Message.error('网络请求异常');
+        })
+      },
+    },
+    mounted() {
+      this.getPeople();
+    }
+  }
+</script>
+<style>
+  .max-height{
+    /*max-height: 600px;*/
+    /*overflow-y: auto;*/
+  }
+</style>

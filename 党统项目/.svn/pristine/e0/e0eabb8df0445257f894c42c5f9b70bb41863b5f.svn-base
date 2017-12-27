@@ -1,0 +1,57 @@
+<template>
+<div class="memberinfo-post">
+    <div class="text-right">
+        <Button type="ghost">表格排序</Button>
+        <Button type="primary">新增</Button>
+    </div>
+    <Table ref="memberinfoposttable" :highlight-row="true" :style="{'marginTop':'8px'}" border :columns="tableCol" :data="lists"></Table>
+</div>
+</template>
+<script>
+import draggable from 'vuedraggable'
+export default {
+    name : 'memberinfo-post',
+    props: {
+        viewdata : null
+    },
+    components: {
+        draggable,
+    },
+    data(){
+        return {
+            tableCol :[{
+                title : '开始日期',
+                key : 'start'      
+            },{
+                title : '截止日期',
+                key : 'end'      
+            },{
+                title : '工作岗位',
+                key : 'name'      
+            },{
+                title : '操作',
+                key : 'opt'
+            }],
+            lists:[]
+        }
+    }
+}
+</script>
+<style scoped>
+.memberinfo-post{
+    height: 100%;
+    padding: 8px;
+}
+.drag-table{margin-top: 8px; border-collapse: collapse;text-align: center;width: 100%;color: #333;font-family: "微软雅黑"; border: 1px solid #e2e2e2;}
+.drag-table thead{line-height: 40px;background: #F8F8F9;font-weight: normal;}
+.drag-table thead {border-bottom: 1px solid #e9eaec;border-top: 1px solid #e9eaec;}
+.drag-table thead th{font-weight: bold;}
+.drag-table tbody tr{line-height: 48px;height: 48px;border-bottom: 1px solid #e9eaec;;color: #333;box-sizing: border-box}
+.drag-table tbody tr:hover{background-color: #EBF7FF}
+.drag-table tbody tr.drag:hover{background-color: #eee;cursor: move}
+.drag-table .checkbox.on:after{content: "√";width: 0;height: 0;color: #fff;position: relative;top: -11px;}
+.drag-table tbody td,.drag-table thead th{ border-right:1px solid #e9eaec;}
+.drag-table tbody td.ready{color: #d73826}
+.drag-table tbody td.out{color: #f07100}
+.drag-table tbody td.in{color: #008df0}
+</style>

@@ -1,0 +1,251 @@
+<template>
+    <div class="layout" :style="{'width':'100%','height':'100%'}">
+        <!-- 头部 -->
+        <top></top>
+        <Row type="flex" class="setHeight">
+            <!-- 侧边栏树结构 -->
+            <i-col span="5" class="layout-menu-left">
+                <Slide ref="slide" url="/v1/trees/members-trees" @reflashList="reflashList"></Slide>
+            </i-col>
+            <i-col span="19">
+                <!-- 工具栏 -->
+                <div class="layout-breadcrumb">
+                    <optNav @select="openModal"></optNav>
+                </div>
+                <!-- -->
+                <!-- 表单主结构 -->
+                <div class="layout-content" style="position:realtive;">
+                    <div class="content-padding">
+                        <!-- 搜索和过滤 -->
+                        <div class="search-filter start-box box-align">
+                            <div class="search-content start-box box-align box-flex">
+                                <Input v-model="searchString" placeholder="姓名/身份证/手机" :style="{'display':'block', 'width':'35%','marginRight':'10px'}"></Input>
+                                <Button type="primary" @click="toggleSlide">查询</Button>
+                            </div>
+                            <div class="set-config">
+                                <Dropdown trigger="custom" :visible="tableDropVisible" style="margin-left: 20px">
+                                    <Button type="ghost" :style="{'background':'#fff'}" @click="toggleTableCfg">列表设置 <Icon type="arrow-down-b"></Icon></Button>
+                                    <DropdownMenu slot="list">
+                                        <CheckboxGroup @mouseleave.native="toggleTableCfg" v-model="tableFilter">
+                                            <div v-for="item in tableModel" class="table-fliter-item"><Checkbox :label="item.title" :disabled="!item.allowHide"><span>{{item.title}}</span></Checkbox></div>
+                                        </CheckboxGroup>
+                                    </DropdownMenu>
+                                </Dropdown>
+                                <Button type="ghost" :style="{'background':'#fff'}">刷新</Button>
+                                <Button type="ghost" :style="{'background':'#fff'}">导出excel</Button>
+                            </div>
+                        </div>
+                        <Table :style="{'marginTop':'20px'}" border :columns="tableCol" :data="lists"></Table>
+                    </div>
+                </div>
+            </i-col>
+        </Row>
+        <router-view name="modal"></router-view>
+        <right-slide :show="rightSlide"></right-slide>
+    </div>
+</template>
+<script>
+    import top from '@/components/top.vue'
+    import Slide from '@/components/slide.vue'
+    import optNav from '@/pages/dangyuanManage/optnav.vue'
+    import rightSlide from '@/pages/dangyuanManage/aside.vue'
+    import modal from '@/pages/dangyuanManage/modal.vue'
+    export default {
+        name: 'dangyuan',
+        data() {
+            return {
+                tableDropVisible: false,    // 控制"列表设置的显示隐藏"
+                soltname: 'mainContent',
+                searchString: '',
+                //表单header
+                tableModel: [
+                    {
+                        title: '姓名',
+                        key: 'real_name',
+                        isshow: true,
+                        allowHide: false,
+                        sortable: true
+                    },
+                    {
+                        title: '身份证号',
+                        key: 'idcard',
+                        isshow: true,
+                        allowHide: true,
+                        sortable: true
+                    },
+                    {
+                        title: '年龄',
+                        key: 'age',
+                        isshow: true,
+                        allowHide: true,
+                        sortable: true
+                    },
+                    {
+                        title: '性别',
+                        key: 'sex',
+                        isshow: true,
+                        allowHide: true,
+                        sortable: true
+                    },
+                    {
+                        title: '民族',
+                        key: 'nation',
+                        isshow: true,
+                        allowHide: true,
+                        sortable: true
+                    },
+                    {
+                        title: '人员状态',
+                        key: 'member_status',
+                        isshow: true,
+                        allowHide: true,
+                        sortable: true
+                    },
+                    {
+                        title: '手机号码',
+                        key: 'mobile',
+                        isshow: true,
+                        allowHide: true,
+                        sortable: true
+                    },
+                    {
+                        title: '支部职务',
+                        key: 'duty_name',
+                        isshow: true,
+                        allowHide: true,
+                        sortable: true
+                    },
+                    {
+                        title: '信息完整度',
+                        key: 'intergrity',
+                        isshow: true,
+                        allowHide: true,
+                        sortable: true
+                    }
+                ],
+                //表单数据
+                lists: [],
+                page_number: 1,
+                page_size : 20,
+                rightSlide : false,
+                modal : false,
+                modalname : ''
+            }
+        },
+        computed: {
+            tableCol() {
+                return this.tableModel.filter((item) => {
+                    return item.isshow
+                })
+            },
+            tableFilter:{   //['姓名', '身份证号' ...] 
+                get(){
+                    return this.tableCol.map((item) => {
+                        return item.title
+                    })
+                },
+                set(newValue){
+                    this.tableModel.forEach((item) => {
+                        if (newValue.indexOf( item.title ) != -1) {
+                            item.isshow = true
+                        }
+                        else {
+                            item.isshow = false
+                        }
+                    })
+                }
+            }
+        },
+        watch: {
+            modal(newVal, oldVal){
+                if (newVal == false) {
+                    this.$router.push('/dangyuan')
+                };
+            },
+            modalname(newVal, oldValue){
+                let popName = newVal.split('-');
+                if (popName.length < 3) {
+                    return
+                }
+                else {
+                    this.$router.push('/dangyuan/' + popName[2])
+                }
+            }
+        },
+        components: {
+            top,
+            Slide,
+            optNav,
+            rightSlide,
+            modal
+        },
+        methods: {
+            toggleTableCfg(){
+                this.tableDropVisible = !this.tableDropVisible;
+            },
+            toggleSlide(){
+                this.rightSlide = !this.rightSlide;
+                this.$router.push('/dangyuan');
+            },
+            toggleModal(){
+                this.modal = !this.modal;
+                this.$router.push('/dangyuan');
+                // console.log(this.model)
+            },
+            openModal(){
+                this.modal = true
+            },
+            openAside(){
+                this.rightSlide = false
+            },
+            fetchData(id, page, size, isfresh){
+                var _this = this;
+                this.axios({
+                    method: 'get',
+                    url: '/v1/member/list',
+                    params: {
+                        id: id,
+                        page_number: page,
+                        page_size: size,
+                        opt: isfresh ? 1 : 0,
+                    }
+                })
+                .then(res => {
+                    console.log(res)
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+            reflashList(item){
+                return item.id
+            }
+        },
+        created() {
+                
+        },
+        mounted() {
+            this.$on('toggleModal', function(status){
+                console.log(status)
+                this.modal = status
+            });
+            this.$on('toggleSlide', function(status){
+                this.rightSlide = status
+            });
+        },
+        watch :{
+            rightSlide(val){
+                console.log(val)
+            }
+        }
+    }
+</script>
+<style scope>
+    .layout{
+        position: relative;
+    }
+    .table-fliter-item{
+        padding-left: 10px;
+    }
+    
+</style>

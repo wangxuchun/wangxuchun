@@ -1,0 +1,53 @@
+<template>
+<div class="memberinfo-grouprelation">
+    <div class="memberinfo-form">
+        <Form :label-width="120">
+            <FormItem label="进入党支部日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="进入党支部类型">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="转离党支部日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="转离党支部类型">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="转往党支部">
+                <Input></Input>
+            </FormItem>
+        </Form>
+    </div>
+    <div class="aside-bottom">
+        <Button type="ghost">取消</Button>
+        <Button type="primary">保存</Button>
+    </div>
+</div>
+</template>
+<script>
+export default {
+    name : 'memberinfo-grouprelation',
+    props: {
+        viewdata : null
+    },
+    data(){
+        return {
+            formModel : {
+
+            }
+        }
+    }
+}
+</script>
+<style scope>
+.memberinfo-grouprelation{
+    height: 100%;
+}
+</style>

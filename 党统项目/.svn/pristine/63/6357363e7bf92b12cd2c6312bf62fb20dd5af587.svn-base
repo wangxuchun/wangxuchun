@@ -1,0 +1,125 @@
+<template>
+    <div class="check-form">
+        <h4>报表校核结果</h4>
+        <Table 
+            border 
+            highlight-row 
+            :columns="resultHeader" 
+            :data="resultList"
+            @on-row-click="resultF"></Table> 
+        <h4>反查对照</h4>
+        <Table 
+            border 
+            highlight-row 
+            :columns="compareHeader" 
+            :data="compareList"
+            @on-row-click="compareF"></Table> 
+        <router-view></router-view>
+    </div>
+</template>
+<script>
+	export default {
+		name: 'tables',
+		data() {
+			return {
+                resultHeader: [
+                    {
+                        type: 'index',
+                        width: 80,
+                        title: '序号',
+                        align: 'center'
+                    },
+                    {
+                        title: '简要提示',
+                        key: 'tips',
+                    },
+                    {
+                        title: '数量',
+                        key: 'count'
+                    },
+                    {
+                        title: '错误提示',
+                        key: 'errors',
+                        render: function(h, params) {
+                            return h('div',{
+                                style: {
+                                    color: 'red'
+                                }
+                            },[
+                                h('p', params.row.errors)
+                            ])
+                        }
+                    },
+                ],
+                resultList: [
+                    {
+                        tips: '困难党员生活保障',
+                        count: 5,
+                        errors: '错误提示："加入中共佐治日期"为当年，且遭遇该同志“毕业时间”最早的学历',
+                        _highlight: true,
+                    },
+                    {
+                        tips: '党籍信息无记录',
+                        count: 4,
+                        errors: ''
+                    },
+                   
+                ],
+                compareHeader: [
+                    {title: '党支部名称', key: 'alias',"sortable": true,},
+                    {title: '党组织编码', key: 'code',"sortable": true,},
+                    {title: '组织类型', key: 'type',"sortable": true,},
+                    {title: '党组织书记', key: 'shuji',"sortable": true,},
+                    {title: '信息完整度', key: 'info',"sortable": true,},
+                    {title: '本届届满日期', key: 'time',"sortable": true,},
+                ],
+                compareList: [
+                    {
+                        alias: '天房科技党总支软件党支部',
+                        code: '245612252',
+                        type: '党委',
+                        shuji: '呵呵呵',
+                        info: '89%',
+                        time: '2018-12-21'
+                    },
+                    {
+                        alias: '天房科技党总支软件党支部',
+                        code: '245612252',
+                        type: '党委',
+                        shuji: '呵呵呵',
+                        info: '89%',
+                        time: '2018-12-21'
+                    },
+                ]
+			}
+		},
+        computed: {
+           
+        },
+		watch: {
+
+		},
+		methods: {
+            resultF(row) {
+                console.log(row)
+            },
+            compareF() {
+                this.$router.push({name:'checkinfo',params:{id: 794,switchs: 0}});
+            }
+		},
+		created() {
+
+		},
+		mounted() {
+            
+	    },
+	}
+</script>
+<style scoped>
+	.check-form {
+        padding: 15px;
+    }
+    .check-form h4{
+        margin: 15px 0 6px 0;
+    }
+</style>

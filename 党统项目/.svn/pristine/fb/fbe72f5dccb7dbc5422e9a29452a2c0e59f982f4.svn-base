@@ -1,0 +1,40 @@
+<template>
+<div class="memberinfo-education">
+    <div class="text-right">
+        <Button type="ghost">表格排序</Button>
+        <Button type="primary">新增</Button>
+    </div>
+    <Table ref="memberinfoedutable" :highlight-row="true" :style="{'marginTop':'8px'}" border :columns="tableCol" :data="lists"></Table>
+</div>
+</template>
+<script>
+export default {
+    name : 'memberinfo-education',
+    props: {
+        viewdata : null
+    },
+    data(){
+        return {
+            tableCol :[{
+                title : '教育类型',
+                key : 'type'      
+            },{
+                title : '学历',
+                key : 'edu'      
+            },{
+                title : '毕业日期',
+                key : 'date'      
+            },{
+                title : '操作'
+            }],
+            lists:[]
+        }
+    }
+}
+</script>
+<style scope>
+.memberinfo-education{
+    height: 100%;
+    padding: 8px;
+}
+</style>

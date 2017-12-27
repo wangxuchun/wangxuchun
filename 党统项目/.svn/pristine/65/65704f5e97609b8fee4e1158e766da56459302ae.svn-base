@@ -1,0 +1,101 @@
+<template>
+    <div>
+        <DatePicker  type="date" format="yyyy-MM-dd" placeholder="选择日期" style="width:309px"></DatePicker>
+        <Input v-model="number" placeholder="请输入..." style="width: 300px"></Input>
+        <table>
+            <thead>
+                    <th>表格</th>
+                    <th>填写</th>
+                    <th>成果</th>
+            </thead>
+            <tbody>
+                <tr v-for="item in msg" >
+                    <td>{{item.title}}</td>
+                    <td v-if="item.type=='1'"><span>在线填表</span></td>
+                    <td v-if="item.type=='2'"><span>在线填表</span><span v-if="item.download='1'" @click="normalTemp(item)">下载空模版</span></td>
+                    <td><span v-if="item.type=='1'">上传附件</span><span @click="normalFile(item)">查看附件</span></td>
+                </tr>
+                <!--<tr>-->
+                    <!--<td>党员推荐入党积极分子汇总表</td>-->
+                    <!--<td><span>在线填表</span><span>下载空模版</span></td>-->
+                    <!--<td><span>上传附件</span><span>查看附件</span></td>-->
+                <!--</tr>-->
+                 <!--<tr>-->
+                    <!--<td>党员推荐入党积极分子汇总表</td>-->
+                    <!--<td><span>在线填表</span><span>下载空模版</span></td>-->
+                    <!--<td><span>上传附件</span><span>查看附件</span></td>-->
+                <!--</tr>-->
+                 <!--<tr>-->
+                    <!--<td>党员推荐入党积极分子汇总表</td>-->
+                    <!--<td><span>在线填表</span><span>下载空模版</span></td>-->
+                    <!--<td><span>上传附件</span><span>查看附件</span></td>-->
+                <!--</tr>-->
+                 <!--<tr>-->
+                    <!--<td>党员推荐入党积极分子汇总表</td>-->
+                    <!--<td><span>在线填表</span><span>下载空模版</span></td>-->
+                    <!--<td><span>上传附件</span><span>查看附件</span></td>-->
+                <!--</tr>-->
+            </tbody>
+        </table>
+        <div class="start-box box-pack" style="margin-top:20px;">
+            <p class="box-flex"><span style="font-weight:bold;">注意：</span>附件须上传PDF格式文件，若是图片可粘贴至WPS中再导出至PDF</p>
+            <p class="box-flex" style="text-align:right;">
+                <Button type="primary" @click="nextProcess" v-if="isNextBtnShow">提交并进入下一个流程</Button>
+            </p>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        name:'dataTable',
+        data(){
+          return{
+            number:'',//志愿书编号
+          }
+        },
+        props: ['msg','isNextBtnShow','uid'],
+        methods:{
+          normalTemp(item){
+            location.href="/v1/recruit/download-template?template_id="+item.template_id
+          },
+          normalFile(item){
+            console.log(this.uid);
+            location.href="/v1/recruit/download-material?template_id="+item.template_id+"&uid="+this.uid.uid
+          },
+          //提交到下一流程
+          nextProcess(){
+            let that = this;
+            let qs = require('qs');
+            this.axios({
+                method:'post',
+                url:'/v1/recruit/submit',
+                data:qs.stringify({
+                  uid:this.uid.uid,
+                  key_field_value:'2017-10-20'
+                })
+              })
+              .then(res =>{
+                let needData = res.data;
+                if(needData.code=='200'){
+                  console.log(needData);
+                }
+            })
+          }
+
+        }
+    }
+</script>
+
+<style scoped>
+    table{margin-top: 8px; border-collapse: collapse;text-align: center;width: 100%;color: #333;font-family: "微软雅黑"; border: 1px solid #e2e2e2;}
+    table thead{line-height: 40px;background: #F8F8F9;font-weight: normal;}
+    table thead {border-bottom: 1px solid #e9eaec;border-top: 1px solid #e9eaec;}
+    table thead th{font-weight: bold;background: #f2f2f2;}
+    table tbody tr{line-height: 48px;height: 48px;border-bottom: 1px solid #e9eaec;;color: #333;box-sizing: border-box}
+    table tbody tr:hover{background-color: #EBF7FF}
+    table tbody tr.drag:hover{background-color: #eee;cursor: move}
+    table tbody td,table thead th{ border-right:1px solid #e9eaec;}
+    table tbody td span{display: inline-block;margin-right: 10px;cursor: pointer}
+    table tbody td span:hover{color: #d73826}
+</style>

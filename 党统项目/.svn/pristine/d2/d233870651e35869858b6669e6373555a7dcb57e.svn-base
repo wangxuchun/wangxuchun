@@ -1,0 +1,142 @@
+<template>
+    <Modal
+        v-model="modal1"
+        :title="table.A1"
+        width="800"
+        @on-ok="ok"
+        @on-cancel="cancel">
+        <div class="onlinetable-wrap">
+            <h1>{{ table.A1 }}</h1>
+            <table class="table1">
+                <tr>
+                    <td colspan="4" :style="{ 'text-align' : 'left' }">{{ table.A3 }}</td>
+                </tr>
+                <tr>
+                    <td>时  间：</td>
+                    <td><input v-model="table.B4" type="text"></td>
+                    <td>地    点：</td>
+                    <td><input v-model="table.D4" type="text"></td>
+                </tr>
+                <tr>
+                    <td>主 持 人：</td>
+                    <td><input v-model="table.B5" type="text"></td>
+                    <td>记 录 人：</td>
+                    <td><input v-model="table.D5" type="text"></td>
+                </tr>
+                <tr>
+                    <td>参加人数：</td>
+                    <td colspan="3"><input v-model="table.B6" type="text"></td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <div class="text-left">参与人员姓名：</div>
+                        <textarea v-model="names" cols="30" rows="10"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        缺席人员姓名及缺席原因：
+                        <input v-model="results" :style="{ width: '590px', display : 'inline-block' }" type="text">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" :style="{'font-size':'22px'}">会议内容</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <textarea v-model="table.A10" rows="10" :style="{'width': '100%'}"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </Modal>
+</template>
+<script>
+    export default {
+        data () {
+            return {
+                modal1: true,
+                table : {
+                    "A1": "确定　　为发展对象征求群众意见会议记录",
+                    "A3": "党组织名称：",
+                    "B4": "会议议题",
+                    "B4": "时间",
+                    "D4": "地点",
+                    "B5": "主持人",
+                    "D5": "记录人",
+                    "B6": "参加人数",
+                    "A7": "",
+                    "A10": "会议内容"
+                },
+                results: '肚子疼',
+                names : "参会人员姓名"
+            }
+        },
+        computed:{
+
+        },
+        methods: {
+            ok () {
+                console.log(this.table);
+                this.$Message.info('点击了确定');
+            },
+            cancel () {
+                this.$Message.info('点击了取消');
+            }
+        },
+        watch: {
+            names( val ){
+                this.table.A7 = "参与人员姓名：" + val;
+            }
+        }
+    }
+</script>
+<style scoped>
+    table{
+        width: 100%;
+        font-size: 14px;
+        border-collapse: collapse;
+    }
+    table input{
+        display: block;
+        border: none;
+        height: 100%;
+        width: 100%;
+    }
+    table textarea{
+        display: block;
+        border: none;
+        width: 100%;
+        /* height: 100%; */
+        resize: none;
+    }
+    td{
+        height: 45px;
+        border-bottom: 1px solid #1c2438;
+        text-align: center;
+        vertical-align: middle;
+    }
+    h1{
+        font-size: 22px;
+        text-align: center;
+    }
+    input, textarea{
+        outline: none;
+    }
+    div{
+        font-size: 14px;
+    }
+    .input-date{
+        width: 40px;
+        text-align: right;
+    }
+    .table2{
+        margin-top: -1px;
+    }
+    .table2 input{
+        text-align: center;
+    }
+    .page-header input{
+        border: none;
+    }
+</style>

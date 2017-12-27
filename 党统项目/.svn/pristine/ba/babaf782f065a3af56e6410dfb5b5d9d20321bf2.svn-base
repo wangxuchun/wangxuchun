@@ -1,0 +1,128 @@
+<template>
+    <Modal
+        v-model="modal1"
+        title="入党宣誓活动记实表"
+        width="800"
+        @on-ok="ok"
+        @on-cancel="cancel">
+        <div class="onlinetable-wrap">
+            <h1>入党宣誓活动记实表</h1>
+            <div class="page-header">党组织名称：<input <input v-model="table.B3" type="text" :style="{width: '500px',height:'50px'}"/></div>
+            <table class="table1">
+                <tr>
+                   <td>活动时间</td>
+                   <td><input v-model="table.B4" type="text"></td>
+                </tr>
+                <tr>
+                   <td>活动地点</td>
+                   <td><input v-model="table.B5" type="text"></td>
+                </tr>
+                <tr>
+                   <td>领誓人姓名<br/>及党内职务</td>
+                   <td><input v-model="table.B6" type="text"></td>
+                </tr>
+                <tr>
+                   <td>参加人员</td>
+                   <td><textarea v-model="table.B7" cols="30" rows="10"></textarea></td>
+                </tr>
+                <tr>
+                   <td>活动情况</td>
+                   <td><textarea v-model="table.B8" cols="30" rows="10" placeholder="（粘贴照片处，可打印）"></textarea></td>
+                </tr>
+                <tr>
+                   <td>备注</td>
+                   <td><textarea v-model="table.B9" cols="30" rows="5" placeholder=""></textarea></td>
+                </tr>
+                
+            </table>           
+            <div class="text-right">中共天津市委组织部制</div>
+        </div>
+    </Modal>
+</template>
+<script>
+    export default {
+        data () {
+            return {
+                modal1: true,
+                table:{
+                    // table1
+                    "B3" : "党组织名称",
+                    "B4" : "活动时间",
+                    "B5" : "活动地点",
+                    "B6" : "领誓人姓名及党内职务",
+                    "B7" : "参加人员",
+                    "B8" : "活动情况",
+                    "B9" : "备　注",
+                }
+            }
+        },
+        computed:{
+            // g2(){
+            //     return this.tableDate.yyyy + '年' + this.tableDate.mm + '月' + this.tableDate.dd + '日';
+            // }
+        },
+        methods: {
+            ok () {
+                console.log(this.table);
+                this.$Message.info('点击了确定');
+            },
+            cancel () {
+                this.$Message.info('点击了取消');
+            }
+        },
+        watch: {
+            
+        }
+    }
+</script>
+<style scoped>
+    table{
+        width: 100%;
+        font-size: 14px;
+        border: 1px solid #1c2438;
+        border-collapse: collapse;
+    }
+    table input{
+        display: block;
+        border: none;
+        height: 100%;
+        width: 100%;
+    }
+    table textarea{
+        display: block;
+        border: none;
+        width: 100%;
+        height: 100%;
+        resize: none;
+    }
+    td{
+        height: 45px;
+        border: 1px solid #1c2438;
+        text-align: center;
+        vertical-align: middle;
+    }
+    h1{
+        font-size: 22px;
+        text-align: center;
+    }
+    input, textarea{
+        outline: none;
+    }
+    div{
+        font-size: 14px;
+    }
+    .input-date{
+        width: 40px;
+        text-align: right;
+    }
+    .table2{
+        margin-top: -1px;
+        margin-bottom: 20px;
+    }
+    .table2 input{
+        text-align: center;
+    }
+    .page-header input{
+        border: none;
+    }
+</style>

@@ -1,0 +1,105 @@
+<!--班子成员新增的弹窗-->
+<template>
+  <div class="TeamMember">
+    <Modal
+      v-model="modal1"
+      title="班子成员维护"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+      @on-ok="handleSubmit('memberFormItem')"
+      @on-cancel="cancel">
+      <Row>
+        <Col span="15">
+          <Form :model="memberFormItem" ref="memberFormItem" :label-width="110" :rules="ruleValidate">
+            <FormItem label="姓名：" prop="memberName">
+              <Input v-model="memberFormItem.memberName" placeholder="请输入"></Input>
+            </FormItem>
+            <FormItem label="职务名称：" prop="postName">
+              <Input v-model="memberFormItem.postName" placeholder="请输入"></Input>
+            </FormItem>
+            <FormItem label="批准任职日期：" prop="date">
+              <Row>
+                <Col span="24">
+                  <DatePicker type="date" placeholder="选择日期" v-model="memberFormItem.date"></DatePicker>
+                </Col>
+              </Row>
+            </FormItem>
+            <FormItem label="职务说明" prop="desc">
+              <Input v-model="memberFormItem.desc" type="textarea" :autosize="{minRows: 4,maxRows: 10}" placeholder="请输入..."></Input>
+            </FormItem>
+
+          </Form>
+        </Col>
+        <Col span="8"  offset="1">
+          <Button type="error" shape="circle" style="margin-right: 20px;margin-bottom: 20px"><Icon type="android-add" style="margin-right: 3px"></Icon>选择内部人员</Button>
+          <Button type="primary" shape="circle" style="margin-right: 20px;margin-bottom: 20px"><Icon type="android-add" style="margin-right: 3px"></Icon>选择外部人员</Button>
+          <Button type="warning" shape="circle" style="margin-right: 20px"><Icon type="android-add" style="margin-right: 3px"></Icon>增加兼职职务</Button>
+        </Col>
+
+      </Row>
+    </Modal>
+  </div>
+</template>
+<script type="text/ecmascript-6">
+  export default {
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading:true,
+        memberFormItem: {  //form的绑定
+          memberName:'',//姓名
+          postName:'',//职务名称
+          date:'',
+          desc:''
+        },
+        ruleValidate: {
+          memberName: [
+            {required: true, message: '姓名不能为空', trigger: 'blur'}
+          ],
+          postName: [
+            {required: true, message: '职务名称不能为空', trigger: 'blur'},
+          ],
+          date:[
+            {required: true,type:'date', message: '任职日期不能为空', trigger: 'change'}
+          ],
+          desc:[
+            {required: true, message: '职务说明不能为空', trigger: 'blur'},
+          ]
+        }
+      }
+    },
+
+    methods: {
+      handleSubmit(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.$Message.success('提交成功!');
+            this.modal1=false;
+            this.$router.go(-1);
+          } else {
+            this.loading=false;
+            this.$Message.error('表单验证失败!');
+            setTimeout(() => {
+              this.loading=true;
+          }, 20);
+          }
+        })
+      },
+      cancel () {
+        this.$Message.info('点击了取消');
+        this.$router.go(-1);
+      }
+    }
+  }
+</script>
+<style>
+  .TeamMember{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+  /*.TeamMember .ivu-modal{*/
+    /*width: 950px !important;*/
+  /*}*/
+</style>

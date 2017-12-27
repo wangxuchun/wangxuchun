@@ -1,0 +1,55 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+Vue.use(Vuex)
+
+const store = new Vuex.Store({
+    state: {
+       isHistory: false, //历史党支部
+       token: '',
+       isClose: false,
+       infoData: {},
+       isEdit: false, //是否是编辑状态
+       slideBar: false,
+       slideData: {},
+       strictRefalsh: false,//数据保存后强制跟新
+       remberId: '',//记住当前树结点的id
+    },
+    mutations: {
+      //历史党支部
+      setHistory(state) {
+        state.isHistory = !state.isHistory;
+      },
+      //是否是编辑状态
+      setEdit(state, payload) {
+        state.isEdit = payload.isDisable;
+      },
+      setSlideBar(state, payload) {
+        state.slideBar = payload.isShow;
+        state.slideData = payload.sliderow;
+      },
+      setStrict(state, payload) {
+        state.strictRefalsh = !state.strictRefalsh;
+      },
+      setId(state, payload) {
+        state.remberId = payload.id;
+      },
+      switchs(state) {
+        state.isClose = !state.isClose;
+      },
+      setToken(state, data) {
+        localStorage.setItem('djwtoken', data);
+        state.token = data;
+      },
+      delToken(state) {
+        state.token = ''; 
+        localStorage.removeItem("djwtoken");
+      }
+    },
+    getters: {
+    	myResult: state => state.isClose
+    },
+    actions: {
+
+    }
+})
+export default store

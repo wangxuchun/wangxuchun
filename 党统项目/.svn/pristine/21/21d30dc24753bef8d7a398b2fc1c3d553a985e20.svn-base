@@ -1,0 +1,77 @@
+<template>
+<div class="memberinfo-partymemberinfo">
+    <div class="memberinfo-form">
+        <Form :label-width="120">
+            <FormItem label="人员类别">
+                <Input placeholder="请输入身份证号" readonly></Input>
+            </FormItem>
+            <FormItem label="入党日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="入党类型">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="转正日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="转正情况">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="进入党支部日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="进入党支部类型">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="离开中共组织日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="离开中共组织类型">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="出党原因">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+        </Form>
+    </div>
+    <div class="aside-bottom">
+        <Button type="ghost">取消</Button>
+        <Button type="primary">保存</Button>
+    </div>
+</div>
+</template>
+<script>
+export default {
+    name : 'memberinfo-partymemberinfo',
+    props: {
+        viewdata : null
+    },
+    data(){
+        return {
+            formModel : {
+
+            }
+        }
+    }
+}
+</script>
+<style scope>
+.memberinfo-partymemberinfo{
+    height: 100%;
+}
+</style>
