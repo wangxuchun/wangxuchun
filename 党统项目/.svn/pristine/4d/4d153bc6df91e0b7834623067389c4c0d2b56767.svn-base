@@ -1,0 +1,53 @@
+<template>
+<div class="memberinfo-hard">
+    <div class="memberinfo-form">
+        <Form :label-width="160">
+            <FormItem label="困难党员类型">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="健康状况">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="是否享受城镇最低生活保障">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="是否享受优抚对象抚恤补助">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="建国前入党没有工作老党员">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="生活困难情况补充">
+                <Input></Input>
+            </FormItem>
+        </Form>
+    </div>
+    <div class="aside-bottom">
+        <Button type="ghost">取消</Button>
+        <Button type="primary">保存</Button>
+    </div>
+</div>
+</template>
+<script>
+export default {
+    name : 'memberinfo-hard'
+}
+</script>
+<style scope>
+
+</style>

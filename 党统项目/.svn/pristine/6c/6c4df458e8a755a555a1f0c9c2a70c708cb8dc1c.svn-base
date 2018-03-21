@@ -1,0 +1,111 @@
+<template>
+  <div class="info-content start-box box-orient" @click="stopP">
+    <div class="info-title start-box box-align box-pack info-padding">
+      <p>{{this.$store.state.slideData.name}}</p>
+      <i class="cursor-point ivu-icon ivu-icon-close"  @click="closeInfo"></i>
+    </div>
+    <Switchs :switchs="switchs" @changSwitch="changSwitch"></Switchs>
+    <orgForm v-if="switchOpen == 0" ></orgForm>
+    <processForm v-if="switchOpen == 1"></processForm>
+    <router-view></router-view>
+  </div>
+</template>
+<script>
+
+  import Switchs from '@/components/switchs.vue'
+//  import Info from '@/components/forms/baseInfo.vue'
+  import orgForm from '@/components/forms/org/orgForm.vue'
+  import ContactInfo from '@/components/forms/contactInfo.vue'
+  import processForm from '@/components/forms/org/processForm.vue'
+  export default {
+    name: 'info',
+    data() {
+      return {
+        switchOpen: this.$route.params.switchs ? this.$route.params.switchs : 0,
+        buttonType: 'ghost',
+        switchs: [{name: '基本信息', active: true, route: 'orgForm'},
+          {name: '转接流程', active: false, route: 'processForm'},
+        ],
+        infodata: {}
+      }
+    },
+    computed: {
+    },
+    watch: {
+
+      // '$route' (to, from) {
+      //     this.getInfo(this.$route.params.id);
+      // }
+    },
+    components: {
+      orgForm,
+      Switchs,
+      processForm,
+
+    },
+    methods: {
+      stopP() {
+        event.stopPropagation();
+      },
+      switchButton() {
+        this.buttonType = 'error'
+      },
+      closeInfo() {
+        this.$router.go(-1);
+      },
+      // events up tableswitch change
+      changSwitch(data) {
+        if (!this.$store.state.isEdit) {
+          alert('编辑模式下请完成编辑');
+          return;
+        };
+        let that = this;
+        if (!this.switchs[data.index].active) {
+          for (let i = 0; i < this.switchs.length; i++) {
+            this.switchs[i].active = false;
+          };
+          that.switchs[data.index].active = true;
+        };
+        that.switchOpen = data.index;
+      },
+      getInfo(id, type) {
+        let that = this;
+        let qs = require('qs');
+        this.axios({
+            method: 'get',
+            url: '/v1/dept/detail',
+            params: {
+              dept_id: id ? id : 0,
+              opt: type ? type : 0,
+            }
+          })
+          .then(res => {
+          let needData = res.data;
+        if (needData.code == 200) {
+          that.infodata = needData.data;
+          // that.$store.infoData = needData.data;
+          // console.log(that.$store.infoData.name)
+          // console.log(that.infodata)
+        } else {
+          that.$Message.error(needData.msg);
+        }
+      })
+      .catch(err => {
+          this.$Message.error('网络请求异常');
+      })
+      },
+    },
+    created() {
+      //this.getInfo(this.$route.params.id);
+    },
+    mounted() {
+      if (this.$route.params.switchs) {
+        this.switchs.forEach(item => item.active = false)
+        this.switchs[this.$route.params.switchs].active = true;
+      };
+    },
+  }
+</script>
+<style scope>
+
+</style>

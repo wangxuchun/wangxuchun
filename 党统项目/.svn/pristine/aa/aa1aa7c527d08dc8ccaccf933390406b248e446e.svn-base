@@ -1,0 +1,523 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import store from '@/store/store'
+import mainIndex from '@/pages/index'
+Vue.use(Router)
+
+
+const router = new Router({
+  routes: [
+    {
+      path: '/login',
+      name: 'login',
+      component: resolve => require(['@/pages/login.vue'], resolve)
+    },
+  	//首页
+    {
+      path: '/index',
+      name: 'mainIndex',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/index.vue'], resolve),
+    },
+    //org router
+    {
+      path: '/orgManage',
+      name: 'orgManage',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/orgManage/org.vue'], resolve),
+      children: [{
+        path: 'group/:id',
+        name: 'group',
+        component: resolve => require(['@/components/infoDetail/group.vue'], resolve),
+      },{
+        path: 'info/:id/:switchs',
+        name: 'info',
+        component: resolve => require(['@/components/infoDetail/info.vue'], resolve),
+        children:[
+        { //基本情况
+          path: 'baseInfo/:id',
+          name: 'baseInfo',
+          component: resolve => require(['@/components/forms/baseInfo.vue'], resolve),
+        },
+        {
+            path: 'TeamMember',
+            name: 'TeamMember',
+            component: resolve => require(['@/components/pop/TeamMember.vue'], resolve),
+        },
+        //新增奖惩
+        {
+            path: 'RewardPunishment',
+            name: 'RewardPunishment',
+            meta: {
+              requireAuth: true,
+            },
+            component: resolve => require(['@/components/pop/RewardPunishment.vue'], resolve),
+        },
+        //党组织管理/新增单位信息
+        {path: 'UnitAdd',
+           name: 'UnitAdd',
+           meta: {
+             requireAuth: true,
+           },
+           component: resolve => require(['@/components/pop/UnitAdd.vue'], resolve),
+         },
+        //新增支部评议
+        {
+          path: 'DemocraticReview',
+          name: 'DemocraticReview',
+          meta: {
+            requireAuth: true,
+          },
+          component: resolve => require(['@/components/pop/DemocraticReview.vue'], resolve),
+        },
+        ]
+      },
+      {//党组织整建制转移
+        path: 'InsideTransfer',
+        name: 'InsideTransfer',
+        meta: {
+          requireAuth: true,
+        },
+        component: resolve => require(['@/components/pop/InsideTransfer.vue'], resolve),
+      },
+      {//党组织增加
+        path: 'AddOrganization',
+        name: 'AddOrganization',
+        meta: {
+          requireAuth: true,
+        },
+        component: resolve => require(['@/components/pop/AddOrganization.vue'], resolve),
+      },
+
+      {//党支部合并
+        path: 'PartyMerge',
+        name: 'PartyMerge',
+        meta: {
+          requireAuth: true,
+        },
+        component: resolve => require(['@/components/pop/PartyMerge.vue'], resolve),
+      },
+      {//党支部拆分
+        path: 'PartySplit',
+        name: 'PartySplit',
+        meta: {
+          requireAuth: true,
+        },
+        component: resolve => require(['@/components/pop/PartySplit.vue'], resolve),
+      },
+      {//党支部撤销弹窗路由
+        path: 'PartyRevoke',
+        name: 'PartyRevoke',
+        meta: {
+          requireAuth: true,
+        },
+        component: resolve => require(['@/components/pop/PartyRevoke.vue'], resolve),
+      },
+      {//设置党小组弹窗路由
+        path: 'PartyTeam',
+        name: 'PartyTeam',
+        meta: {
+          requireAuth: true,
+        },
+        component: resolve => require(['@/components/pop/PartyTeam.vue'], resolve),
+      },
+      {//党组织管理/批量修改弹窗路由
+        path: 'BatchUpdate',
+        name: 'BatchUpdate',
+        meta: {
+          requireAuth: true,
+        },
+        component: resolve => require(['@/components/pop/BatchUpdate.vue'], resolve),
+      },
+      {//组合查询弹窗路由
+        path: 'CombinationQuery',
+        name: 'CombinationQuery',
+        meta: {
+          requireAuth: true,
+        },
+        component: resolve => require(['@/components/pop/CombinationQuery.vue'], resolve),
+      },
+
+      ],
+    },
+    //baseSituation router
+    {
+      path: '/baseSituation',
+      name: 'baseSituation',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/baseSituation/baseSituation.vue'], resolve),
+    },
+    //unit manage router
+    {
+      path: '/unitManage',
+      name: 'unitManage',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/unitManage/unitManage.vue'], resolve),
+      children: [
+        {
+          path: 'unit/:id',
+          name: 'unit',
+          component: resolve => require(['@/components/infoDetail/unit.vue'], resolve),
+        },
+        {
+          path: 'unitNew',
+          name: 'unitNew',
+          component: resolve => require(['@/components/pop/unitNew.vue'], resolve),
+        }
+      ]
+    },
+    //组织关系转接
+    {
+      path: '/organizationManage',
+      name: 'organizationManage',
+      meta: {
+        requireAuth: true,
+      },
+      component: resolve => require(['@/pages/organizationManage/organizationManage.vue'], resolve),
+      children: [
+        {
+          path: 'organization/:id',
+          name: 'organization',
+          component: resolve => require(['@/components/infoDetail/organization.vue'], resolve),
+        },
+        //{
+        //  path: 'unitNew',
+        //  name: 'unitNew',
+        //  component: resolve => require(['@/components/pop/unitNew.vue'], resolve),
+        //}
+      ]
+    },
+    //历史党员管理 router
+    {
+      path: '/historyManage',
+      name: 'historyManage',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/historyManage/history.vue'], resolve),
+      children:[
+        {
+          path: 'modal',
+          components: {
+              modal: resolve => require(['@/pages/historyManage/modal.vue'], resolve)
+          }
+        }
+      ]
+    },
+    //dangyuan router
+    {
+      path: '/dangyuan',
+      name: 'dangyuan',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/dangyuanManage/dangyuan.vue'], resolve),
+      children: [
+        {
+            path: 'modal/add',
+            components: {
+                modal: resolve => require(['@/components/pop/partymember/AddPartyMember.vue'], resolve)
+            }
+        },
+    		{
+            path: 'modal/dead',
+            components: {
+                modal: resolve => require(['@/components/pop/partymember/PartyMemberDeath.vue'], resolve)
+            }
+        },
+        {
+            path: 'modal/stop',
+            components: {
+                modal: resolve => require(['@/components/pop/partymember/PartyMemberStop.vue'], resolve)
+            }
+        },
+        {
+            path: 'modal/out',
+            components: {
+                modal: resolve => require(['@/components/pop/partymember/PartyMemberOuter.vue'], resolve)
+            }
+        },
+        {
+            path: 'modal/transfer',
+            components: {
+                modal: resolve => require(['@/components/pop/partymember/PartyMemberZhuanchu.vue'], resolve)
+            }
+        },
+        {
+            path: 'modal/sort',
+            components: {
+                modal: resolve => require(['@/components/pop/partymember/PartyMemberSort.vue'], resolve)
+            }
+        },
+        {
+          path: 'modal/distribution',
+          components: {
+              modal: resolve => require(['@/components/pop/partymember/PartyGroupManage.vue'], resolve)
+          }
+        },
+        {
+          path: 'modal/batch',
+          components: {
+              modal: resolve => require(['@/components/pop/partymember/BatchEdit.vue'], resolve)
+          }
+        },
+        {
+          path: 'modal/combos',
+          components: {
+              modal: resolve => require(['@/components/pop/partymember/CombosQuery.vue'], resolve)
+          }
+        },
+        //新增学历 弹窗
+        {
+          path: 'modal/memberinfo-add',
+          components: {
+              modal: resolve => require(['@/components/pop/partymember/memberinfo-education-add.vue'], resolve)
+          }
+        },
+        {
+          path: 'modal/post-add',
+          components: {
+              modal: resolve => require(['@/components/pop/partymember/memberinfo-post-add.vue'], resolve)
+          }
+        },
+        {
+          path: 'modal/admin-add',
+          components: {
+              modal: resolve => require(['@/components/pop/partymember/memberinfo-adminjob-add.vue'], resolve)
+          }
+        },
+        {
+          path: 'modal/reward-add',
+          components: {
+              modal: resolve => require(['@/components/pop/partymember/memberinfo-reward-add.vue'], resolve)
+          }
+        },
+        {
+          path: 'modal/representative-add',
+          components: {
+              modal: resolve => require(['@/components/pop/partymember/memberinfo-representative-add.vue'], resolve)
+          }
+        },
+      ]
+    },
+    {
+      path: '/dangyuan/:id',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/dangyuanManage/dangyuan.vue'], resolve),
+      children:[
+        {
+            path: 'aside/:asidename',
+            components: {
+                aside: resolve => require(['@/pages/dangyuanManage/aside.vue'], resolve)
+            }
+        }
+      ]
+    },
+    // {//班子成员新增弹窗路由
+    //   path: '/TeamMember',
+    //   name: 'TeamMember',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/TeamMember.vue'], resolve),
+    // },
+    // {//奖惩情况新增弹窗路由
+    //   path: '/RewardPunishment',
+    //   name: 'RewardPunishment',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/RewardPunishment.vue'], resolve),
+    // },
+    // {//民主评议新增的弹窗路由
+    //   path: '/DemocraticReview',
+    //   name: 'DemocraticReview',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/DemocraticReview.vue'], resolve),
+    // },
+    // {//学历学位新增的弹窗路由
+    //   path: '/Degree',
+    //   name: 'Degree',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/Degree.vue'], resolve),
+    // },
+    // {//工作岗位新增的弹窗路由
+    //   path: '/WorkPost',
+    //   name: 'WorkPost',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/WorkPost.vue'], resolve),
+    // },
+    // {//党组织维护下/整建制转移/内部转移弹窗路由
+    //   path: '/InsideTransfer',
+    //   name: 'InsideTransfer',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/InsideTransfer.vue'], resolve),
+    // },
+    // {//党组织维护下/整建制转移/新增党组织弹窗路由
+    //   path: '/AddOrganization',
+    //   name: 'AddOrganization',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/AddOrganization.vue'], resolve),
+    // },
+    // {//党组织管理/党支部维护/党支部合并弹窗路由
+    //   path: '/PartyMerge',
+    //   name: 'PartyMerge',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/PartyMerge.vue'], resolve),
+    // },
+    // {//党组织管理/党支部维护/党支部拆分弹窗路由
+    //   path: '/PartySplit',
+    //   name: 'PartySplit',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/PartySplit.vue'], resolve),
+    // },
+    // {//党组织管理/党支部委会/党支部撤销弹窗路由
+    //   path: '/PartyRevoke',
+    //   name: 'PartyRevoke',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/PartyRevoke.vue'], resolve),
+    // },
+    // {//党组织管理/党支部委会/设置党小组弹窗路由
+    //   path: '/PartyTeam',
+    //   name: 'PartyTeam',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/PartyTeam.vue'], resolve),
+    // },
+    // {//党组织管理/查询统计/组合查询弹窗路由
+    //   path: '/CombinationQuery',
+    //   name: 'CombinationQuery',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/CombinationQuery.vue'], resolve),
+    // },
+    // {//党组织管理/批量修改弹窗路由
+    //   path: '/BatchUpdate',
+    //   name: 'BatchUpdate',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/BatchUpdate.vue'], resolve),
+    // },
+    // {//党组织管理/单位信息添加弹窗路由
+    //   path: '/UnitAdd',
+    //   name: 'UnitAdd',
+    //   meta: {
+    //     requireAuth: true,
+    //   },
+    //   component: resolve => require(['@/components/pop/UnitAdd.vue'], resolve),
+    // },
+
+    { //默认首页
+       path: '/',
+       redirect: '/orgManage'
+    },
+    { //默认错误页
+      path: '*',
+      component: resolve => require(['@/pages/404.vue'], resolve),
+    },
+//  {//党员管理/新增党员弹窗路由
+//    path: '/AddPartyMember',
+//    name: 'AddPartyMember',
+//    meta: {
+//      requireAuth: true,
+//    },
+//    component: resolve => require(['@/components/pop/AddPartyMember.vue'], resolve),
+//  },
+//  {//党员管理/党员排序弹窗路由
+//    path: '/PartyMemberSort',
+//    name: 'PartyMemberSort',
+//    meta: {
+//      requireAuth: true,
+//    },
+//    component: resolve => require(['@/components/pop/PartyMemberSort.vue'], resolve),
+//  },
+//  {//党员管理/党小组人员分配弹窗路由
+//    path: '/PartyGroupManage',
+//    name: 'PartyGroupManage',
+//    meta: {
+//      requireAuth: true,
+//    },
+//    component: resolve => require(['@/components/pop/PartyGroupManage.vue'], resolve),
+//  },
+//  {//党员管理/党员减少/党员出党弹窗路由
+//    path: '/PartyMemberOuter',
+//    name: 'PartyMemberOuter',
+//    meta: {
+//      requireAuth: true,
+//    },
+//    component: resolve => require(['@/components/pop/PartyMemberOuter.vue'], resolve),
+//  },
+//  {//党员管理/党员减少/党员死亡弹窗路由
+//    path: '/PartyMemberDeath',
+//    name: 'PartyMemberDeath',
+//    meta: {
+//      requireAuth: true,
+//    },
+//    component: resolve => require(['@/components/pop/PartyMemberDeath.vue'], resolve),
+//  },
+//  {//党员管理/党员减少/党员停止党籍弹窗路由
+//    path: '/PartyMemberStop',
+//    name: 'PartyMemberStop',
+//    meta: {
+//      requireAuth: true,
+//    },
+//    component: resolve => require(['@/components/pop/PartyMemberStop.vue'], resolve),
+//  },
+//  {//党员管理/党员减少/党员流出弹窗路由
+//    path: '/PartyMemberLiuchu',
+//    name: 'PartyMemberLiuchu',
+//    meta: {
+//      requireAuth: true,
+//    },
+//    component: resolve => require(['@/components/pop/PartyMemberLiuchu.vue'], resolve),
+//  },
+//  {//党员管理/党员减少/党员转移弹窗路由
+//    path: '/PartyMemberZhuanyi',
+//    name: 'PartyMemberZhuanyi',
+//    meta: {
+//      requireAuth: true,
+//    },
+//    component: resolve => require(['@/components/pop/PartyMemberZhuanyi.vue'], resolve),
+//  },
+//  {//党员管理/党员减少/党员转出弹窗路由
+//    path: '/PartyMemberZhuanchu',
+//    name: 'PartyMemberZhuanchu',
+//    meta: {
+//      requireAuth: true,
+//    },
+//    component: resolve => require(['@/components/pop/PartyMemberZhuanchu.vue'], resolve),
+//  },
+  ]
+})
+
+export default router;
+

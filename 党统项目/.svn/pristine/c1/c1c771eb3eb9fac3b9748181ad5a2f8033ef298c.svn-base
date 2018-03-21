@@ -1,0 +1,171 @@
+<!--联系方式form-->
+<template>
+    <div class="box-flex start-box box-orient">
+        <div class="info-detail box-flex">
+            <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="140">
+                <FormItem label="党组联系人" prop="person_name">
+                    <Select v-model="formValidate.person_name" :disabled="isDisable" placeholder="请选择党组联系人">
+                      <Option value="beijing">联系人A</Option>
+                      <Option value="shenzhen">联系人B</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="党组联系人手机号" prop="contact_phone">
+                    <Input v-model="formValidate.contact_phone" :disabled="isDisable" placeholder="请输入党组织名称"></Input>
+                </FormItem>
+                <FormItem label="党组织办公电话" prop="person_tel">
+                  <Input v-model="formValidate.person_tel" :disabled="isDisable" placeholder="请输入党组织办公电话"></Input>
+                </FormItem>
+                <FormItem label="所在地区：" prop="region">
+                  <Cascader :data="formValidate.data" :disabled="isDisable" v-model="formValidate.region"></Cascader>
+                </FormItem>
+                <FormItem label="详细地址" prop="address">
+                  <Input v-model="formValidate.address" :disabled="isDisable" placeholder="请输入详细地址"></Input>
+                </FormItem>
+                <FormItem label="邮政编码" prop="postcode">
+                  <Input v-model="formValidate.postcode" :disabled="isDisable" placeholder="请输入邮政编码"></Input>
+                </FormItem>
+
+            </Form>
+        </div>
+        <div class="info-footer start-box box-align">
+            <div class="box-flex"></div>
+            <Button type="ghost" style="margin-right: 15px;"  @click="handleReset('formValidate')">取消</Button>
+            <Button v-show="isDisable" type="primary" @click="editBtn">编辑</Button>
+            <Button v-show="!isDisable" type="error"  @click="handleSubmit('formValidate')">保存</Button>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        name: 'contactInfo',
+        data() {
+            return {
+                isDisable:true,
+                formValidate: {
+                  opartycodept: '',
+                  name: '',
+                  type_id: '',
+                  affiliation_id: '',
+                  found_time: '',
+                  region: [],//所在地区
+                  data: [{
+                    value: 'beijing',
+                    label: '北京',
+                    children: [
+                      {
+                        value: 'gugong',
+                        label: '故宫'
+                      },
+                      {
+                        value: 'tiantan',
+                        label: '天坛'
+                      },
+                      {
+                        value: 'wangfujing',
+                        label: '王府井'
+                      }
+                    ]
+                  }, {
+                    value: 'jiangsu',
+                    label: '江苏',
+                    children: [
+                      {
+                        value: 'nanjing',
+                        label: '南京',
+                        children: [
+                          {
+                            value: 'fuzimiao',
+                            label: '夫子庙',
+                            children: [
+                              {
+                                value: 'fuzimiao1',
+                                label: '夫子庙子集111'
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        value: 'suzhou',
+                        label: '苏州',
+                        children: [
+                          {
+                            value: 'zhuozhengyuan',
+                            label: '拙政园',
+                          },
+                          {
+                            value: 'shizilin',
+                            label: '狮子林',
+                          }
+                        ]
+                      }
+                    ],
+                  }],
+                },
+                ruleValidate: {
+                  person_tel: [{
+                        required: true, message: '党组办公电话不能为空', trigger: 'blur'
+                    }],
+                },
+                datas: this.infodata,
+            }
+        },
+        props: ['infodata'],
+        components: {
+
+        },
+        watch: {
+            '$route' (to, from) {
+                if (/copy/.test(to.path)) {
+                    this.initF();
+                } else if(/info/.test(to.path)) {
+                    this.initF();
+                }
+            },
+        },
+        methods: {
+            editBtn: function () {
+              this.isDisable=!this.isDisable;
+              this.$store.commit('setEdit', {isDisable: this.isDisable});
+            },
+            handleSubmit (name) {
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        this.$Message.success('提交成功!');
+                        this.isDisable=!this.isDisable;
+                        this.$router.go(-1)
+                    } else {
+                        this.$Message.error('表单验证失败!');
+                    }
+                })
+            },
+            handleReset (name) {
+                this.$refs[name].resetFields();
+                this.$router.go(-1)
+            },
+            initF() {
+                let that = this;
+
+//                that.formValidate.opartycodept = that.datas.opartycodept;
+//                that.formValidate.name = that.datas.name;
+//                that.formValidate.type_id = that.datas.type_id;
+//                that.formValidate.affiliation_id = that.datas.affiliation_id;
+//                that.formValidate.found_time = that.datas.found_time;
+            }
+        },
+        created() {
+
+        },
+        mounted() {
+            let that = this;
+            this.$store.commit('setEdit', {isDisable: this.isDisable});
+            this.$watch('infodata', function(newD, oldD) {
+                that.datas = newD;
+            }, {deep: true, immediate: true});
+
+        },
+    }
+</script>
+<style scope>
+
+</style>

@@ -1,0 +1,166 @@
+<!--单位信息form-->
+<template>
+    <div class="box-flex start-box box-orient">
+        <div class="info-detail box-flex">
+          <Row>
+            <p style="float: left;margin-left: 10px;margin-top: 7px;">单位信息</p>
+            <Row  style="text-align: right;">
+              <Button v-show="isSort" @click="save" type="primary" style="margin-left: 5px;">保存排序</Button>
+              <Button v-show="!isSort" @click="sort" style="margin-left: 5px;">调整排序</Button>
+              <Button style="margin-left: 5px;" type="error" @click="addUnit">新增</Button>
+            </Row>
+          </Row>
+          <Row>
+            <div class="tabs">
+              <table>
+                <thead>
+                <th>单位名称</th>
+                <th>单位性质类别</th>
+                <th>法人单位标识</th>
+                <th>法人单位建立基层组织情况</th>
+                <th>操作</th>
+                </thead>
+                <draggable :list="listData" :element="'tbody'">
+                  <tr :class="sortClassName" v-for="(item,index) in data6" :key="item.index" :ondragstart="isDragstart" >
+                    <td>{{item.unit_name}}</td>
+                    <td>{{item.relationship}}</td>
+                    <td>{{item.category}}</td>
+                    <td>{{item.category}}</td>
+                    <td width="120px"><Button type="info" size="small" @click="checkUnit(item)">查看</Button> <Button @click="remove(item,index)" type="error" size="small">删除</Button></td>
+                  </tr>
+                </draggable>
+              </table>
+            </div>
+          </Row>
+        </div>
+    </div>
+</template>
+<script type="text/ecmascript-6">
+    import draggable from 'vuedraggable'
+    export default {
+        name: 'unit',
+        data() {
+          return {
+            isSort:false,//是否开始排序
+            listData:[],
+            sortClassName:'',
+            isDragstart:'return false',//
+            data6: [
+              {
+                unit_name: '天津和平信息管理单位',
+                relationship: '直接关系',
+                category: '类别A',
+                id:'type01',
+                row_id:'row01'
+              },
+              {
+                unit_name: '天津和平信息管理单位',
+                relationship: '直接关系',
+                category: '类别B',
+                id:'type02',
+                row_id:'row02'
+              }
+            ],
+            formValidate: {
+
+            },
+            ruleValidate: {
+
+            },
+          }
+        },
+        components: {
+          draggable
+        },
+        watch: {
+            '$route' (to, from) {
+                if (/copy/.test(to.path)) {
+                    this.initF();
+                } else if(/info/.test(to.path)) {
+                    this.initF();
+                }
+            },
+            // infodata(val) {
+            //     this.datas = val;
+            // }
+        },
+        methods: {
+            handleSubmit (name) {
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        this.$Message.success('提交成功!');
+                    } else {
+                        this.$Message.error('表单验证失败!');
+                    }
+                })
+            },
+            handleReset (name) {
+                this.$refs[name].resetFields();
+            },
+            initF() {
+            },
+            //排序
+            sort(){
+              this.sortClassName='drag';
+              this.isDragstart=''
+              this.isSort=!this.isSort;
+            },
+            save(){
+              this.isDragstart='return false';
+              this.isSort=!this.isSort;
+              this.sortClassName='';
+            },
+            //新增功能
+            addUnit(){
+              this.$router.push({name: 'UnitAdd',params:{state:'1'}});
+            },
+            //查看功能
+            checkUnit(item){
+              this.$router.push({name: 'UnitAdd',params:{state:'0'}});
+            }
+        },
+        created() {
+
+        },
+        mounted() {
+          let that = this;
+          let qs = require('qs');
+//          this.axios({
+//              method: 'post',
+//              url: '/v1/leader/dept-leaders',
+//              data: qs.stringify({
+//                id: that.$route.query.id,
+//              })
+//            })
+//            .then(res => {
+//              let needData = res.data;
+//              if (needData.code == 200) {
+//
+//              } else {
+//                that.$Message.error(needData.msg);
+//              }
+//            })
+//            .catch(err => {
+//              this.$Message.error('网络请求异常');
+//            })
+        },
+    }
+</script>
+<style scope>
+  td{padding: 0;margin: 0;}
+  .tabs{margin-top: 10px;margin-left: 10px;user-select: none}
+  .tabs table{border-collapse: collapse;text-align: center;width: 100%;color: #333;font-family: "微软雅黑"; border: 1px solid #e2e2e2;}
+  .tabs table thead{line-height: 40px;background: #F8F8F9;font-weight: normal;}
+  .tabs table thead {border-bottom: 1px solid #e9eaec;border-top: 1px solid #e9eaec;}
+  .tabs table thead th{font-weight: normal;}
+  .tabs table tbody tr{line-height: 48px;height: 48px;border-bottom: 1px solid #e9eaec;;color: #333;box-sizing: border-box}
+  .tabs table tbody tr:hover{background-color: #EBF7FF}
+  .tabs table tbody tr.drag:hover{background-color: #eee;cursor: move}
+  .tabs table .checkbox{width: 20px;height: 20px;box-sizing:border-box;border:1px solid #ccc;;margin: 3px auto 0}
+  .tabs table .checkbox.on{background: #d73826;border-color: #d73826}
+  .tabs table .checkbox.on:after{content: "√";width: 0;height: 0;color: #fff;position: relative;top: -11px;}
+  .tabs table tbody td,.tabs table thead th{ border-right:1px solid #e9eaec;}
+  .tabs table tbody td.ready{color: #d73826}
+  .tabs table tbody td.out{color: #f07100}
+  .tabs table tbody td.in{color: #008df0}
+</style>

@@ -1,0 +1,788 @@
+<template>
+    <div class="app-main" :style="{'width':'100%','height':'100%'}" @click="closeDefault">
+        <div class="layout  start-box box-orient" :style="{'width':'100%','height':'100%'}">
+            <!-- 头部 -->
+            <top></top>
+            <Row type="flex" class="box-flex">
+                <!-- 侧边栏树结构 -->
+                <i-col span="5" class="layout-menu-left">
+                    <Slide ref="slide"
+                        @reflashList="reflashList"
+                        @getnode="getnode"
+                        @slideDown="slideDown"
+                        :url="url"
+                        :openitem="openitem"
+                        :currentnode="currentnode"
+                        :openlist="openlist"
+                        >
+                    </Slide>
+                </i-col>
+                <i-col span="19" class="start-box box-orient" style="overflow: hidden;">
+                    <!-- 筛选结构 -->
+                    <div class="layout-breadcrumb">
+                        <subNav ref="subnav" :remberRow="remberRow"></subNav>
+                    </div>
+                    <!-- 表单主结构 -->
+                    <div class="layout-content box-flex" style="position:realtive;">
+                        <div class="content-padding start-box box-orient">
+                            <!-- 搜索和过滤 -->
+                            <div class="search-filter start-box box-align">
+                                <div class="search-content start-box box-align box-flex">
+                                    <Input v-model.trim="searchString" placeholder="请输入党组织名称" :style="{'display':'block', 'width':'35%','marginRight':'10px'}"></Input>
+                                    <Button type="error" style="height: 32px;line-height: 16px;" @click="searchbar">搜索</Button>
+                                </div>
+                                <div class="set-config">
+                                    <Select v-show="!remberGroup" style="width:100px" placeholder="列表设置">
+                                         <CheckboxGroup  v-model="social">
+                                            <Checkbox v-for="item in cityList" :key="item.value" :label="item.key" :disabled="item.disabled" style="display:block;border-bottom: 1px solid #ddd; padding:3px 5px; margin-right:0px;"> {{item.title}} </Checkbox>
+                                        </CheckboxGroup>
+                                    </Select>
+                                    <Button type="ghost" :style="{'background':'#fff'}" @click="reflash">刷新</Button>
+                                    <Button type="ghost" :style="{'background':'#fff'}" @click="exportXLS">导出excel</Button>
+                                </div>
+                            </div>
+                            <Table class="box-flex"
+                                :style="{'marginTop':'20px', 'height':'calc(100% - 100px)', 'height': '-webkit-calc(100% - 100px)'}"
+                                border
+                                :row-class-name="rowClassName"
+                                :columns="headers"
+                                :data="lists"
+                                stripe
+                                highlight-row
+                                @on-row-click="goDetail"
+                                v-if="!remberGroup"></Table>
+                            <Table class="box-flex"
+                                :style="{'marginTop':'20px', 'height':'calc(100% - 100px)', 'height': '-webkit-calc(100% - 100px)'}"
+                                border
+                                :columns="groupHeader"
+                                :data="groupList"
+                                stripe
+                                highlight-row
+                                @on-row-click="groupDetail"
+                                v-if="remberGroup"></Table>
+                            <div :style='{"textAlign": "center", "marginTop": "20px"}'>
+                               <Page v-show="total>6" size="small" :total="parseInt(total)" :page-size="parseInt(pags)" @on-change="goPage"></Page>
+                            </div>
+                        </div>
+                    </div>
+                    <transition name="slides">
+                        <Info v-if="slideBar"></Info>
+                    </transition>
+
+                    <transition name="slides">
+                        <router-view></router-view>
+                    </transition>
+                </i-col>
+            </Row>
+        </div>
+    </div>
+</template>
+<script>
+    import top from '@/components/top.vue'
+    import Slide from '@/components/slide.vue'
+    import subNav from '@/components/subNav.vue'
+    import Info from '@/components/infoDetail/info.vue'
+
+    export default {
+        name: 'orgManage',
+        data() {
+            return {
+                url: '/v1/trees/list',
+                openitem: [],
+                radiosObj: {},
+                openlist: [],
+                currentnode: '',
+                searchString: '',
+                slideBar: false,
+                remberGroup: false,
+                isSearch: false,
+                cityList: [
+                    {
+                        title: '党组织名称',
+                        key: 'name',
+                        disabled: true,
+                        render: (h, params) => {
+                            if (this.isSearch) {
+                                params.column.width = 130
+                                return h('div',
+                                    {
+                                        style:{
+                                            width: '130px'
+                                        }
+                                    },
+                                    [params.row.real_name,
+                                    h('Button', {
+                                        style: {
+                                            color : '#2b92e9',
+                                            padding: '4px 10px'
+                                        },
+                                        props : {
+                                            type : 'text',
+                                            icon : 'location'
+                                        },
+                                        on: {
+                                            click: (event) => {
+                                                //this.locationTree(params.row);
+                                                event.stopPropagation();
+                                            }
+                                        }
+                                    },'定位')])
+                            }
+                            else {
+                                return params.row.real_name
+                            }
+                        }
+                    },
+                    {
+                        title: '党组织代码',
+                        key: 'partycode',
+                        disabled: true,
+                    },
+                    {
+                        title: '组织类别',
+                        key: 'type',
+                        disabled: false,
+                    },
+                    {
+                        title: '党组织书记',
+                        key: 'sec',
+                        disabled: false,
+                    },
+                    {
+                        title: '信息完整度',
+                        key: 'newInter',
+                        disabled: false,
+                    },
+                    {
+                        title: '本届届满日期',
+                        key: 'end_time',
+                        disabled: false,
+                    }
+                ],
+                soltname: 'mainContent',
+                page_index: 1,
+                page_size: 6,
+                total: 0,
+                pags: 6,
+                groupHeader: [
+                    {
+                        title: '选择',
+                        align: 'center',
+                        width: 65,
+                        key: 'select',
+                        render: (h, params) => {
+                            return h('div', {
+                                class: {
+                                    'radio-outer': true
+                                },
+                                nativeOn: {
+                                    click() {
+                                        event.stopPropagation();
+                                    }
+                                },
+                            },
+                            [
+                                h('Radio', {
+                                    class: {
+                                        'radio-check': true
+                                    },
+                                    props: {
+                                        size: 'large',
+                                        value: this.radiosObj['items'+params.row.id]
+                                    },
+                                    on: {
+                                        'on-change': (val) => {
+                                            event.stopPropagation()
+                                            this.changeRadio(val, params);
+                                        }
+                                    },
+                                    nativeOn: {
+                                        click() {
+                                            event.stopPropagation()
+                                        }
+                                    },
+                                }),
+                            ]);
+                        }
+                    },
+                    {
+                        title: '党小组名称',
+                        key: 'name',
+                        sortable: true,
+                        width:200,
+                        render: (h, params) => {
+                            if (this.isSearch) {
+                                return h('div',
+                                    [params.row.name,
+                                    h('Button', {
+                                        style: {
+                                            color : '#2b92e9',
+                                            padding: '4px 10px'
+                                        },
+                                        props : {
+                                            type : 'text',
+                                            icon : 'location'
+                                        },
+                                        on: {
+                                            click: (event) => {
+                                                event.stopPropagation();
+                                                this.locationTree(params.row);
+                                            }
+                                        }
+                                    },'定位')])
+                            }
+                            else {
+                                return params.row.name
+                            }
+                        }
+                    },
+                    {
+                        title: '党组织代码',
+                        key: 'code',
+                        sortable: true,
+                    },
+                    {
+                        title: '建立日期',
+                        key: 'adddate',
+                        sortable: true,
+                    },
+                ],
+                groupList: [],
+                //表单header
+                copyHeader: [
+                    {
+                        title: '选择',
+                        align: 'center',
+                        width: 65,
+                        isShow: true,
+                        key: 'select',
+                        render: (h, params) => {
+                            return h('div', {
+                                class: {
+                                    'radio-outer': true
+                                },
+                                nativeOn: {
+                                    click() {
+                                        event.stopPropagation();
+                                    }
+                                },
+                            },
+                            [
+                                h('Radio', {
+                                    class: {
+                                        'radio-check': true
+                                    },
+                                    props: {
+                                        size: 'large',
+                                        value: this.radiosObj['items'+params.row.id]
+                                    },
+                                    on: {
+                                        'on-change': (val) => {
+                                            event.stopPropagation()
+                                            this.changeRadio(val, params);
+                                        }
+                                    },
+                                    nativeOn: {
+                                        click() {
+                                            event.stopPropagation()
+                                        }
+                                    },
+                                }),
+                            ]);
+                        }
+                    },
+                    {
+                        title: '党组织名称',
+                        key: 'name',
+                        width:420,
+                        isShow: true,
+                        sortable: true,
+                        render: (h, params) => {
+                            if (this.isSearch) {
+                                return h('div',
+                                    [params.row.name,
+                                    h('Button', {
+                                        style: {
+                                            color : '#2b92e9',
+                                            padding: '4px 10px'
+                                        },
+                                        props : {
+                                            type : 'text',
+                                            icon : 'location'
+                                        },
+                                        on: {
+                                            click: (event) => {
+                                                event.stopPropagation();
+                                                this.locationTree(params.row);
+                                            }
+                                        }
+                                    },'定位')])
+                            }
+                            else {
+                                return params.row.name
+                            }
+                        }
+                    },
+                    {
+                        title: '党组织代码',
+                        key: 'partycode',
+                        sortable: true,
+                        isShow: true,
+                    },
+                    {
+                        title: '组织类别',
+                        key: 'type',
+                        sortable: true,
+                        isShow: true,
+                    },
+                    {
+                        title: '党组织书记',
+                        key: 'sec',
+                        sortable: true,
+                        isShow: true,
+                    },
+                    {
+                        title: '信息完整度',
+                        key: 'newInter',
+                        sortable: true,
+                        isShow: true,
+                    },
+                    {
+                        title: '本届届满日期',
+                        key: 'end_time',
+                        sortable: true,
+                        isShow: true,
+                    }
+                ],
+                //表单数据
+                lists: [],
+                remberId: '', //记住点击的列
+                remberRow: {}
+            }
+        },
+        computed: {
+            getType() {
+                return this.$store.state.flashType;
+            },
+            isRef() {
+                return this.$store.state.strictRefalsh;
+            },
+            ishis() {
+                return this.$store.state.isHistory;
+            },
+            headers() {
+                return this.copyHeader.filter(item => {return item.isShow})
+            },
+            social: {
+                get() {
+                    return this.headers.map(item => {return item.key})
+                },
+                set(val) {
+                    this.copyHeader.forEach(item => {
+                        if (val.indexOf( item.key ) != -1) {
+                            item.isShow = true
+                        } else {
+                            item.isShow = false
+                        }
+                    })
+                }
+            }
+        },
+        watch: {
+            getType(newD, oldD) {
+                if (newD == 1) {
+                    this.getList(this.$store.state.remberId, 1);
+                } else if (newD == 2) {
+                    this.getGrouplist(this.$store.state.remberId, 1);
+                }
+            },
+            '$route' (to, from) {
+              this.CombinationQuery();
+            },
+            // social(newD, oldD) {
+            //     let that = this;
+            //     if (newD.length > oldD.length) {
+            //         let oldSet = new Set(oldD);
+            //         let comp = newD.filter(v => {return !oldSet.has(v)});
+            //         let serArr = this.searchStr(comp[0], this.copyHeader, 'object');
+            //         let seri = this.searchStr(comp[0], this.copyHeader);
+            //         that.headers.splice(seri, 0, serArr);
+            //     } else if(newD.length < oldD.length) {
+            //         let newSet = new Set(newD);
+            //         let comp = oldD.filter(v => {return !newSet.has(v)});
+            //         let seri = this.searchStr(comp[0], this.headers);
+            //         that.headers.splice(seri, 1);
+            //     }
+            // },
+            isRef(newD, oldD) {
+                if (newD != oldD) {
+                    if (this.$store.state.flashType2 == 1) {
+                        this.getList(this.$store.state.remberId, 1);
+                    } else {
+                        this.getGrouplist(this.$store.state.remberId, 1);
+                    }
+                };
+            },
+            ishis(v) {
+                if (v) {
+                    this.$nextTick(function() {
+                       $('.gobalhidden').show();
+                    })
+                } else {
+                    this.$nextTick(function() {
+                       $('.gobalhidden').hide();
+                    })
+                }
+            },
+        },
+        components: {
+            // Frame,
+            top,
+            Slide,
+            subNav,
+            Info
+        },
+        methods: {
+            locationTree(rowData) {
+                let that = this;
+                event.stopPropagation();
+                this.openlist = [];
+                rowData.location.forEach( function(item, index) {
+                    this.openlist.push(item)
+                }, this);
+            },
+            changeRadio(val, params) {
+                let that = this;
+                for(let i in that.radiosObj) {
+                    that.$set(that.radiosObj, i, false);
+                }
+                that.$set(that.radiosObj, 'items'+params.row.id, true);
+                this.remberRow = Object.assign({}, params);
+                this.currentnode = params.row['id'];
+                this.$store.commit('setId',{id: params.row['id']})
+                this.$store.commit('setNode',{data: params.row})
+            },
+            rowClassName (row, index) {
+                return row.deleteflag != 0 ? (this.ishis ? 'gobalhidden gobalcomm' : 'gobalhidden') : '';
+            },
+            slideDown() {
+                let that = this;
+                this.currentnode = '';
+                this.$nextTick(function() {
+                    that.currentnode = that.openlist[that.openlist.length-1];
+                });
+            },
+            searchStr(str, ser, returnType) {
+                for (var i = 0; i < ser.length; i++) {
+                    if (ser[i].key == str) {
+                        return returnType == 'object' ? ser[i] : i;
+                    } else if(ser[i].key != str && i == (ser.length -1) ) {
+                        return null;
+                    }
+                };
+            },
+            closeDefault() {
+                // if (this.$route.name == 'info' || this.$route.name == 'group') {
+                //     this.$router.go(-1);
+                // };
+            },
+            //查看详情
+            goDetail(row) {
+                event.stopPropagation();
+                if (this.$route.name !== 'orgManage') {
+                    if (this.remberId == row.id) {
+                        return;
+                    };
+                    this.$router.replace({
+                        name:'info',
+                        params:{
+                            id: row.id,
+                            switchs: 0
+                        },
+                        query : {
+                            type : row.type_icon,
+                            del: row.deleteflag > 0 ? 1 : 0
+                        }
+                    });
+                   this.remberId = row.id;
+                } else {
+                    this.remberId = row.id;
+                    this.$router.push({
+                        name:'info',
+                        params:{
+                            id: row.id,
+                            switchs: 0
+                        },
+                        query : {
+                            type : row.type_icon,
+                            del: row.deleteflag > 0 ? 1 : 0
+                        }
+                    });
+                }
+                this.$store.commit('setSlideBar', {'isShow': false, sliderow: row});
+            },
+            groupDetail(row) {
+                event.stopPropagation();
+                if (this.$route.name !== 'orgManage') {
+                    if (this.remberId == row.id) {
+                        return;
+                    };
+                   this.$router.replace({name:'group',params:{id: row.id}})
+                } else {
+                    this.$router.push({name:'group',params:{id: row.id}})
+                }
+                this.remberId = row.id;
+                this.$store.commit('setSlideBar', {'isShow': false, sliderow: row});
+            },
+            //search
+            searchbar() {
+                let that = this;
+                let qs = require('qs');
+                if (that.searchString == '') {
+                    that.$Message.error('请输入搜索关键字');
+                    that.getList(that.$store.state.remberId, 1);
+                };
+                this.isSearch = true;
+                this.axios({
+                    method: 'get',
+                    url: '/v1/dept/search-list',
+                    params: {
+                        dept_id: that.$store.state.remberId,
+                        keyword: that.searchString,
+                        opt: 1
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.lists = [];
+                        that.radiosObj = {};
+                        needData.data.forEach(item => {
+                            item.newInter = Math.round( (parseInt(item.items) / parseInt(item.integrity))*100 )+'%';
+                            that.lists.push(item);
+                            that.radiosObj['items'+item.id] = false;
+                        });
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+            eidt(item) {
+                this.$router.push({path: '/cms/singleVideoAdd', query: {id: item.row.id}});
+            },
+            // tree emit events（events up）
+            reflashList(item) {
+                if (/group/.test(this.$route.name) || /info/.test(this.$route.name)) {
+                    this.$router.go(-1);
+                };
+                if (this.ishis) {
+                    this.$nextTick(function() {
+                        $('.gobalhidden').show();
+                    })
+                } else {
+                    this.$nextTick(function() {
+                        $('.gobalhidden').hide();
+                    })
+                }
+                //判断是否是党小组
+                if (item.data.type_icon == 6) {
+                    this.remberGroup = true
+                    this.groupList = []
+                    this.$router.replace({name: 'orgManage',params:{ids: item.id}});
+                    this.getGrouplist(item.id, 1)
+                } else {
+                    this.$router.replace({name: 'orgManage',params:{ids: item.id}});
+                    this.lists = [];
+                    this.getList(item.id, 1)
+                    this.remberGroup = false
+                }
+            },
+            setSelect(who, id) {
+                if (who) {
+                    this.lists.forEach(item => {
+                        if (item.id == id) {
+                            item._highlight = true;
+                        } else {
+                            item._highlight = false;
+                        }
+                    })
+                } else {
+                    this.groupList.forEach(item => {
+                        if (item.id == id) {
+                            item._highlight = true;
+                        } else {
+                            item._highlight = false;
+                        }
+                    })
+                }
+            },
+            // main list
+            getList(id, type) {
+                this.isSearch = false;
+                let that = this;
+                let qs = require('qs');
+                this.axios({
+                    method: 'get',
+                    url: '/v1/dept/list',
+                    params: {
+                        dept_id: id,
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.lists = [];
+                        let tempObj = {};
+                        needData.data.forEach(item => {
+                            item.newInter = Math.round( (parseInt(item.items) / parseInt(item.integrity))*100 )+'%';
+                            item._highlight = false;
+                            that.lists.push(item);
+                            tempObj['items'+item.id] = false;
+                        });
+                        let ids = this.$route.params.ids;
+                        if (ids == 0) {
+                            ids = this.$store.state.remberId;
+                        };
+                        that.setSelect(true, ids)
+                        that.radiosObj = Object.assign({}, tempObj);
+                    } else {
+                        // that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+            CombinationQuery() {
+              let that = this;
+              let qs = require('qs');
+              let type='';
+              if(!that.$route.params.queryId){
+                return;
+              }
+              if (/^orgManage$/.test(this.$route.name)) {
+                type='1';
+              }else if(/^dangyuan$/.test(this.$route.name)){
+                type='2';
+              }else if(/^applicantManage$/.test(this.$route.name)){
+                type='3';
+              }else if(/^unitManage$/.test(this.$route.name)){
+                type='4';
+              }
+              this.axios({
+                method:'post',
+                url:'v1/sqlsysbuilder/sql-sys-query',
+                data:qs.stringify({
+                  id:that.$route.params.queryId,
+                  dept_id:that.$store.state.remberId,
+                  type:type,
+                  page_number:'1',
+                  page_size:'10'
+                })
+              })
+              .then(res => {
+                let needData = res.data;
+                if(needData.code=='200'){
+                  that.lists = [];
+                  let tempObj = {};
+                  needData.data.forEach(item => {
+                    item.newInter = Math.round( (parseInt(item.items) / parseInt(item.integrity))*100 )+'%';
+                    that.lists.push(item);
+                    tempObj['items'+item.id] = false;
+                  });
+                  that.radiosObj = Object.assign({}, tempObj);
+                }
+              })
+            },
+            // group list
+            getGrouplist(id, type) {
+                let that = this;
+                let qs = require('qs');
+                that.groupList = [];
+                this.axios({
+                    method: 'get',
+                    url: '/v1/dept/dept-group-list',
+                    params: {
+                        dept_id: id,
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        let tempObj = {};
+                        needData.data.forEach(item => {
+                            item._highlight = false;
+                            that.groupList.push(item);
+                            tempObj['items'+item.id] = false;
+                        });
+                        that.radiosObj = Object.assign({}, tempObj);
+                        let ids = this.$route.params.ids;
+                        if (ids == 0) {
+                            ids = this.$store.state.remberId;
+                        };
+                        that.setSelect(false, ids)
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+            goPage(p) {
+                this.lists = [];
+                this.page_index = p;
+            },
+            getnode(node) {
+                // console.log(node)
+            },
+            reflash() {
+                 this.openlist = [798, 797, 792, 796];
+            },
+            exportXLS() {
+                let ids = this.$route.params.ids;
+                if (ids == 0) {
+                    ids = this.$store.state.remberId;
+                };
+                window.open('/v1/dept/export?dept_id=' + ids+'&opt=1');
+            }
+        },
+        created() {
+
+        },
+        mounted() {
+            let that = this;
+            if (this.$route.params.ids) {
+                this.getList(this.$route.params.ids, 1);
+            } else {
+                this.getList(this.$store.state.remberId, 1);
+            }
+            this.$store.commit('setHistory',{satate: false})   
+        },
+    }
+</script>
+<style scoped>
+    .gobalhidden {
+        color: rgb(204, 204, 204);
+    }
+    .togoole-enter-active {
+        transition: all 0.3s;
+    }
+    .togoole-leave-active {
+        transition: all 0.3s;
+    }
+    .slides-enter-active {
+      transition: all .3s ease;
+    }
+    .slides-leave-active {
+      transition: all .8s ease;
+    }
+    .slides-enter, .slides-leave-to
+    {
+      transform: translateX(800px);
+      opacity: 0;
+    }
+</style>

@@ -1,0 +1,113 @@
+<template>
+	<div class="form-set-nav layout-breadcrumb clearfix">
+        <Dropdown trigger="click" placement="bottom-start" @on-click="clearTable">
+            <Button type="ghost">报表清空 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem v-for="item in tableClearList" :name="item.value" :key="item.value">{{item.name}}</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        <Dropdown trigger="click" placement="bottom-start" @on-click="tableCountF"> 
+            <Button type="ghost">报表直统 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem v-for="item in tableCountList" name="countMore" :key="item.value">{{item.name}}</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        <Dropdown trigger="click" placement="bottom-start" @on-click="tableSet">
+            <Button type="ghost">报表汇总 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem v-for="item in tableAllList" :name="item.value" :key="item.value">{{item.name}}</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        <Dropdown trigger="click" placement="bottom-start" @on-click="checkF">
+            <Button type="ghost">报表校核 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem v-for="item in checkTableList" name="/checkForm" :key="item.value">{{item.name}}</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        
+        <Dropdown trigger="click" placement="bottom-start" @on-click="prientF">
+            <Button type="ghost">打印 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem v-for="item in prientList" :name="item.value"  :key="item.value">{{item.name}}</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        <Dropdown trigger="click" placement="bottom-start" @on-click="output">
+            <Button type="ghost">导出 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem v-for="item in exportList" :name="item.value" :key="item.value">{{item.name}}</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        <Button type="ghost" @click="lockF">上报锁定</Button>
+        <!-- <Button type="ghost">上报解锁</Button> -->
+        <div class="right-set fr">
+            <Button type="error" @click="beginDo">开始录制</Button>
+            <Button type="ghost" @click="saveTable">保存</Button>
+            <Dropdown trigger="click" placement="bottom-start">
+                <Button type="ghost">查询 <Icon type="arrow-down-b"></Icon></Button>
+                <DropdownMenu slot="list">
+                    <DropdownItem v-for="item in exportList" :name="item.value"  :key="item.value">{{item.name}}</DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
+            <Button type="ghost">取数条件</Button>
+
+        </div>
+    </div>
+</template>
+<script>
+	export default {
+		name: 'nav',
+        data() {
+        	return {
+                tableClearList: [{name: '清空本表', value: 1},{name: '清空多表', value: 2},{name: '清空全部',value: 3}],
+                tableCountList:  [{name: '直统本表', value: 1},{name: '直统多表', value: 2},{name: '直统全部',value: 3}],
+                tableAllList:  [{name: '汇总本表', value: 1},{name: '汇总多表', value: 2},{name: '汇总全部',value: 3}],
+                checkTableList:  [{name: '校验本表', value: 1},{name: '校验多表', value: 2},{name: '校验全部',value: 3}],
+                searchModel: 1,
+                prientList: [{name: '打印报表', value: 1}, {name: '打印空报表', value: 2}],
+                exportList: [{name: '导出报表', value: 1}, {name: '导出空报表', value: 2}],
+        	}
+        },
+        methods: {
+        	//报表清空
+        	clearTable(val) {
+                this.$emit('allControl', {value: val, type: 1})
+            },
+            //报表直统
+            tableCountF(val) {
+                this.$emit('allControl', {value: val, type: 2})
+            },
+            //报表汇总
+            tableSet(val) {
+            	this.$emit('allControl', {value: val, type: 3})
+            },
+            //报表校核
+            checkF(val) {
+            	this.$emit('allControl', {value: val, type: 4})
+            },
+            //打印
+            prientF(val) {
+            	this.$emit('allControl', {value: val, type: 5})
+            },
+            //导出
+            output(val) {
+            	this.$emit('allControl', {value: val, type: 6})
+            },
+            //上所解锁
+            lockF() {
+            	this.$emit('allControl', {value: 1, type: 7})
+            },
+            //开始录制
+            beginDo() {
+            	this.$emit('allControl', {value: 1, type: 8})
+            },
+            //保存报表
+            saveTable() {
+            	this.$emit('allControl', {value: 1, type: 9})
+                console.log(this)
+            },
+        }
+	}
+</script>
+<style scoped>
+	
+</style>

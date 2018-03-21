@@ -1,0 +1,260 @@
+<template>
+    <div class="app-main" :style="{'width':'100%','height':'100%'}" @click="closeDefault">
+        <div class="layout start-box box-orient" :style="{'width':'100%','height':'100%'}">
+            <!-- 头部 -->
+            <top></top>
+            <Row type="flex" class="box-flex">
+                <!-- 侧边栏树结构 -->
+                <i-col span="4" class="layout-menu-left">
+                    <Slide ref="slide" 
+                        @reflashList="reflashList" 
+                        @getnode="getnode"
+                        @slideDown="slideDown"
+                        :url="url"
+                        :openitem="openitem"
+                        :currentnode="currentnode"
+                        :openlist="openlist"
+                        >
+                    </Slide>
+                </i-col>
+                <i-col span="20" class="start-box box-orient">
+                    <!-- 筛选结构 -->
+                    <subNav @allControl="fromControl"></subNav>
+                    <!-- 表单主结构 -->
+                    <div class="content-padding start-box box-flex">
+                        <div class="form-slides start-box box-orient">
+                            <div class="slides-top start-box box-pack">
+                                <Select style="width:100px" placeholder="年度报表" v-model="classify">
+                                    <Option v-for="item in classifyList" :value="item.value" :key="item.value">{{ item.name }}</Option>
+                                </Select>
+                                <Select style="width:100px" placeholder="2017年度">
+                                     <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                </Select>
+                            </div>
+                            <div class="slides-content box-flex">
+                                <ul class="slide-list">
+                                    <li class="item" v-for="(item, index) in paperList" :class="{'item-active': item.active}" @click="goDetail(item, index)">{{item.label}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="form-table box-flex" style="position:realtive;overflow:auto;">
+                            <router-view :orders="orders"></router-view>
+                        </div>
+                    </div>
+                </i-col>
+            </Row>
+        </div>
+        <pop :controls="controls"  @cancel="cancel"></pop>
+    </div>
+</template>
+<script>
+    import top from '@/components/top.vue'
+    import Slide from '@/components/slide.vue'
+    import subNav from './nav.vue'
+    import tbs from '@/components/tables/tables.vue'
+    import pop from '@/components/pop/countMore.vue'
+    export default {
+        name: 'countForm',
+        data() {
+            return {
+                controls: false,
+                orders: {},
+                classify: '',
+                classifyList: [{name: '年度报表', value: 1},{name: '自定义报表', value: 2}],
+                
+                url: '/v1/trees/list',
+                openitem: [],
+                openlist: [],
+                currentnode: '',
+                searchString: '',
+                cityList: [
+                    {
+                        value: '1',
+                        label: '2016年度'
+                    },
+                    {
+                        value: '2',
+                        label: '其它年度'
+                    },
+                    
+                ],
+                model1: '',
+                paperList: [{label: '封面', active: true, id: 1, path: 'form1'}, 
+                    {label: '一表：党员数量变化情况一表：党员数量变化情况', active: false, id: 1,path: 'form2'},
+                    {label: '三表：党员数量变化情况一表：党员数量变化情况', active: false, id: 1,path: 'form3'},
+                    ]
+
+            }
+        },
+        computed: {
+        },
+        watch: {
+            '$route' (to, from) {
+                
+            }
+        },
+        components: {
+            top,
+            Slide,
+            subNav,
+            tbs,
+            pop
+        },
+        methods: {
+            fromControl(item) {
+                this.orders = Object.assign({}, item);
+                switch(parseInt(item.type)) {
+                    case 1:  break;
+                    case 2: console.log('报表直统');
+                        this.controls = true;
+                    break;
+                    case 3: console.log('报表汇总');this.controls = true; break;
+                    case 4: console.log('报表校核'); 
+                        let url = window.location.port ? window.location.hostname+':'+window.location.port : window.location.hostname;
+                        window.open('http://'+url+'/#'+item.value);
+                    break;
+                    case 5: console.log('打印'); break;
+                    case 6: console.log('导出'); break;
+                    case 7: console.log('上所解锁'); break;
+                    case 8: console.log('开始录制'); break;
+                    case 9: console.log('保存报表'); break;
+                    default: return;
+                }
+            },
+            cancel() {
+                this.controls = false;
+            },
+            slideDown() {
+                console.log('jieshu')
+            },
+            closeDefault() {
+                console.log(this.$route)
+                if (this.$route.name == 'info' || this.$route.name == 'group') {
+                    this.$router.go(-1);
+                };
+            },
+            //查看详情
+            goDetail(row, index) {
+                event.stopPropagation();
+                this.paperList.forEach(item => item.active = false)
+                row.active = true;
+                this.$router.push({'name':'form-'+(index+1)});
+            },
+            //search
+            searchbar() {
+                let that = this;
+                let qs = require('qs');
+                if (that.searchString == '') {
+                    that.$Message.error('请输入搜索关键字');
+                };
+                this.axios({
+                    method: 'get',
+                    url: '/v1/dept/search-list',
+                    params: {
+                        dept_id: that.$store.state.remberId,
+                        keyword: that.searchString,
+                        opt: 0
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.lists = [];
+                        needData.data.forEach(item => {
+                            that.lists.push(item);
+                        });
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+
+            // tree emit events（events up）
+            reflashList(item) {
+
+            },
+
+
+            getnode(node) {
+                // console.log(node)
+            },
+            reflash() {
+
+            }
+
+        },
+        created() {
+                
+        },
+        mounted() {
+
+            let params = this.$route.name.split('-')[1];
+            if (params) {
+                this.paperList.forEach(item => item.active = false)
+                this.paperList[params-1].active = true;
+            };    
+        },
+    }
+</script>
+<style scope>
+    .ivu-select-placeholder {
+        color: #495060 !important;
+    }
+    .form-slides {
+        width: 220px;
+        border: 1px solid #dddee1;
+    }
+    .form-slides .slides-top {
+        padding: 5px;
+        border-bottom: 1px solid #dddee1;
+    }
+    .slide-list .item {
+        /*width: 200px;*/
+        height: 40px;
+        line-height: 40px;
+        padding-left: 8px;
+        background-color: #fff;
+        border-bottom: 1px solid #dddee1;
+        width: 100%;
+        white-space: nowrap;
+        text-overflow:ellipsis;
+        overflow: hidden;
+        cursor: pointer;
+    }
+    .slide-list .item.item-active {
+        background: #edf7ff;
+    }
+    .slide-list .item:hover {
+        background: #edf7ff;
+    }
+    .form-slides .slides-content {
+        padding-bottom: 20px;
+        background: #fff;
+        overflow: auto;
+    }
+    .form-table {
+        border: 1px solid #dddee1;
+        margin-left: 6px;
+        background: #fff;
+    }
+    .togoole-enter-active {
+        transition: all 0.3s;
+    }
+    .togoole-leave-active {
+        transition: all 0.3s;
+    }
+    .slides-enter-active {
+      transition: all .3s ease;
+    }
+    .slides-leave-active {
+      transition: all .8s ease;
+    }
+    .slides-enter, .slides-leave-to
+    {
+      transform: translateX(800px);
+      opacity: 0;
+    }
+</style>

@@ -1,0 +1,113 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import store from '@/store/store'
+import mainIndex from '@/pages/index'
+Vue.use(Router)
+
+
+const router = new Router({
+  routes: [
+    {
+      path: '/login',
+      name: 'login',
+      component: resolve => require(['@/pages/login.vue'], resolve)
+    },
+  	//首页
+    {
+      path: '/index',
+      name: 'mainIndex',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/index.vue'], resolve),
+    },
+    //org router
+    {
+      path: '/orgManage',
+      name: 'orgManage',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/orgManage/org.vue'], resolve),
+      children: [{
+        path: 'info',
+        name: 'info',
+        component: resolve => require(['@/components/infoDetail/info.vue'], resolve),
+      },{
+        path: 'copy',
+        name: 'info',
+        component: resolve => require(['@/components/infoDetail/info.vue'], resolve),
+      }],
+    },
+    //dangyuan router
+    {
+      path: '/dangyuan',
+      name: 'dangyuan',
+      meta: {
+          requireAuth: true,
+      },
+      component: resolve => require(['@/pages/dangyuanManage/dangyuan.vue'], resolve),
+    },
+    {//班子成员新增弹窗路由
+      path: '/TeamMember',
+      name: 'TeamMember',
+      meta: {
+        requireAuth: true,
+      },
+      component: resolve => require(['@/components/pop/TeamMember.vue'], resolve),
+    },
+    {//奖惩情况新增弹窗路由
+      path: '/RewardPunishment',
+      name: 'RewardPunishment',
+      meta: {
+        requireAuth: true,
+      },
+      component: resolve => require(['@/components/pop/RewardPunishment.vue'], resolve),
+    },
+    {//民主评议新增的弹窗路由
+      path: '/DemocraticReview',
+      name: 'DemocraticReview',
+      meta: {
+        requireAuth: true,
+      },
+      component: resolve => require(['@/components/pop/DemocraticReview.vue'], resolve),
+    },
+    {//学历学位新增的弹窗路由
+      path: '/Degree',
+      name: 'Degree',
+      meta: {
+        requireAuth: true,
+      },
+      component: resolve => require(['@/components/pop/Degree.vue'], resolve),
+    },
+    {//工作岗位新增的弹窗路由
+      path: '/WorkPost',
+      name: 'WorkPost',
+      meta: {
+        requireAuth: true,
+      },
+      component: resolve => require(['@/components/pop/WorkPost.vue'], resolve),
+    },
+    {//党组织维护下/整建制转移/内部转移弹窗路由
+      path: '/InsideTransfer',
+      name: 'InsideTransfer',
+      meta: {
+        requireAuth: true,
+      },
+      component: resolve => require(['@/components/pop/InsideTransfer.vue'], resolve),
+    },
+
+    { //默认首页
+       path: '/',
+       redirect: '/orgManage'
+    },
+    { //默认错误页
+      path: '*',
+      component: resolve => require(['@/pages/404.vue'], resolve),
+    },
+
+  ]
+})
+
+export default router;
+

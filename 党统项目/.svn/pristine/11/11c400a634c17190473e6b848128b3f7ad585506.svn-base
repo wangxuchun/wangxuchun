@@ -1,0 +1,104 @@
+<template>
+<div class="memberinfo-hard">
+    <div class="memberinfo-form">
+        <Form :label-width="160">
+            <FormItem label="困难党员类型">
+                <Select  :disabled="!editing">
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="健康状况">
+                <Select :disabled="!editing">
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="是否享受城镇最低生活保障">
+                <Select :disabled="!editing">
+                    <Option :value="2">否</Option>
+                    <Option :value="1">是</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="是否享受优抚对象抚恤补助">
+                <Select :disabled="!editing">
+                    <Option :value="2">否</Option>
+                    <Option :value="1">是</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="建国前入党没有工作老党员">
+                <Select :disabled="!editing">
+                    <Option :value="2">否</Option>
+                    <Option :value="1">是</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="生活困难情况补充">
+                <Input :disabled="!editing"></Input>
+            </FormItem>
+        </Form>
+    </div>
+    <div class="aside-bottom">
+        <Button v-show="!editing" @click="editInfo" type="primary">编辑</Button>
+        <Button v-show="editing" @click="cancelEdit" type="ghost">取消</Button>
+        <Button v-show="editing" @click="save" type="primary">保存</Button>
+    </div>
+</div>
+</template>
+<script>
+export default {
+    name : 'memberinfo-hard',
+    props: {
+        viewdata : null
+    },
+    data() {
+        return {
+            formModel : {
+
+            },
+            currentData : this.viewdata,
+            editing : false, // 编辑状态
+            formFields: {
+
+            },
+            tempFormData: {},
+            formValidate: {}
+        };
+    },
+    methods: {
+        fetchField(code = ''){
+            return this.axios({
+                method: 'get',
+                url: '/v1/dictionary/get-list-by-type',
+                params: {
+                    // uid: id
+                    type: code
+                }
+            })
+        }
+    }
+}
+</script>
+<style scoped>
+.memberinfo-hard{
+    height: 100%;
+}
+.memberinfo-form{
+    padding: 20px 8px 50px 8px;
+}
+.memberinfo-avatar{
+    display: block;
+    margin: auto;
+    width: 85px;
+    height: 120px;
+    vertical-align: middle;
+}
+.aside-bottom{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #ddd;
+    padding: 8px;
+    text-align: right;
+    background-color: #f8f8f8;
+}
+</style>

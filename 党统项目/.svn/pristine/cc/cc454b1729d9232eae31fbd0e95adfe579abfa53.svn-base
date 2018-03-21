@@ -1,0 +1,125 @@
+<template>
+    <div class="info-content start-box box-orient" @click="stopP">
+        <div class="info-title start-box box-align box-pack info-padding">
+            <p>{{this.$store.state.slideData.name}}</p>
+            <i class="cursor-point ivu-icon ivu-icon-close"  @click="closeInfo"></i>
+        </div>
+        <Switchs :switchs="switchs" @changSwitch="changSwitch"></Switchs>
+        <Info v-if="switchOpen == 0" ></Info>
+        <ContactInfo v-if="switchOpen == 1"></ContactInfo>
+        <Team v-if="switchOpen == 2"></Team>
+        <Reward v-if="switchOpen == 3"></Reward>
+        <Unit v-if="switchOpen == 4"></Unit>
+        <Review v-if="switchOpen == 5"></Review>
+        <HistoryParty v-if="switchOpen == 6"></HistoryParty>
+        <!-- <Info v-if="switchOpen"></Info> -->
+        <router-view></router-view>
+    </div>
+</template>
+<script>
+
+    import Switchs from '@/components/switchs.vue'
+    import Info from '@/components/forms/baseInfo.vue'
+    import ContactInfo from '@/components/forms/contactInfo.vue'
+    import Team from '@/components/forms/team.vue'
+    import Reward from '@/components/forms/reward.vue'
+    import Unit from '@/components/forms/unit.vue'
+    import Review from '@/components/forms/review.vue'
+    import HistoryParty from '@/components/forms/historyParty.vue'
+    export default {
+        name: 'info',
+        data() {
+            return {
+                switchOpen: 0,
+                buttonType: 'ghost',
+                switchs: [{name: '基本情况', active: true, route: 'baseInfo'},
+                    {name: '联系方式', active: false, route: 'ContactInfo'},
+                    {name: '班子成员', active: false, route: 'Team'},
+                    {name: '奖惩情况', active: false, route: 'Reward'},
+                    {name: '单位信息', active: false, route: 'Unit'},
+                    {name: '支部民主评议', active: false, route: 'Review'},
+                    {name: '历史党支部信息', active: false, route: 'HistoryParty'},
+                ],
+                infodata: {}
+            }
+        },
+        computed: {
+        },
+        watch: {
+            // '$route' (to, from) {
+            //     this.getInfo(this.$route.params.id);
+            // }
+        },
+        components: {
+           Info,
+           Switchs,
+           ContactInfo,
+           Team,
+           Reward,
+           Unit,
+           Review,
+           HistoryParty
+        },
+        methods: {
+            stopP() {
+                event.stopPropagation();
+            },
+            switchButton() {
+                this.buttonType = 'error'
+            },
+            closeInfo() {
+                this.$router.go(-1);
+            },
+            // events up tableswitch change
+            changSwitch(data) {
+                if (!this.$store.state.isEdit) {
+                    alert('编辑模式下请完成编辑');
+                    return;
+                };
+                let that = this;
+                if (!this.switchs[data.index].active) {
+                    for (let i = 0; i < this.switchs.length; i++) {
+                         this.switchs[i].active = false;
+                    };
+                    that.switchs[data.index].active = true;
+                };
+                that.switchOpen = data.index;
+            },
+            getInfo(id, type) {
+                let that = this;
+                let qs = require('qs');
+                this.axios({
+                    method: 'get',
+                    url: '/v1/dept/detail',
+                    params: {
+                        dept_id: id ? id : 0,
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.infodata = needData.data;
+                        // that.$store.infoData = needData.data;
+                        // console.log(that.$store.infoData.name)
+                        // console.log(that.infodata)
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })
+            },
+        },
+        created() {
+           //this.getInfo(this.$route.params.id);
+        },
+        mounted() {
+            
+        },
+    }
+</script>
+<style scope>
+
+</style>

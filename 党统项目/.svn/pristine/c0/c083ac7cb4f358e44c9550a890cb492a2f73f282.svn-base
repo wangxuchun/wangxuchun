@@ -1,0 +1,102 @@
+<template>
+    <div class="info-content start-box box-orient">
+        <div class="info-title start-box box-align box-pack info-padding">
+            <p>软件党支部</p>
+            <i class="cursor-point ivu-icon ivu-icon-close"  @click="closeInfo"></i>  
+        </div>
+        <Switchs :switchs="switchs" @changSwitch="changSwitch"></Switchs>
+        <Info v-if="switchOpen" :infodata="infodata"></Info>
+    </div>
+</template>
+<script>
+    import Info from '@/components/forms/baseInfo.vue'
+    import Switchs from '@/components/switchs.vue'
+
+    export default {
+        name: 'info',
+        data() {
+            return {
+                switchOpen: true,
+                buttonType: 'ghost',
+                switchs: [{name: '基本情况', active: true},
+                    {name: '联系方式', active: false},
+                    {name: '班子成员', active: false},
+                    {name: '奖惩情况', active: false},
+                    {name: '单位信息', active: false},
+                    {name: '支部民主评议', active: false},
+                    {name: '历史党支部信息', active: false},
+                ],
+                infodata: {}
+            }
+        },
+        computed: {
+        },
+        watch: {
+            '$route' (to, from) {
+                if (/copy/.test(to.path)) {
+                    this.getInfo(this.$route.query.id);      
+                } else if(/info/.test(to.path)) {
+                    this.getInfo(this.$route.query.id);      
+                }
+            }
+        },
+        components: {
+           Info,
+           Switchs
+        },
+        methods: {
+            switchButton() {
+                this.buttonType = 'error'
+            },
+            closeInfo() {
+                this.$router.go(-1);
+            },
+            // events up tableswitch change
+            changSwitch(data) {
+                let that = this;
+                if (!this.switchs[data.index].active) {
+                    for (let i = 0; i < this.switchs.length; i++) {
+                         this.switchs[i].active = false;
+                    };
+                    that.switchs[data.index].active = true;
+                };
+            },
+            getInfo(id, type) {
+                let that = this;
+                let qs = require('qs');
+                this.axios({
+                    method: 'get',
+                    url: '/v1/dept/detail',
+                    params: {
+                        dept_id: id ? id : 0,
+                        opt: type ? type : 0,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        for(let item in needData.data) {
+                            that.infodata[item] = needData.data[item];
+                        }
+                       // console.log(that.infodata)
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                })    
+            },
+        },
+        created() {
+                
+        },
+        mounted() { 
+            // console.log(this.$route)  
+            this.getInfo(this.$route.query.id);          
+        },
+    }
+</script>
+<style scope>
+    
+</style>

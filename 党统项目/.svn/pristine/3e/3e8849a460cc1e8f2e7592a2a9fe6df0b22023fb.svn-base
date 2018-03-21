@@ -1,0 +1,386 @@
+<template>
+<div class="memberinfo-partymemberinfo">
+    <div class="memberinfo-form">
+        <Form :label-width="0" ref="infoForm" :model="infoForm" :rules="ruleValidate">
+            <div v-if="infoForm.deleteflag=='0'">
+                <Row>
+                    <Col span="12">
+                    <FormItem class="reset-style" label="人员类型">
+                        <Input disabled v-model="infoForm.type_id_desc"></Input>
+                    </FormItem>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span='12'>
+                    <FormItem class="reset-style" label="申请入党日期" prop="apply_date">
+                        <DatePicker :disabled="!isEdit" v-model="infoForm.apply_date" type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+                    </FormItem>
+                    </Col>
+                    <Col span='12'>
+                    <FormItem class="reset-style" label="列为积极份子日期" prop="active_date">
+                        <DatePicker :disabled="!isEdit" v-model="infoForm.active_date" type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+                    </FormItem>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span='12'>
+                    <FormItem class="reset-style" label="列为发展对象日期" prop="develop_date">
+                        <DatePicker :disabled="!isEdit" v-model="infoForm.develop_date" type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+                    </FormItem>
+                    </Col>
+                    <Col span='12'>
+                    <FormItem class="reset-style" label="参加培训日期" prop="train_date">
+                        <DatePicker :disabled="!isEdit" v-model="infoForm.train_date" type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+                    </FormItem>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span="12">
+                    <FormItem class="reset-style" label="入党日期" prop="party_date">
+                        <DatePicker :transfer=true :disabled="!isEdit" type="date" v-model="infoForm.party_date" placeholder="选择日期" style="width: 100%"></DatePicker>
+                    </FormItem>
+                    </Col>
+                    <Col span="12">
+                    <FormItem class="reset-style" label="入党类型" prop="join_source_list">
+                        <Select :transfer=true v-model="infoForm.join_source" :disabled="!isEdit">
+                                <Option v-for='item in join_source_list' :key="item.id" :value="item.id" :disabled="item.choosed==0">{{item.name}}</Option>
+                            </Select>
+                    </FormItem>
+                    </Col>
+
+                </Row>
+                <Row>
+                    <Col span="12">
+                    <FormItem class="reset-style" label="转正日期">
+                        <DatePicker :transfer=true :disabled="!isEdit" type="date" v-model="infoForm.join_party_date" placeholder="选择日期" style="width: 100%"></DatePicker>
+                    </FormItem>
+                    </Col>
+                    <Col span="12">
+                    <FormItem class="reset-style" label="转正情况">
+                        <Select placement='top' :transfer=true v-model="infoForm.to_normal_type" :disabled="!isEdit">
+                            <Option v-for='item in to_normal_type_list' :key="item.id" :value="item.id" :disabled="item.choosed==0">{{item.name}}</Option>
+                        </Select>
+                    </FormItem>
+                    </Col>
+                </Row>
+            </div>
+            <div v-if="infoForm.deleteflag!=='0'">
+                <Row>
+                    <Col span="12">
+                    <FormItem class="reset-style" label="离开中共组织日期">
+                        <DatePicker :disabled="!isEdit" type="date" v-model="infoForm.left_dept_time" placeholder="选择日期" style="width: 100%"></DatePicker>
+                    </FormItem>
+                    </Col>
+                    <Col span="12">
+                    <FormItem class="reset-style" label="离开中共组织类型">
+                        <Select v-model="infoForm.left_type" :disabled="!isEdit">
+                                <Option v-for='item in left_type_list' :key="item.id" :value="item.id" :disabled="item.choosed==0">{{item.name}}</Option>
+                            </Select>
+                    </FormItem>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span="12">
+                    <FormItem class="reset-style" label="出党原因">
+                        <Select v-model="infoForm.left_reason" :disabled="!isEdit">
+                                <Option v-for='item in left_reason_list' :key="item.id" :value="item.id" :disabled="item.choosed==0">{{item.name}}</Option>
+                            </Select>
+                    </FormItem>
+                    </Col>
+                    <Col span="12">
+
+                    </Col>
+                </Row>
+            </div>
+        </Form>
+    </div>
+    <div class="aside-bottom" v-show="editable">
+        <Button v-show="!isEdit" @click="toggleEdit" type="primary">编辑</Button>
+        <Button v-show="isEdit" @click="returnData" type="ghost">取消</Button>
+        <Button v-show="isEdit" type="primary" @click="handleSubmit('infoForm')">保存</Button>
+    </div>
+</div>
+</template>
+
+<script>
+export default {
+    name: 'memberinfo-partymemberinfo',
+    props: {
+        viewdata: null,
+        editable: {
+            type: Boolean,
+            default: true
+        }
+    },
+    data() {
+        return {
+            isEdit: false,
+            join_source_list: [],
+            to_normal_type_list: [],
+            left_type_list: [],
+            left_reason_list: [],
+            url: '/v1/membership/edit',
+            uid: this.$route.params.uid,
+            infoForm: {
+                type_id: '',
+                type_id_desc: '123',
+                party_date: '',
+                join_source: '',
+                join_party_date: '',
+                to_normal_type: '',
+                left_dept_time: '',
+                left_type: '',
+                left_reason: '',
+                deleteflag: '0',
+                apply_date: '',
+                active_date: '',
+                develop_date: '',
+                train_date: '',
+            },
+            oldForm: {
+
+            },
+            ruleValidate: {
+                party_date: [{
+                    required: true,
+                    type: 'date',
+                    message: '入党日期不能为空',
+                    trigger: 'change'
+                }],
+                join_source: [{
+                    required: true,
+                    message: '入党类型不能为空',
+                    trigger: 'change'
+                }],
+                apply_date: [{
+                    required: true,
+                    type: 'date',
+                    message: '申请入党日期不能为空',
+                    trigger: 'change'
+                }],
+                active_date: [{
+                    required: true,
+                    type: 'date',
+                    message: '列为积极份子日期不能为空',
+                    trigger: 'change'
+                }],
+                develop_date: [{
+                    required: true,
+                    type: 'date',
+                    message: '列为发展对象日期不能为空',
+                    trigger: 'change'
+                }],
+                train_date: [{
+                    required: true,
+                    type: 'date',
+                    message: '参加培训日期不能为空',
+                    trigger: 'change'
+                }],
+            },
+            filters: {
+                dateFormat(value) {
+                    if (value == '') {
+                        return
+                    }
+                    var date = new Date(+value),
+                        Y = date.getFullYear(),
+                        m = date.getMonth() + 1,
+                        d = date.getDate(),
+                        H = date.getHours(),
+                        i = date.getMinutes(),
+                        s = date.getSeconds();
+                    if (m < 10) {
+                        m = '0' + m;
+                    }
+                    if (d < 10) {
+                        d = '0' + d;
+                    }
+                    if (H < 10) {
+                        H = '0' + H;
+                    }
+                    if (i < 10) {
+                        i = '0' + i;
+                    }
+                    if (s < 10) {
+                        s = '0' + s;
+                    }
+                    var t = Y + '-' + m + '-' + d;
+                    return t;
+                }
+            },
+        };
+    },
+    methods: {
+        handleSubmit(name) {
+            let that = this;
+            that.$refs[name].validate((valid) => {
+                if (valid) {
+                    let qs = require('qs');
+                    let _data = {};
+                    _data['uid'] = that.uid;
+                    for (let item in that.infoForm) {
+                        if (item.indexOf('time') >= 0 || item.indexOf('date') >= 0) {
+                            _data[item] = that.filters.dateFormat(that.infoForm[item]);
+                        } else {
+                            _data[item] = that.infoForm[item];
+                        }
+                    }
+                    for (let key in _data) {
+                        if (that.infoForm.deleteflag == "0" && key.indexOf('left') >= 0) {
+                            delete _data[key]
+                        } else if (that.infoForm.deleteflag == "1" && key.indexOf('left') < 0) {
+                            delete _data[key]
+                        }
+                    }
+                    that.axios({
+                            method: 'post',
+                            url: that.url,
+                            data: qs.stringify(_data)
+                        })
+                        .then(res => {
+                            let needData = res.data;
+                            if (needData.code == 200) {
+                                setTimeout(() => {
+                                    that.$Message.success('提交成功!');
+                                    that.toggleEdit();
+                                    that.getDetail();
+                                }, 200)
+                            } else {
+                                that.$Message.error(needData.msg);
+                            }
+                        })
+                        .catch(err => {
+                            this.$Message.error('网络请求异常');
+                        });
+                } else {
+                    this.loading = false;
+                    this.$Message.error('表单验证失败!');
+                    setTimeout(() => {
+                        this.loading = true;
+                    }, 20);
+                }
+            })
+        },
+        toggleEdit() {
+            this.isEdit = !this.isEdit;
+        },
+        returnData() {
+            this.toggleEdit();
+            this.infoForm = Object.assign({}, this.oldForm);
+        },
+        getList(type, arr) {
+            let that = this;
+            let qs = require('qs');
+            if (that[arr].length > 1) {
+                return
+            }
+            that.axios({
+                    method: 'get',
+                    url: 'v1/dictionary/get-list-by-type',
+                    params: {
+                        type: type
+                    },
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        setTimeout(() => {
+                            that[arr] = needData.data;
+                        }, 200)
+                    } else {
+                        that.$Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.$Message.error('网络请求异常');
+                });
+        },
+        getDetail() {
+            let that = this;
+            that.axios({
+                    url: '/v1/membership/detail',
+                    method: 'get',
+                    params: {
+                        uid: that.$route.params.uid,
+                    }
+                })
+                .then(res => {
+                    let needData = res.data;
+                    if (needData.code == 200) {
+                        that.infoForm = Object.assign({}, needData.data);
+                        for (var key in that.infoForm) {
+                            if (key.indexOf('time') >= 0 || key.indexOf('date') >= 0) {
+                                if (that.infoForm[key] != "") {
+                                    that.infoForm[key] = new Date(that.infoForm[key]);
+                                }
+                            }
+                        }
+                        that.oldForm = Object.assign({}, that.infoForm);
+                    } else {
+                        that.Message.error(needData.msg);
+                    }
+                })
+                .catch(err => {
+                    this.Message.error('网络请求异常');
+                })
+        },
+        cancel() {
+            //this.$Message.info('点击了取消');
+            this.$router.back();
+        }
+    },
+    mounted() {
+        this.getList('C02011', 'join_source_list');
+        this.getList('C02018', 'to_normal_type_list');
+        this.getList('DT12', 'left_type_list');
+        this.getList('C02027', 'left_reason_list');
+        this.getDetail();
+    }
+}
+</script>
+
+<style>
+.reset-style {
+    margin-bottom: 14px;
+}
+
+.reset-style .ivu-form-item-label {
+    text-align: left;
+}
+
+.reset-style .ivu-form-item-content {
+    margin-right: 15px;
+}
+</style>
+
+<style scoped>
+.info-detail {
+    padding: 0 15px;
+}
+
+.memberinfo-partymemberinfo {
+    height: 100%;
+}
+
+.memberinfo-form {
+    padding: 20px 8px 50px 8px;
+}
+
+.memberinfo-avatar {
+    display: block;
+    margin: auto;
+    width: 85px;
+    height: 120px;
+    vertical-align: middle;
+}
+
+.aside-bottom {
+    /*position: absolute;*/
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #ddd;
+    padding: 8px;
+    text-align: right;
+    background-color: #f8f8f8;
+}
+</style>

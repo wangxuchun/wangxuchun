@@ -1,0 +1,190 @@
+<!--奖惩情况form-->
+<template>
+    <div class="box-flex start-box box-orient">
+        <div class="info-detail box-flex">
+          <Row>
+            <Button style="float: right;" @click="addReward">新增</Button>
+          </Row>
+          <Row>
+            <Table border :columns="cloums" :data="lists" style="margin-top: 10px;margin-left: 10px"></Table>
+          </Row>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        name: 'reward',
+        data() {
+          return {
+              cloums: [
+                  {
+                    title: '奖惩名称',
+                    key: 'type_name',
+                  },
+                  {
+                    title: '批准组织',
+                    key: 'approval_dept_name'
+                  },
+                  {
+                    title: '批准时间',
+                    key: 'time'
+                  },
+                  {
+                    title: '操作',
+                    key: 'action',
+                    width: 180,
+                    align: 'center',
+                    render: (h, params) => {
+                    return h('div', [
+                      h('Button', {
+                        props: {
+                          type: 'primary',
+                          size: 'small'
+                        },
+                        style: {
+                          marginRight: '5px'
+                        },
+                        on: {
+                          click: () => {
+                            this.showDetail(params);
+                          }
+                    }
+                    }, '查看'),
+                      h('Button', {
+                        props: {
+                          type: 'primary',
+                          size: 'small'
+                        },
+                        style: {
+                          marginRight: '5px'
+                        },
+                        on: {
+                          click: () => {
+                            this.edit(params);
+                          //this.remove(params.index)
+                      }
+                    }
+                    }, '编辑'),
+                      h('Button', {
+                        props: {
+                          type: 'error',
+                          size: 'small'
+                        },
+                        style: {
+                          marginRight: '5px'
+                        },
+                        on: {
+                          click: () => {
+                            this.remove(params)
+                          }
+                        }
+                      }, '删除'),
+                    ]);
+                    }
+                  }
+                ],
+                lists: [
+                ],
+                formValidate: {
+
+                },
+                ruleValidate: {
+
+                },
+                datas: this.infodata,
+            }
+        },
+        filters:{
+          dateFormat(value){
+            var date = new Date(+value),
+                Y = date.getFullYear(),
+                m = date.getMonth() + 1,
+                d = date.getDate(),
+                H = date.getHours(),
+                i = date.getMinutes(),
+                s = date.getSeconds();
+              if (m < 10) {
+                m = '0' + m;
+              }
+              if (d < 10) {
+                d = '0' + d;
+              }
+              if (H < 10) {
+                H = '0' + H;
+              }
+              if (i < 10) {
+                i = '0' + i;
+              }
+              if (s < 10) {
+                s = '0' + s;
+              }
+              var t = Y + '-' + m + '-' + d;
+              return t;
+          }
+        },
+        props: ['infodata'],
+        components: {
+        },
+        watch: {
+            '$route' (to, from) {
+            },
+        },
+        methods: {
+          showDetail() {
+            this.$router.push({name: 'RewardPunishment', params: {recodeId: 456, type: 2}});
+          },
+          remove() {
+            this.$router.push({name: 'RewardPunishment', params: {id: this.$route.params['id']}});
+          },
+          edit(item) {
+            this.$router.push({name: 'RewardPunishment', params: { recodeId: item.row.id, type: 1 }});
+          },
+          addReward() {
+            this.$router.push({name: 'RewardPunishment', params: {id: this.$route.params['id']}});
+          },
+          handleSubmit (name) {
+              this.$refs[name].validate((valid) => {
+                  if (valid) {
+                      this.$Message.success('提交成功!');
+                  } else {
+                      this.$Message.error('表单验证失败!');
+                  }
+              })
+          },
+          handleReset (name) {
+              this.$refs[name].resetFields();
+          },
+         
+        },
+        created() {
+
+        },
+        mounted() {
+          let that = this;
+          let qs = require('qs');
+          this.axios({
+              method: 'get',
+              url: '/v1/deptrule/list',
+              params: {
+                dept_id: that.$route.params['id'],
+              }
+            })
+            .then(res => {
+              let needData = res.data;
+              if (needData.code == 200) {
+                needData.data.forEach(item => {
+                  that.lists.push(item);
+                })
+              } else {
+                that.$Message.error(needData.msg);
+              }
+            })
+            .catch(err => {
+              this.$Message.error('网络请求异常');
+            })
+        },
+    }
+</script>
+<style scope>
+
+</style>

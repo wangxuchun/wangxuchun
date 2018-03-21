@@ -1,0 +1,337 @@
+<template>
+<div class="memberinfo-abroad">
+    <div class="memberinfo-form">
+        <Form :label-width="0" ref="infoform" :model="infoform" :rules="ruleValidate">
+            <Row>
+                <Col span='12'>
+                   <FormItem class="reset-style"label="所至国家(地区)" prop="country">
+                        <Select :transfer="true" v-model="infoform.country" :disabled="!editing">
+                            <Option v-for='item in country_list' :key="item.id" :value="item.id" :disabled="item.choosed==0">{{item.name}}</Option>
+                        </Select>
+                    </FormItem>
+                </Col>
+                <Col span='12'>
+                    <FormItem class="reset-style" label="出国(境)日期" prop="abroad_time">
+                        <DatePicker  v-model="infoform.abroad_time" :disabled="!editing2" type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+                    </FormItem>  
+                </Col>
+            </Row>
+            <Row>
+                <Col span='12'>
+                   <FormItem class="reset-style"   label="出国(境)原因" prop="abroad_reason">
+                        <Input :disabled="!editing2" v-model="infoform.abroad_reason"></Input>
+                    </FormItem>
+                </Col>
+                <Col span='12'>
+                    <FormItem class="reset-style"   label="出国党员与党组织联系情况" prop="concat">
+                        <Select :disabled="!editing2" v-model="infoform.concat">
+                            <Option v-for='item in concat_list' :key="item.id" :value="item.id" :disabled="item.choosed==0">{{item.name}}</Option>
+                        </Select>
+                    </FormItem>
+        
+                </Col>
+            </Row>
+            <Row>
+                <Col span='12'>
+                   <FormItem class="reset-style"   label="回国情况">
+                        <Select :disabled="!editing2" v-model="infoform.back">
+                            <Option v-for='item in back_list' :key="item.id" :value="item.id" :disabled="item.choosed==0">{{item.name}}</Option>
+                        </Select>
+                    </FormItem>
+                </Col>
+                <Col span='12'>
+                    <FormItem class="reset-style"   label="回国日期">
+                        <DatePicker v-model="infoform.back_time" :disabled="!editing2" type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+                    </FormItem>
+                </Col>
+            </Row>
+            <Row>
+                <Col span='12'>
+                   <FormItem class="reset-style"   label="恢复组织生活情况">
+                        <Select :disabled="!editing2" v-model="infoform.recover">
+                            <Option v-for='item in recover_list' :key="item.id" :value="item.id" :disabled="item.choosed==0">{{item.name}}</Option>
+                        </Select>
+                    </FormItem>
+                </Col>
+                <Col span='12'>
+                    <FormItem class="reset-style"   label="组织关系出国（境）时是否转往过（境）外">
+                        <Select :disabled="!editing2"  v-model="infoform.relation_abroad">
+                            <Option value="0">否</Option>
+                            <Option value="1">是</Option>
+                        </Select>
+                    </FormItem> 
+                </Col>
+            </Row>     
+        </Form>
+    </div>
+    <div class="aside-bottom" v-show="editable">
+        <Button v-show="!editing" @click="toggleEdit" type="primary">编辑</Button>
+        <Button v-show="editing" @click="cancelEdit" type="ghost">取消</Button>
+        <Button v-show="editing" @click="reset" type="ghost">重置</Button>
+        <!-- <Button v-show="editing"  @click="reset" type="ghost">清空</Button> -->
+        <Button v-show="editing" @click="save('infoform')" type="primary">保存</Button>
+    </div>
+</div>
+</template>
+<script>
+export default {
+    name : 'memberinfo-abroad',
+    props: {
+        viewdata : null,
+        editable : {
+            type : Boolean,
+            default : true
+        }
+    },
+    data(){
+        return{
+            infoform : {
+                country:'',
+                abroad_time:'',
+                abroad_reason:'',
+                concat:'',
+                back:'',
+                back_time:'',
+                recover:'',
+                relation_abroad:'',
+            },
+            oldData:{},
+            country_list:[],
+            concat_list:[],
+            back_list:[],
+            recover_list:[],
+            editing : false, // 编辑状态
+            editing2:false,
+            url:'/v1/abroad/edit',
+            uid:this.$route.params.uid,
+            ruleValidate: {
+                    
+            },
+            ruleValidate2: {
+               country: [
+                   {required: true, message: '所至国家(地区)不能为空', trigger: 'change'}
+               ],
+               abroad_time:[
+                   {required: false,type:'date', message: '出国(境)日期不能为空', trigger: 'change'}
+               ],
+               abroad_reason:[
+                   {required: true, message: '出国(境)原因不能为空', trigger: 'blur'}
+               ],
+               concat:[
+                   {required: true, message: '出国党员与党组织联系情况', trigger: 'change'}
+               ],
+            },
+            filters:{
+                dateFormat(value){
+                    if(value==''){return}
+                    var date = new Date(+value),
+                        Y = date.getFullYear(),
+                        m = date.getMonth() + 1,
+                        d = date.getDate(),
+                        H = date.getHours(),
+                        i = date.getMinutes(),
+                        s = date.getSeconds();
+                    if (m < 10) {
+                        m = '0' + m;
+                    }
+                    if (d < 10) {
+                        d = '0' + d;
+                    }
+                    if (H < 10) {
+                        H = '0' + H;
+                    }
+                    if (i < 10) {
+                        i = '0' + i;
+                    }
+                    if (s < 10) {
+                        s = '0' + s;
+                    }
+                    var t = Y+'-'+ m +'-'+ d;
+                    return t;
+                }
+            }
+        };
+    },
+
+    methods:{
+        getList(type,arr){
+            let that = this;
+            let qs = require('qs');
+            if(that[arr].length>1){
+                return
+            }
+            that.axios({
+                method : 'get',
+                url : 'v1/dictionary/get-list-by-type',
+                params:{
+                    type:type
+                },
+            })
+            .then(res=>{
+                let needData = res.data;
+                if (needData.code == 200) {
+                setTimeout(()=>{
+                            that[arr] = needData.data;
+                },200)
+                } else {
+                    that.$Message.error(needData.msg);
+                }
+            })
+            .catch(err => {
+                this.$Message.error('网络请求异常');
+            });
+        },
+        getData(){
+            let that = this;
+            that.axios({
+                url:'/v1/abroad/detail',
+                method:'get',
+                params:{
+                    uid:that.$route.params.uid,
+                },
+            })
+            .then(res=>{
+                let needData = res.data;
+                if (needData.code == 200) {
+                    if(needData.data.length<=0){
+                        return
+                    }
+                    for (let key in needData.data ) {
+                       if(key.indexOf('time')>=0){
+                           needData.data[key] = new Date(needData.data[key]);
+                       }
+                    }
+                    that.infoform = Object.assign({},needData.data);
+                    that.oldData =  Object.assign({},needData.data);
+
+                } else {
+                    that.Message.error(needData.msg);
+                }
+            })
+            .catch(err=>{
+                this.Message.error('网络请求异常');
+            })
+        },
+        toggleEdit(){
+            this.editing = !this.editing
+        },
+        cancelEdit(){
+            // 延迟改变默认值
+            setTimeout(() => {
+                this.infoform = Object.assign({}, this.oldData);
+            }, 300)
+            this.toggleEdit();
+             this.$refs['infoform'].resetFields();
+        },
+        save(name){
+            // TODO save request
+            let that = this;
+            this.$refs[name].validate((valid) => {
+                if (valid) {
+                    let qs = require('qs');
+                    let _data = Object.assign({},this.infoform);
+                    _data['uid'] = that.uid;
+                    _data.abroad_time = that.filters.dateFormat(_data.abroad_time);
+                    _data.back_time = that.filters.dateFormat(_data.back_time);
+                    that.axios({
+                        method : 'post',
+                        url : that.url,
+                        data:qs.stringify(_data)
+                    })
+                    .then(res=>{
+                        let needData = res.data;
+                        if (needData.code == 200) {
+                        setTimeout(()=>{
+                            that.$Message.success('提交成功!');
+                            that.toggleEdit();
+                            that.getData();
+                        },200)
+                        } else {
+                            that.$Message.error(needData.msg);
+                        }
+                    })
+                    .catch(err => {
+                        this.$Message.error('网络请求异常');
+                    });
+
+                } else {
+                    this.$Message.error('表单验证失败!');
+                }
+            });
+        },
+        //重置功能
+        reset(){
+          let _this = this;
+          for(let i in _this.infoform){
+            _this.infoform[i] = "";
+          }
+         
+        }
+    },
+    watch:{
+        'infoform.country' (newval,oldval){
+            if(newval!=""){
+               // this.ruleValidate = Object.assign({},this.ruleValidate2);
+                for (let key in this.ruleValidate2) {
+                    this.ruleValidate[key]  = this.ruleValidate2[key];
+                }
+                this.editing2 = true;
+                
+            }else{
+                for (let key in this.ruleValidate) {
+                   this.ruleValidate[key] = "";
+                   //this.$refs['infoform'].resetFields();
+                }
+                this.editing2 = false;
+            }
+        },
+    },
+    mounted(){
+        this.getList('A12001A','country_list');
+        this.getList('C09003','concat_list');
+        this.getList('C09006','back_list');
+        this.getList('C09007','recover_list');
+        this.getData();
+    },
+}
+</script>
+
+<style>
+    .reset-style {
+        margin-bottom: 0px;    
+    }
+    .reset-style .ivu-form-item-label {
+        text-align: left;
+    } 
+    .reset-style  .ivu-form-item-content {
+        margin-right: 15px;
+    }
+</style>
+
+<style scoped>
+.info-detail {
+    padding: 0 15px;
+}
+.memberinfo-abroad{
+    height: 100%;
+}
+.memberinfo-form{
+    padding: 20px 8px 50px 8px;
+}
+.memberinfo-avatar{
+    display: block;
+    margin: auto;
+    width: 85px;
+    height: 120px;
+    vertical-align: middle;
+}
+.aside-bottom{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #ddd;
+    padding: 8px;
+    text-align: right;
+    background-color: #f8f8f8;
+}
+</style>

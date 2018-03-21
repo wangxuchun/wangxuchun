@@ -1,0 +1,144 @@
+<template>
+    <div class="toolbar">
+        <Dropdown @on-click="toolOpt" trigger="click" placement="bottom-start">
+            <Button type="ghost">党员维护 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem name="Modal-serv-add">党员增加</DropdownItem>
+                <DropdownItem name="Modal-serv-del">党员删除</DropdownItem>
+                <DropdownItem name="Modal-serv-sort">党员排序</DropdownItem>
+                <DropdownItem name="Modal-serv-distribution">党小组人员分配</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        <Dropdown @on-click="toolOpt" trigger="click" placement="bottom-start">
+            <Button type="ghost">党员减少 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem name="Modal-decr-out">党员出党</DropdownItem>
+                <DropdownItem name="Modal-decr-dead">党员死亡</DropdownItem>
+                <DropdownItem name="Modal-decr-stop">停止党籍</DropdownItem>
+                <!-- <DropdownItem name="Modal-decr-transfer">党员转出</DropdownItem> -->
+            </DropdownMenu>
+        </Dropdown>
+        <Button type="ghost" @click="toolOpt('Modal-serv-batch')">批量修改</Button>
+        <Dropdown @on-click="toolOpt" trigger="click" placement="bottom-start">
+            <Button type="ghost">查询／统计 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem name="Modal-search-combos">组合查询</DropdownItem>
+                <!-- <DropdownItem name="Modal-search-random">随机统计</DropdownItem>
+                <DropdownItem name="Modal-search-single">一个党组织的组合统计</DropdownItem>
+                <DropdownItem name="Modal-search-multi">多个党组织的组合统计</DropdownItem> -->
+            </DropdownMenu>
+        </Dropdown>
+        <Button type="ghost">信息校核</Button>
+        <!-- <Dropdown @on-click="toolOpt" trigger="click" placement="bottom-start">
+            <Button type="ghost">打印 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem>打印啥啊</DropdownItem>
+            </DropdownMenu>
+        </Dropdown> -->
+    </div>
+</template>
+<script>
+    export default {
+        name: 'opt-nav',
+        props:{ 
+            currentRow:null,
+            uid: null,
+            remberRow:null,
+        },
+        data() {
+            return {
+                modal : this.modalname,
+                Row : this.currentRow,
+            }
+        },
+        watch: {
+            currentRow(newVal, oldVal){
+                this.Row = newVal
+            },
+            uid(newVal, oldVal){
+                this.uid = newVal;
+                
+            },
+            remberRow(newVal, oldVal){
+                this.remberRow = newVal;
+            }
+        },
+        methods: {
+            toolOpt(name) {
+                let that = this;
+                let menuName = name.split('-');
+                if (menuName.length < 3) {
+                    return
+                }
+
+                if (name === 'Modal-serv-sort' && this.$store.state.remberNode['type_icon'] != 5 && this.$store.state.remberNode['type_icon'] != 6) {
+                    this.$Message.error('请选择党支部或者党小组');
+                    return;
+                }
+                this.$emit('select');
+                if(menuName[1]=='decr'){
+                    if(!that.uid){
+                        return
+                    }
+                    this.$router.push({path: '/dangyuan/modal/' + menuName[2], query: {uid:that.uid,dept_id:that.$route.params.dept}});
+                }else if(menuName[2]=='del'){
+                        if(!that.$route.params.dept||!that.remberRow){
+                            return
+                        }
+                        this.$Modal.confirm({
+                            title: '警告',
+                            content: '确定要删除'+that.remberRow.row['real_name']+'吗？',
+                            onOk: () => {
+                                var that = this;
+                                let qs = require('qs')
+                                that.axios({
+                                    url:'/v1/member/del',
+                                    method:'get',
+                                    params:{
+                                        uid : that.uid,
+                                        dept_id : that.$route.params.dept,
+                                    },
+                                })
+                                .then(res=>{
+                                    let needData = res.data;
+                                    if (needData.code == 200) {
+                                        this.$Message.success('操作成功');
+                                        that.$emit('del');
+                                    } else {
+                                        that.Message.error(needData.msg);
+                                    }
+                                })
+                                .catch(err=>{
+                                    this.Message.error('网络请求异常');
+                                })
+                            
+                            },
+                            onCancel: () => {
+                            // this.$Message.info('操作取消');
+                            }
+                        });
+                }else if(menuName[2]=='add'){
+                    if(!that.$route.params.dept){
+                        return
+                    }else{
+                        this.$router.push({path: '/dangyuan/modal/' + menuName[2], query: {dept_id:that.$route.params.dept}});
+                    }
+                }else{
+                    this.$router.push({path: '/dangyuan/modal/' + menuName[2], query: {dept_id:that.$route.params.dept}});
+                }
+            },
+        },
+        created() {
+            
+        },
+        mounted() {
+          // console.log(this.$route.params);
+           
+        }
+    }
+</script>
+<style scope>
+    .toolbar .ivu-btn-ghost{
+        background-color: #fff;
+    }
+</style>

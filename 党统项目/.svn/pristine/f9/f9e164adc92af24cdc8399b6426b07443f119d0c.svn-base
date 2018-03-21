@@ -1,0 +1,1056 @@
+<template>
+    <div class="tables" style="width: 820px;">
+        <div class="title text-center">
+           <h3 class="text-center" style="margin: 10px 0;">党员学历情况</h3> 
+           <p>截至日期：2017年12月31日</p>
+        </div>
+        
+        <div class="start-box box-pack" style="position: relative; top: -16px;">
+            <p>填报单位：天房科技党总支</p>
+            <p>第四表</p>
+        </div>
+        <div class="table-outer">
+            <table class="count-table" align="center" cellspacing="0" cellpadding="0" width="100%">
+                <tr>
+                    <td width="150" colspan=3>项目</td>
+                    <td width="60" colspan=2>总数</td>
+                    <td width="60">研究生</td>
+                    <td width="60">大学<br>本科</td>
+                    <td width="60">大学<br>专科</td>
+                    <td width="60">中专</td>
+                    <td width="60">高中、中技</td>
+                    <td width="60">初中及以下</td>
+                </tr>
+                <tr>
+                   <td colspan=3>甲</td> 
+                   <td></td>
+                   <td><strong>A</strong></td>
+                   <td><strong>B</strong></td>
+                   <td><strong>C</strong></td>
+                   <td><strong>D</strong></td>
+                   <td><strong>E</strong></td>
+                   <td><strong>F</strong></td>
+                   <td><strong>G</strong></td>
+                </tr>
+                <tr v-for="(item, index) in tablesData">
+
+                    <td colspan=3 v-if="item.type == 1">{{item.label}}</td>
+
+                    <td width='20' v-if="item.type == 3"></td>
+                    <td colspan=2 v-if="item.type == 3">{{item.label}}</td>
+                    
+                    <td width='20'  v-if="item.type == 2" rowspan=7>{{item.title}}</td>
+                    <td colspan=2  v-if="item.type == 2">{{item.label}}</td>
+                    
+                    <td  v-if="item.type == 4" style="border-left: none;" colspan=2>{{item.label}}</td>
+                    
+                    <td v-if="item.type == 5" width="20" style="border:none;"></td>
+                    <td v-if="item.type == 5" style="border-left: none;">{{item.label}}</td>
+                    
+                    <td v-if="item.type == 6" width="20" style="border-left: none;"></td>
+                    <td v-if="item.type == 6" style="border-left: none;">{{item.label}}</td>
+
+                    <td width=30><strong>{{index+1}}</strong></td>
+
+                    <td v-for="(inner, inx) in item.lists" :style="{'color': inner.disabled ? '#ccc' : '', 'backgroundColor': (index == 0 || index == 1 || index == 2 || inx == 0) ? '#E7F4FE' : (index == 9 || index == 16 || index == 18) ? '#ffece2' : '' }"><input type="text" :disabled="inner.disabled" v-model="inner.value" :style="{'color': inner.disabled ? '#ccc' : '', 'backgroundColor': (index == 0 || index == 1 || index == 2 || inx == 0) ? '#E7F4FE' : (index == 9 || index == 16 || index == 18) ? '#ffece2' : '' }"></td>
+                    
+                </tr>  
+            </table>
+        </div>
+        <router-view></router-view>
+    </div>
+</template>
+<script>
+    export default {
+        name: 'form4',
+        props: {
+            orders: {
+                type: Object,
+                default: function() {
+                    return {}
+                }
+            }
+        },
+        data() {
+            return {
+                msg: 'this is table',
+                tablesData: [
+                    {
+                        type: 1,
+                        title: '',
+                        label: '总计',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: true,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 1,
+                        title: '',
+                        label: '一、在岗职工',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 3,
+                        title: '',
+                        label: '合计',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 2,
+                        title: '公共制单位',
+                        label: '党政机关工作人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 4,
+                        title: '',
+                        label: '事业单位管理人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+
+                    {
+                        type: 4,
+                        title: '',
+                        label: '事业单位专业技术人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 4,
+                        title: '',
+                        label: '企业管理人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 4,
+                        title: '',
+                        label: '企业专业技术人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 5,
+                        title: '',
+                        label: '工勤技能人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 6,
+                        title: '',
+                        label: '农民工',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 2,
+                        title: '非公有制单位',
+                        label: '合计',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 4,
+                        title: '',
+                        label: '企业管理人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 4,
+                        title: '',
+                        label: '企业专业技术人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 4,
+                        title: '',
+                        label: '民办非企业 单位管理人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 4,
+                        title: '',
+                        label: '民办非企业 专业技术人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 5,
+                        title: '',
+                        label: '工勤技能人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 6,
+                        title: '',
+                        label: '农民工',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 1,
+                        title: '',
+                        label: '二、农牧渔民',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 3,
+                        title: '',
+                        label: '外出务工经商人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 1,
+                        title: '',
+                        label: '三、军人、武警',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 1,
+                        title: '',
+                        label: '四、学 生',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 1,
+                        title: '',
+                        label: '五、离退休人员',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    },
+                    {
+                        type: 1,
+                        title: '',
+                        label: '其它',
+                        disabled: false,
+                        bgcolor: "#222",
+                        lists: [
+                        {
+                            disabled: false,
+                            value: 4
+                        },
+                        {
+                            disabled: false,
+                            value: 7
+                        },
+                        {
+                            disabled: false,
+                            value: 67
+                        },
+                        {
+                            disabled: false,
+                            value: 3
+                        },
+                        {
+                            disabled: false,
+                            value: 9
+                        },
+                        {
+                            disabled: false,
+                            value: 6
+                        },
+                        {
+                            disabled: false,
+                            value: 89
+                        }]
+                    }
+                ]
+            }
+        },
+        computed: {
+           
+        },
+        watch: {
+
+        },
+        methods: {
+            todo(item) {
+                switch(parseInt(item.type)) {
+                    //清空报表
+                    case 1: 
+                        this.tablesData.forEach(item => {
+                            item.lists.forEach(it => {
+                                it.value = '';
+                            })
+                        })
+                    break;
+                    //报表直统
+                    case 2: console.log('报表直统');
+                    break;
+                    //报表汇总
+                    case 3: console.log('报表汇总'); 
+                    break;
+                    //报表校核
+                    case 4: console.log('报表校核'); 
+                    break;
+                    //打印
+                    case 5: console.log('打印'); break;
+                    //导出
+                    case 6: console.log('导出'); break;
+                    //上所解锁
+                    case 7: console.log('上所解锁'); break;
+                    //开始录制
+                    case 8: 
+                        this.tablesData.forEach((item, index) => {
+                            if (index > 2) {
+                                item.lists.forEach((it, inx) => {
+                                    if (inx > 0) {
+                                      it.disabled = false;  
+                                    };                            
+                                })
+                            };
+                        })
+                    break;
+                    //保存报表
+                    case 9: 
+                        console.log(this.tablesData)
+                    break;
+                    default: return;
+                }
+            }
+        },
+        created() {
+
+        },
+        mounted() {
+            this.tablesData.forEach(item => {
+                item.lists.forEach(it => {
+                    it.disabled = true;
+                })
+            })
+        },
+        watch: {
+            '$route' (to, from) {
+                
+            },
+            'orders' (newD, oldD) {
+                if (newD != oldD) {
+                    this.todo(newD)
+                };
+            }
+        },
+    }
+</script>
+<style scoped>
+    .table-outer {
+        width: 100%;
+        overflow: auto; 
+    }
+    table tr:first-child td{
+        border-top: 1px solid #222;
+    }
+    table tr td{
+        border-bottom: 1px solid #222;
+        border-right: 1px solid #222;
+        text-align: center;
+    }
+    table tr td input {
+        display: inline-block;
+        display: table-cell;
+        border: none;
+        width: 50px;
+        padding-left: 3px;
+        text-align: center;
+    }
+    table tr td:first-child {
+        border-left: 1px solid #222;
+    }
+    .tips-outer {
+        margin-top: 15px;
+    }
+    .tips input {
+        width: 60px;
+        height: 18px;
+        margin: 0 3px;
+        padding-left: 3px;
+    }
+    .tips p {
+        line-height: 24px;
+    }
+    .tables-containter div {
+        text-align: center;
+    }
+    .comm-left {
+        width: 120px;
+        border: 1px solid #222;
+        border-width: 0 1px 0 0;
+        height: 100%;
+    }
+    .wh100 {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+    .tables {
+        padding: 15px;
+    }
+    .tables-containter {
+        border: 1px solid #222;
+    }
+    .tables-header {
+        height: 60px;
+    }
+    .header-top {
+        height: 40px;
+        border-bottom: 1px solid #222;
+        line-height: 40px;
+    }
+    .header-bottom {
+        height: 20px;
+        line-height: 20px;
+        border-bottom: 1px solid #222;
+    }
+    .count-table input{
+        background-color: transparent;
+    }
+</style>

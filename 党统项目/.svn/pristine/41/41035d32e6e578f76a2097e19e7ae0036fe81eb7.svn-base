@@ -1,0 +1,271 @@
+<template>
+    <div class='task-step-box'>
+        <div style="clear:both;overfllow:hidden;">
+            <div class="task-step">
+                <div v-for="(item,index) in task_step" @click="active(index)" :class="{active:item.active=='true'}" :style="{'z-index':task_step.length-index}" >{{index+1}}<span v-show="item.active=='true'">、{{item.title}}</span></div>
+            </div>
+            <p style="text-align:right;display:inline-block;float:right;">
+              <Button style="margin-left: 10px;"@click="clickBtn(item.id)"  v-for="item in topBtn" :key="item.id" type="ghost">{{item.name}}</Button>
+            </p>
+        </div>
+        <div class="task-branch-step">
+            <div @click="clickMe(item)" v-for="item in task_branch_step" :class="{bingo:item.status=='1', error:item.status=='2', active:item.status=='3'}">
+                <p class="task-status" style="height:21px">{{item.status==1?'已通过':item.status=='2'?'已驳回':item.status=='3'?'进行中':''}}</p>
+                <p><span :class="{'active-bg':item.status==1}">{{item.step}}</span>{{item.content}}</p>
+            </div>
+        </div>
+        <p style="font-size:12px;border-bottom:1px solid #ddd;padding-bottom:10px;margin-bottom:20px;"><span style="font-weight:bold">材料：</span>入党申请人基本情况；推荐和推优情况；支部委员会建议等。<span style="font-weight:bold">要求：</span>了解入党积极分子是否具备条件；手续是否齐全</p>
+        <dataTable v-show="isShow" :msg="dataparams"></dataTable>
+        <fileTable v-show="!isShow"></fileTable>
+    </div>
+</template>
+
+<script>
+    import dataTable from '@/pages/recruitMembers/table-data.vue'
+    import fileTable from '@/pages/recruitMembers/table-file.vue'
+    export default {
+        name:'recruit-tab',
+        data(){
+            return {
+                date:'',
+                isShow: true,
+                statData: [],
+                stepIndex : 0,
+                task_step : [],
+                dataparams:[],//步骤列表信息
+                topBtn:[],//头部按钮  思想汇报 & 发展党员工作信访情况记录
+//                userinfo:{},
+            }
+        },
+        props:['users'],
+        components:{
+            dataTable,
+            fileTable,
+        },
+        methods: {
+            //点击每个操作小步事件
+            clickMe(item){
+              console.log(item);
+              let that = this;
+              let qs = require('qs');
+              this.axios({
+                method:'post',
+                url:'/v1/recruit/step-material',
+                data:qs.stringify({
+                  step_id:item.step
+                })
+              })
+              .then(res =>{
+                let needData = res.data;
+                if(needData.code=='200'){
+                  console.log(needData);
+                  that.dataparams = needData.data;
+
+                }
+              })
+            },
+            active(index) {
+                this.stepIndex = index;
+                this.task_step.forEach(function(item){
+                    item.active = 'false';
+                });
+                this.task_step[index].active = 'true';
+
+
+            },
+            getSteps(){
+                let _this = this;
+                this.axios({
+                    method: 'get',
+                    url: '/v1/recruit/step-process'
+                })
+                .then(res => {
+                    // console.log(res);
+                    if (res.data.code == 200) {
+                        _this.statData = res.data.data;
+                        _this.task_step = [];
+                        for(let i=0; i<_this.statData.length; i++){
+                          let active = 'false';
+                            if ( i == 0) {
+                                active = 'true';
+                            };
+                            _this.task_step.push({
+                                title: this.statData[i].name,
+                                active : active
+                            })
+                        }
+
+                    };
+                });
+            },
+            //获取按钮
+            getButton(){
+              let that = this;
+              let qs = require('qs');
+              this.axios({
+                method:'post',
+                url:'/v1/recruit/step-normal',
+              })
+              .then(res =>{
+                let needData = res.data;
+                if(needData.code=='200'){
+                  console.log(needData);
+                  that.topBtn = needData.data;
+                }
+              })
+            },
+            //点击思想汇报 & 发展党员工作信访情况记录 按钮事件
+            clickBtn(id){
+              //id: 31 点击思想汇报 32 发展党员工作信访情况记录
+              console.log(id);
+            },
+        },
+        computed : {
+            task_branch_step(){
+                if (this.statData.length <= 0) {
+                    return;
+                };
+                let arr = [];
+                let children = this.statData[this.stepIndex].child;
+//                 console.log(this.statData[this.stepIndex])
+
+              console.log(this.users);
+              for (let i=0; i< children.length; i++){
+                    // console.log(i);
+                     console.log(this.statData[this.stepIndex].child[i].ordernum);
+                    if(+this.statData[this.stepIndex].child[i].ordernum<+this.users.step){
+                      arr.push({
+                        step: this.statData[this.stepIndex].child[i].ordernum,
+                        content: this.statData[this.stepIndex].child[i].name,
+                        status:1
+                      });
+                    }else{
+                      arr.push({
+                          step: this.statData[this.stepIndex].child[i].ordernum,
+                          content: this.statData[this.stepIndex].child[i].name,
+                          status:4
+                      });
+                    }
+                }
+                console.log(arr);
+                return arr;
+            }
+        },
+        mounted(){
+            this.getSteps();
+            this.getButton();
+        }
+    }
+</script>
+
+<style scoped>
+
+    .task-step{
+        font-size: 0;
+        display: inline-block;
+        border: 1px solid #ddd;
+    }
+    .task-step>div{
+        font-size: 12px;
+        display: inline-block;
+        position: relative;
+        padding: 0 30px;
+        height: 32px;
+        line-height: 32px;
+        color: #333;
+        cursor: pointer;
+        background:#fff;
+        text-indent: 10px;
+
+    }
+
+    .task-step>div:not(:last-child)::after{
+        display: block;
+        position: absolute;
+        right: -32px;
+        top: 0;
+        content: "";
+        width:0;
+        height: 0;
+        border: 16px solid transparent;
+        border-left-color: #fff;
+    }
+    .task-step>div:not(:last-child)::before{
+        display: block;
+        position: absolute;
+        right: -33px;
+        top: 0;
+        content: "";
+        width:0;
+        height: 0;
+        border: 16px solid transparent;
+        border-left-color: #ddd;
+    }
+    .task-step>div.active{
+        background: #d73826;
+        color: #fff;
+    }
+    .task-step>div.active:not(:last-child)::after{
+         border-left-color: #d73826;
+    }
+    .task-branch-step{font-size: 0;margin:20px 0;}
+    .task-branch-step>div{
+        display: inline-block;
+        font-size: 12px;
+        color: #333;
+        cursor: pointer;
+        position: relative;
+        margin-bottom: 10px;
+    }
+    .task-branch-step>div:not(:last-child){
+        margin-right: 26px;
+    }
+    .task-branch-step>div:not(:last-child)::after{
+        display: block;
+        content: '';
+        position: absolute;
+        width: 22px;
+        background: #e7e7e7;
+        height: 2px;
+        right: -24px;
+        top: 50%;
+        margin-top: 8px;
+    }
+    .task-branch-step>div p.task-status{
+        padding-left: 20px;
+        text-align: center;
+    }
+    .task-branch-step>div.working p.task-status{
+        color: #999;
+    }
+    .task-branch-step>div.bingo p.task-status{
+        color: #3798e2;
+    }
+    .task-branch-step>div.error p.task-status{
+        color:##d73826;
+    }
+    .task-branch-step>div p:last-child span{
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #d5d5d5;
+        line-height: 22px;
+        text-align: center;
+        color: #fff;
+        margin-right: 10px;
+    }
+    .task-branch-step>div p:last-child span.active-bg{
+      background: #e14e28 !important;
+    }
+
+
+    .task-branch-step>div.bingo p:last-child span{
+        background: #989898;
+    }
+    .task-branch-step>div.active p:last-child span{
+        background: #e14f27;
+    }
+
+
+</style>

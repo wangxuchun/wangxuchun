@@ -1,0 +1,241 @@
+<!--奖惩中的批准树-->
+<template>
+  <div class="partyLetter">
+    <Modal
+      v-model="modal1"
+      title="介绍信编辑"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+      :closable="false"
+      class-name="max-height vertical-center-modal"
+      @on-ok="ok"
+      @on-cancel="cancel">
+      <div class="letter-title">
+        <p>姓名:  <span>王学柱</span></p>
+        <p>党组织:<span>中国共产党天津市宝坻区供销合作社联合社机关支部</span></p>
+      </div>
+      <div class="letter-top">
+        <div class="letter-top-left">
+          <span>党员证明信存根</span>
+        </div>
+        <div class="letter-top-right">
+          <div class="row-1">
+            <div class="formItem">
+              <span>编号:</span>
+              <input type="text" class="letter-number">
+            </div>
+          </div>
+          <div class="row-1 mt10">
+              <input type="text" class="input-long">
+              <span class="w104">同志系中共</span>
+              <input type="text" class="input-sm">
+              <span class="w50">党员，</span>
+          </div>
+          <div class="row-1 mt10">
+            <span class="begin">由</span>
+            <input type="text" class="input-long w357">
+            <span class="end">去</span>
+            <input type="text" class="input-sm w353" disabled>
+          </div>
+          <div class="row-1">
+            <span class="validity-date">(有效期&emsp;<label>7</label>&emsp;天)</span>
+            <div class="formItem">
+              <span class="fl">时间:</span>
+              <div class="wrap-data"style="margin-left: 10px">
+                <DatePicker type="date" placeholder="选择日期" style="width: 146px"></DatePicker>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="letter-title">
+        <p style="text-align: center; width: 100%;margin-top: 16px;">中国共产党党员组织关系介绍信回执联</span></p>
+      </div>
+      <div class="letter-footer">
+      <div class="row-1 mt14">
+        <input type="text" class="w285">
+        <div class="formItem">
+          <span>编号:</span>
+          <input type="text" class="letter-number">
+        </div>
+      </div>
+      </div>
+    </Modal>
+  </div>
+</template>
+<script>
+  export default {
+    name:'partyLetter',
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading: true,
+        formInline:{
+
+        },
+      }
+    },
+    components: {
+    },
+    methods: {
+      cancel() {
+      },
+      ok() {
+      }
+    },
+    mounted(){
+      //this.url=this.uri;
+    }
+  }
+</script>
+<style type="text/less">
+ .letter-title{
+   width: 100%;
+   overflow: hidden;
+  }
+ .letter-title p{
+   float: left;
+   margin-left: 40px;
+   font-weight: bold;
+   font-size: 18px;;
+ }
+.letter-top{
+  margin: 12px auto 0;
+  width: 886px;
+  height: 190px;
+  border:1px solid #666;
+  overflow: hidden;
+}
+.mt10{
+  margin-top: 10px;
+}
+ .letter-top .letter-top-left{
+   width: 60px;
+   border-right: 1px solid #666;
+   height: 190px;
+   float: left;
+   text-align: center;
+  }
+ .letter-top .letter-top-left span{
+   width: 20px;
+   padding-top: 20px;
+   font-size: 16px;
+   display: inline-block;
+   line-height: 22px;
+ }
+  .letter-top-right{
+    width: 823px;
+    height:100%;
+    float: left;
+  }
+ .letter-top-right .row-1{
+   width:100%;
+   overflow: hidden;
+ }
+ .letter-top-right .row-1 .formItem{
+   float: right;
+   margin-top:14px;
+   margin-right: 13px;
+   margin-left: 19px;
+ }
+.letter-top-right .row-1 .formItem span{
+  line-height: 20px;
+  color: #333;
+}
+ .letter-top-right .row-1 .formItem .letter-number{
+   width: 177px;
+   height: 34px;
+   border:1px solid #aaa;
+   border-radius: 2px;
+   outline: none;
+   line-height: 34px;
+   font-size: 12px;
+   text-indent:10px;
+ }
+ .begin,.end{
+   margin-left: 19px;
+   display: inline-block;
+ }
+ .end{
+   margin-right: 19px;
+ }
+ .letter-top-right .row-1 .input-long.w357{
+   width: 357px;
+   margin-left: 10px;
+ }
+ .letter-top-right .row-1 .input-long,.letter-top-right .row-1 .input-sm{
+   width: 379px;
+   height: 34px;
+   line-height: 34px;
+   text-indent: 10px;
+   font-size: 12px;
+   border:1px solid #aaa;
+   border-radius: 2px;
+   outline: none;
+   margin-left: 19px;
+ }
+ .letter-top-right .row-1 .w104{
+   width: 104px;
+   display: inline-block;
+   font-size: 16px;
+   text-align: center ;
+ }
+ .letter-top-right .row-1 .w50{
+   width: 50px;
+   display: inline-block;
+   font-size: 16px;
+   text-align: center;
+ }
+ .letter-top-right .row-1 .input-sm{
+   width: 257px;
+   margin-left: 0;
+ }
+ .letter-top-right .row-1 .input-sm.w353{
+   width: 353px;
+ }
+ .validity-date{
+   font-size: 14px;
+   margin-left: 40px;
+   margin-top: 16px;
+   display: inline-block;
+ }
+  input[disabled]{
+    cursor: no-drop;
+  }
+  .wrap-data{
+    width: 146px;
+    height: 32px;
+    float: left;
+  }
+ .letter-top-right .row-1 .formItem span.fl{
+    float: left;
+    line-height: 32px;
+
+  }
+
+
+ /*footer*/
+  .letter-footer{
+    padding-left: 14px;
+    padding-right: 12px;
+    width: 870px;
+    height: 146px;
+    border:1px solid #666;
+    margin: 12px auto 0;
+  }
+ .letter-footer input{
+   line-height: 34px;
+   text-indent: 10px;
+   font-size: 12px;
+   border:1px solid #aaa;
+   border-radius: 2px;
+   outline: none;
+ }
+.w285{
+  width: 285px;
+}
+.mt14{
+  margin-top: 14px;
+}
+</style>

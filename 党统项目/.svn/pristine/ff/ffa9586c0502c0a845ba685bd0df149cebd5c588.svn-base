@@ -1,0 +1,43 @@
+<template>
+<div class="memberinfo-representative">
+    <div class="text-right">
+        <Button type="primary">新增</Button>
+    </div>
+    <Table ref="memberinfoposttable" :highlight-row="true" :style="{'marginTop':'8px'}" border :columns="tableCol" :data="lists"></Table>
+</div>
+</template>
+<script>
+export default {
+    name : 'memberinfo-representative',
+    props: {
+        viewdata : null
+    },
+    data(){
+        return {
+            tableCol :[{
+                title : '党代会级别',
+                key : 'start'      
+            },{
+                title : '开始时间',
+                key : 'end'      
+            },{
+                title : '结束时间',
+                key : 'name'      
+            },{
+                title : '党代表类型',
+                key : 'name'      
+            },{
+                title : '操作',
+                key : 'opt'
+            }],
+            lists:[]
+        }
+    }
+}
+</script>
+<style scoped>
+.memberinfo-representative{
+    height: 100%;
+    padding: 8px;
+}
+</style>

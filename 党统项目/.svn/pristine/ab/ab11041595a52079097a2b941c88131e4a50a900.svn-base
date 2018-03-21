@@ -1,0 +1,130 @@
+<template>
+    <div class="app-main" :style="{'width':'100%','height':'100%'}" @click="closeDefault">
+        <div class="layout" :style="{'width':'100%','height':'100%'}">
+            <!-- 头部 -->
+            <top></top>
+            <Row type="flex" class="setHeight">
+                <!-- 侧边栏树结构 -->
+                <i-col span="5" class="layout-menu-left">
+                    <Slide ref="slide" 
+                        @reflashList="reflashList" 
+                        @getnode="getnode"
+                        @slideDown="slideDown"
+                        :url="url"
+                        :openitem="openitem"
+                        :currentnode="currentnode"
+                        :openlist="openlist"
+                        >
+                    </Slide>
+                </i-col>
+                <i-col span="19">
+                    <div class="set-com">
+                       <Button type="ghost">重新计算</Button><Button type="ghost">导出本页到word</Button><Button type="ghost">导出全部到word</Button> 
+                    </div>
+                    <div class="tabs">
+                        <Tabs>
+                            <TabPane label="党组织党员基本情况">标签一的内容</TabPane>
+                            <TabPane label="发展党员基本情况">标签二的内容</TabPane>
+                            <TabPane label="党建基本情况">标签三的内容</TabPane>
+                        </Tabs>
+                    </div>
+                    
+                </i-col>
+            </Row>
+        </div>
+    </div>
+</template>
+<script>
+    import top from '@/components/top.vue'
+    import Slide from '@/components/slide.vue'
+
+    export default {
+        name: 'baseSituation',
+        data() {
+            return {
+                url: '/v1/trees/list',
+                openitem: [],
+                openlist: [],
+                currentnode: '',
+                slideBar: false,
+                remberGroup: false,
+                lists: [],
+                remberId: '', //记住点击的列
+                remberRow: {}
+            }
+        },
+        computed: {
+        },
+        watch: {
+        },
+        components: {
+            top,
+            Slide,
+        },
+        methods: {
+            slideDown() {
+                console.log('jieshu')
+            },
+            closeDefault() {
+                if (this.$route.name == 'info' || this.$route.name == 'group') {
+                    this.$router.go(-1);
+                };
+            },
+            // tree emit events（events up）
+            reflashList(item) {
+                if (this.ishis) {
+                    this.$nextTick(function() {
+                        $('.gobalhidden').show();   
+                    })
+                } else {
+                    this.$nextTick(function() {
+                        $('.gobalhidden').hide();  
+                    })
+                }
+                //判断是否是党小组
+                if (item.data.type_icon == 6) {
+                    this.remberGroup = true
+                    this.groupList = []
+                    this.getGrouplist(item.id, 1)
+                } else {
+                    this.lists = [];
+                    this.getList(item.id, 1)
+                    this.remberGroup = false
+                }
+            },
+            getnode(node) {
+                // console.log(node)
+            },
+            reflash() {
+                 this.openlist = [798, 797, 792, 796];
+            }
+
+        },
+        created() {
+                
+        },
+        mounted() {
+        },
+    }
+</script>
+<style scope>
+    .set-com {
+        margin-top: 20px;
+        margin-left: 10px;
+    }
+    .set-com button {
+        background: #fff;
+        margin-left: 10px;
+    }
+    .slides-enter-active {
+      transition: all .3s ease;
+    }
+    .slides-leave-active {
+      transition: all .8s ease;
+    }
+    .slides-enter, .slides-leave-to
+    {
+      transform: translateX(800px);
+      opacity: 0;
+    }
+</style>

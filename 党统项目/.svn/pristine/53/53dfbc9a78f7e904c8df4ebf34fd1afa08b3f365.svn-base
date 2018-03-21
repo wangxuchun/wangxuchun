@@ -1,0 +1,166 @@
+<!- 党支部/设置党小组弹窗-->
+<template>
+  <div class="PartyTeam">
+    <Modal
+      v-model="modal1"
+      title="党支部拆分"
+      width="950"
+      :mask-closable=false
+      :closable=false
+      :loading="loading"
+      class-name="max-height"
+      @on-ok="handleSubmit('PartyTeamForm')"
+      @on-cancel="cancel">
+
+        <Form ref="PartyTeamForm" :model="PartyTeamForm"  :label-width="150" :rules="ruleValidate">
+          <Row>
+            <Col span="12">
+            <FormItem label="党小组名称：" prop="name">
+              <Input v-model="PartyTeamForm.name" placeholder="请输入新拆分党支部编码"></Input>
+            </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <FormItem label="建立时间：" prop="createDate">
+                <DatePicker style="width: 100%;"  type="date" placeholder="选择建立时间" v-model="PartyTeamForm.createDate"></DatePicker>
+              </FormItem>
+            </Col>
+          </Row>
+        </Form>
+        <Row>
+          <p>新拆分党支部的党员</p>
+          <Table border :columns="columns4" :data="data1"></Table>
+        </Row>
+    </Modal>
+  </div>
+</template>
+<script TYPE="text/ecmascript-6">
+  export default {
+    name:'AddOrganization',
+    data () {
+      return {
+        modal1: true,
+        loading: true,
+        PartyTeamForm: {
+          name:'',//党小组名称
+          electionDate:'',//建立时间
+        },
+        ruleValidate: {
+          name: [
+            {required: true, message: '党小组名称不能为空', trigger: 'blur'}
+          ],
+          createDate: [
+            {required: true,type:'date', message: '建立时间日期', trigger: 'change'}
+          ]
+        },
+        columns4: [
+          {
+            type: 'selection',
+            width: 40,
+            align: 'center'
+          },
+          {
+            title: '姓名',
+            key: 'name'
+          },
+          {
+            title: '身份证号',
+            key: 'nameId',
+            width:200
+          },
+          {
+            title: '性别',
+            key: 'sex'
+          },
+          {
+            title: '民族',
+            key: 'nation'
+          },
+          {
+            title: '出生日期',
+            key: 'birthday'
+          },
+          {
+            title: '所属党小组',
+            key: 'team'
+          },
+        ],
+        data1: [
+          {
+            name: '王叙淳',
+            nameId: '120102199207217772',
+            sex:'男',
+            nation:'汉族',
+            birthday:'1992-07-21',
+            team:'第一党小组'
+          },
+          {
+            name: '王叙淳',
+            nameId: '120102199207217772',
+            sex:'男',
+            nation:'汉族',
+            birthday:'1992-07-21',
+            team:'第一党小组'
+          },
+          {
+            name: '王叙淳',
+            nameId: '120102199207217772',
+
+            sex:'男',
+            nation:'汉族',
+            birthday:'1992-07-21',
+            team:'第一党小组'
+          },
+          {
+            name: '王叙淳',
+            nameId: '120102199207217772',
+            sex:'男',
+            nation:'汉族',
+            birthday:'1992-07-21',
+            team:'第一党小组'
+          },
+          {
+            name: '王叙淳',
+            nameId: '120102199207217772',
+            sex:'男',
+            nation:'汉族',
+            birthday:'1992-07-21',
+            team:'第一党小组'
+          },
+
+
+
+        ]
+      };
+    },
+
+    methods: {
+      handleSubmit(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.$Message.success('提交成功!');
+            this.modal1=false;
+            this.$router.go(-1)
+          } else {
+            this.loading=false;
+            this.$Message.error('表单验证失败!');
+            setTimeout(() => {
+              this.loading=true;
+            }, 20);
+          }
+        })
+      },
+      cancel () {
+        this.$Message.info('点击了取消');
+        this.$router.go(-1)
+      }
+    }
+  }
+</script>
+<style>
+  .max-height{
+    /*max-height: 600px;*/
+    /*overflow-y: auto;*/
+  }
+</style>

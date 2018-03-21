@@ -1,0 +1,464 @@
+<template>
+    <div class='task-step-box'>
+        <div style="clear:both;overfllow:hidden;">
+            <div class="task-step">
+                <div v-for="(item,index) in task_step" @click="active(item.id,item)" :class="{active:item.active=='true'}" :style="{'z-index':task_step.length-index}" >{{index+1}}<span v-show="item.active=='true'">、{{item.title}}</span></div>
+              <!--<div v-for="(item,index) in processTree" @click="active(index)" :class="{active:item.active=='true'}" :style="{'z-index':task_step.length-index}" >{{index+1}}<span v-show="item.active=='true'">、{{item.name}}</span></div>-->
+            </div>
+            <p style="text-align:right;display:inline-block;float:right;">
+              <Button style="margin-left: 10px;"@click="clickBtn(item.template_id,index)" :class="{activeBg:item.active=='true'}"  v-for="(item,index) in topBtn" :key="item.id" type="ghost">{{item.name}}</Button>
+            </p>
+        </div>
+        <div class="task-branch-step">
+            <div @click="clickMe(item,index)" v-for="(item,index) in task_branch_module" :class="{bingo:item.status=='1', error:item.status=='-1', active:item.status=='0', active:item.status=='2'}">
+                <p class="task-status" style="height:21px">
+                  {{item.status==1?'已通过':item.status=='-1'?'被驳回':item.status=='0'?'待审核':item.status=='2' ?'':''}}
+                  <Tooltip v-if="item.status=='-1'" :content="item.reason">
+                    <Icon style="font-size: 16px;color: #d73826;" type="ios-information-outline"></Icon>
+                  </Tooltip>
+                </p>
+                <!--<p><span :class="{'active-bg':item.status=='1' || item.status=='0' || item.status=='-1'}">{{item.step}}</span>{{item.content}}</p>-->
+                <p><span :class="{'active-bg':item.activeClass}">{{item.step}}</span>{{item.content}}</p>
+            </div>
+        </div>
+        <p style="font-size:12px;border-bottom:1px solid #ddd;padding-bottom:10px;margin-bottom:20px;"><span style="font-weight:bold">材料：</span>入党申请人基本情况；推荐和推优情况；支部委员会建议等。<span style="font-weight:bold">要求：</span>了解入党积极分子是否具备条件；手续是否齐全</p>
+        <DatePicker  type="date" v-model="crateDate" format="yyyy-MM-dd" v-show="isShowDate"  :placeholder="datePlaceholder" style="width:309px"></DatePicker>
+        <Input v-model="number" v-if="isShowText" placeholder="请填写志愿书编号" style="width: 300px"></Input>
+        <dataTable v-if="isShow" :msg="dataparams" :uid="users" :step_id="step_id" :isNextBtnShow="isNextBtnShow"></dataTable>
+        <fileTable v-if="!isShow" :fileTableData="fileTableData" :uid="uid" :templateid="template_id"></fileTable>
+        <div v-show="isShow" class="start-box box-pack" style="margin-top:20px;">
+          <p class="box-flex"><span style="font-weight:bold;">注意：</span>附件须上传PDF格式文件，若是图片可粘贴至WPS中再导出至PDF</p>
+          <p class="box-flex" style="text-align:right;">
+            <Button type="primary" @click="nextProcess" v-if="isNextBtnShow">提交并进入下一个流程</Button>
+          </p>
+        </div>
+    </div>
+</template>
+
+<script>
+    import dataTable from '@/pages/recruitMembers/table-data.vue'
+    import fileTable from '@/pages/recruitMembers/table-file.vue'
+    export default {
+        name:'recruit-tab',
+        data(){
+            return {
+                date:'',
+                isShow: true,
+                number:'',//志愿书编号
+                crateDate:'',//申请时间
+                datePlaceholder:'',
+                statData: [],
+                stepIndex : 0,
+                task_step : [],
+                dataparams:[],//步骤列表信息
+                topBtn:[],//头部按钮  思想汇报 & 发展党员工作信访情况记录
+                task_branch_module:[],//小步骤数据源
+                fileTableData:[],//思想汇报的列表信息
+                btn_index:'',//点击按钮的index
+                template_id:'',//模板id
+                uid:'',//用户id
+                isNextBtnShow:false,//提交到下步是否显示
+                childId:'',//小步骤id
+                isShowDate:false,//v-show 绑定  是否显示,
+                isShowText:false,//v-show 绑定志愿书编号  是否显示
+                step_id:'',//传递给子组件的小步骤序号
+            }
+        },
+        props:['users','processTree'],
+        components:{
+            dataTable,
+            fileTable,
+        },
+        methods: {
+            //点击每个操作小步事件
+            clickMe(item,index){
+                console.log(index);
+                if (item.status=='4'){
+                    this.$Message.error('此用户没有该步骤权限');
+                    return;
+                }
+                this.task_branch_module.forEach((item,index)=>{
+                    item.activeClass=false;
+                })
+                this.task_branch_module[index].activeClass=true
+
+                this.step_id=item.step;
+
+
+              if(item.id==this.childId){
+                this.isNextBtnShow=item.status=='0' ?false :true;
+              }else{
+                this.isNextBtnShow=false;
+              }
+              this.isShow=true;
+              let that = this;
+              let qs = require('qs');
+              this.axios({
+                method:'post',
+                url:'/v1/recruit/step-material',
+                data:qs.stringify({
+                  step_id:item.step
+                })
+              })
+              .then(res =>{
+                let needData = res.data;
+                if(needData.code=='200'){
+                  that.dataparams = needData.data;
+                }
+              })
+            },
+            active(pid,item) {
+//                console.log(index,item)
+//                return
+              if(+item.id>+this.users.step_pid){
+                this.$Message.error('此用户没有该步骤权限');
+                return;
+              }
+//              console.log(pid, item.id);
+              let  that = this;
+//                this.stepIndex = index;
+//                this.task_step.active = 'false';
+                this.task_step.forEach(function(item,index){
+                  if(pid==item.id){
+                    item.active = 'true';
+                    that.stepIndex = index;
+                  }else{
+                    item.active = 'false';
+                  }
+                });
+              this.statData = this.processTree;
+                //获取小步骤数据源
+              this.axios({
+                  method: 'get',
+                  url: '/v1/recruit/step-process'
+              })
+              .then(res => {
+                let needData = res.data;
+              that.task_branch_module =[];
+                if (needData.code == '200') {
+
+                  for (let i=0; i< needData.data[item.id].child.length; i++) {
+//                     console.log(i);
+                    let childId = needData.data[item.id].child[i].id;
+                    //判断是否已启用
+                    if (that.users.step_info[childId].enable=='1'){
+                        //判断是否为当前步
+                        if (that.users.step_info[childId].current=='1'){
+
+                            this.childId=childId;
+                            if (that.users.step_info[childId].check_status=='null') {//null 为不需要审核
+                              that.task_branch_module.push({
+                                step: this.statData[this.stepIndex].child[i].ordernum,
+                                id: this.statData[this.stepIndex].child[i].id,
+                                content: this.statData[this.stepIndex].child[i].name,
+                                status: "2",
+                                reason:that.users.step_info[childId].reason,
+                                activeClass:true
+                              });
+                                console.log('当前步1');
+                              that.datePlaceholder=this.statData[this.stepIndex].child[i].key_field_name;
+                              if(this.statData[this.stepIndex].child[i].key_field_name==''){
+                                that.isShowDate=false;
+                              }else {
+                                that.isShowDate=true;
+                              }
+                              if(this.statData[this.stepIndex].child[i].key_field_type=='text'){
+                                that.isShowText=true;
+                              }else {
+                                that.isShowText=false;
+                              }
+                            }else{
+                              //如果状态是待审核 0  就屏蔽下一步按钮
+                              if (that.users.step_info[childId].check_status=='0'){
+                                that.isNextBtnShow=false;
+                              }
+                              that.task_branch_module.push({
+                                step: this.statData[this.stepIndex].child[i].ordernum,
+                                id: this.statData[this.stepIndex].child[i].id,
+                                content: this.statData[this.stepIndex].child[i].name,
+                                status: that.users.step_info[childId].check_status,
+                                reason:that.users.step_info[childId].reason,
+                                activeClass:true
+                              });
+                                console.log('当前步2');
+                              that.datePlaceholder=this.statData[this.stepIndex].child[i].key_field_name;
+                              if(this.statData[this.stepIndex].child[i].key_field_name==''){
+                                that.isShowDate=false;
+                              }else {
+                                that.isShowDate=true;
+                              }
+                              if(this.statData[this.stepIndex].child[i].key_field_type=='text'){
+                                that.isShowText=true;
+                              }else {
+                                that.isShowText=false;
+                              }
+                            }
+                            this.clickMe(that.task_branch_module[i],i)
+//                            console.log(i);
+
+                        }else{
+                            that.task_branch_module.push({
+                                step: this.statData[this.stepIndex].child[i].ordernum,
+                                id: this.statData[this.stepIndex].child[i].id,
+                                content: this.statData[this.stepIndex].child[i].name,
+                                status: 1,
+                                reason:that.users.step_info[childId].reason,
+                                activeClass:false
+                              });
+                                console.log('不是当前步');
+                          if(this.statData[this.stepIndex].child[i].key_field_name==''){
+                            that.isShowDate=false;
+                          }else {
+                            that.isShowDate=true;
+                          }
+                          if(this.statData[this.stepIndex].child[i].key_field_type=='text'){
+                            that.isShowText=true;
+                          }else {
+                            that.isShowText=false;
+                          }
+                        }
+                     }else {
+                       that.task_branch_module.push({
+                         step: this.statData[this.stepIndex].child[i].ordernum,
+                         id: this.statData[this.stepIndex].child[i].id,
+                         content: this.statData[this.stepIndex].child[i].name,
+                         status: 4,
+                         reason:that.users.step_info[childId].reason,
+                         activeClass:false
+                       });
+                    }
+                  }
+                }else {
+                  that.$Message.error(needData.msg)
+                };
+              });
+            },
+            getSteps(){
+              let  _this = this;
+              this.axios({
+                    method: 'get',
+                    url: '/v1/recruit/step-process'
+                })
+                .then(res => {
+                    if (res.data.code == 200) {
+                        _this.statData = _this.processTree;
+                        _this.task_step = [];
+                        for(let i=0; i<_this.statData.length; i++){
+                          let active = 'false';
+                            if ( i == 0) {
+                                active = 'true';
+                            };
+                            _this.task_step.push({
+                                title: this.statData[i].name,
+                                id:this.statData[i].id,
+                                active : ''
+                            })
+                          _this.task_step[0].active='true';
+
+                        }
+
+                    };
+                });
+            },
+            //获取按钮
+            getButton(){
+              let that = this;
+              let qs = require('qs');
+              this.axios({
+                method:'post',
+                url:'/v1/recruit/step-normal',
+              })
+              .then(res =>{
+                let needData = res.data;
+                if(needData.code=='200'){
+                  that.topBtn = needData.data;
+                }
+              })
+            },
+            //点击思想汇报 & 发展党员工作信访情况记录 按钮事件
+            clickBtn(id,index){
+              //时间/志愿书 输入框 不显示
+              this.isShowDate=false
+              this.isShowText=false,
+
+              this.btn_index = index;
+              this.topBtn.forEach(function(item){
+                item.active = 'false';
+              });
+              this.topBtn[index].active = 'true';
+              console.log(id);
+              this.isShow=false;
+              let that = this;
+              let qs = require('qs');
+              this.axios({
+                  method:'post',
+                  url:'/v1/recruit/step-normal-user-material',
+                  data:qs.stringify({
+                    uid:that.users.uid,
+                    template_id:id,
+                    opt:'1'
+                  })
+                })
+                .then(res =>{
+                let needData = res.data;
+                if(needData.code=='200'){
+                  that.fileTableData = needData.data;
+                  that.template_id = id;
+                  that.uid = that.users.uid;
+                }
+              })
+
+          },
+          //提交到下一流程
+          nextProcess(){
+            let that = this;
+            let qs = require('qs');
+            let postVal ='';
+            if(that.crateDate!=''){
+              postVal=that.crateDate.format('yyyy-MM-dd');
+            }else if(that.number!=''){
+              postVal=that.number;
+            }
+            this.axios({
+                method:'post',
+                url:'/v1/recruit/submit',
+                data:qs.stringify({
+                  uid:that.users.uid,
+                  key_field_value:postVal
+                })
+              })
+              .then(res =>{
+                let needData = res.data;
+                if(needData.code=='200'){
+                  this.$Message.success('提交成功')
+                  that.crateDate='';
+                  this.$emit('search');
+                }else {
+                  this.$Message.info(needData.msg)
+                }
+            })
+          }
+        },
+        mounted(){
+            this.getSteps();
+            this.getButton();
+            this.uid = this.users.uid
+        }
+    }
+</script>
+
+<style scoped>
+    .activeBg{
+      background: #f04134;
+      color: #fff;
+    }
+    .task-step{
+        font-size: 0;
+        display: inline-block;
+        border: 1px solid #ddd;
+    }
+    .task-step > div{
+        font-size: 12px;
+        display: inline-block;
+        position: relative;
+        padding: 0 30px;
+        height: 32px;
+        line-height: 32px;
+        color: #333;
+        cursor: pointer;
+        background:#fff;
+        text-indent: 10px;
+
+    }
+
+    .task-step > div:not(:last-child)::after{
+        display: block;
+        position: absolute;
+        right: -32px;
+        top: 0;
+        content: "";
+        width:0;
+        height: 0;
+        border: 16px solid transparent;
+        border-left-color: #fff;
+    }
+    .task-step > div:not(:last-child)::before{
+        display: block;
+        position: absolute;
+        right: -33px;
+        top: 0;
+        content: "";
+        width:0;
+        height: 0;
+        border: 16px solid transparent;
+        border-left-color: #ddd;
+    }
+    .task-step > div.active{
+        background: #d73826;
+        color: #fff;
+    }
+    .task-step > div.active:not(:last-child)::after{
+         border-left-color: #d73826;
+    }
+    .task-branch-step{font-size: 0;margin:20px 0;}
+    .task-branch-step > div{
+        display: inline-block;
+        font-size: 12px;
+        color: #333;
+        cursor: pointer;
+        position: relative;
+        margin-bottom: 10px;
+    }
+    .task-branch-step>div:not(:last-child){
+        margin-right: 26px;
+    }
+    .task-branch-step > div:not(:last-child)::after{
+        display: block;
+        content: '';
+        position: absolute;
+        width: 22px;
+        background: #e7e7e7;
+        height: 2px;
+        right: -24px;
+        top: 50%;
+        margin-top: 8px;
+    }
+    .task-branch-step > div p.task-status{
+        padding-left: 20px;
+        text-align: center;
+        font-weight: bold;
+    }
+    .task-branch-step > div.working p.task-status{
+        color: #999;
+    }
+    .task-branch-step > div.bingo p.task-status{
+        color: #3798e2;
+    }
+    .task-branch-step > div.error p.task-status{
+        color:#d73826;
+    }
+    .task-branch-step > div p:last-child span{
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #d5d5d5;
+        line-height: 22px;
+        text-align: center;
+        color: #fff;
+        margin-right: 10px;
+    }
+    .task-branch-step>div p:last-child span.active-bg{
+      background: #e14e28 !important;
+    }
+
+
+    .task-branch-step>div.bingo p:last-child span{
+        background: #989898;
+    }
+    /*.task-branch-step>div.active p:last-child span{*/
+        /*background: #e14f27;*/
+    /*}*/
+
+
+</style>

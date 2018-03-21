@@ -1,0 +1,138 @@
+<template>
+<div class="memberinfo-post">
+    <div class="text-right">
+        <Button @click="toggleDrag" v-show="!dragOption.disabled" type="ghost">完成</Button>
+        <Button @click="toggleDrag" v-show="dragOption.disabled" type="ghost">表格排序</Button>
+        <Button v-show="dragOption.disabled" type="primary" @click="add">新增</Button>
+    </div>
+    <table class="drag-table">
+        <colgroup>
+            <col width="120"></col>
+            <col width="120"></col>
+            <col width="120"></col>
+            <col></col>
+        </colgroup>
+        <thead>
+            <tr>
+                <th v-for="item in tableCol">{{ item.title }}</th>
+            </tr>
+        </thead>
+        <draggable element="tbody" :options="dragOption" v-model="lists">
+            <tr v-for="(item, index) in lists">
+                <td>{{ item.education_type }}</td>
+                <td>{{ item.degree }}</td>
+                <td>{{ item.education_end_time }}</td>
+                <td>
+                    <Button :disabled="!dragOption.disabled" style="padding: 6px;" type="text"><Icon type="compose"></Icon> 编辑</Button>
+                    <Button :disabled="!dragOption.disabled" style="padding: 6px;" type="text"><Icon type="search"></Icon> 查看</Button>
+                    <Button @click="delItem(item, index)" :disabled="!dragOption.disabled" style="padding: 6px;" type="text"><Icon type="trash-a"></Icon> 删除</Button>
+                </td>
+            </tr>
+        </draggable>
+    </table>
+</div>
+</template>
+<script>
+import draggable from 'vuedraggable'
+export default {
+    name : 'memberinfo-post',
+    props: {
+        viewdata : null
+    },
+    components: {
+        draggable,
+    },
+    data(){
+        return {
+            tableCol :[{
+                title : '开始日期',
+                key : 'start'      
+            },{
+                title : '截止日期',
+                key : 'end'      
+            },{
+                title : '工作岗位',
+                key : 'name'      
+            },{
+                title : '操作'
+            }],
+            lists:[],
+            dragOption : {
+                disabled : true
+            }
+        }
+    },
+    methods : {
+        toggleDrag() {
+            this.dragOption.disabled = !this.dragOption.disabled
+        },
+        delItem(rowData, index){
+
+            // TODO 删除请求
+            let idx = index;
+            let _this = this;
+            let data = rowData;
+            this.$Modal.warning({
+                title: '警告',
+                content: '<p>确定要删除该记录吗？</p>',
+                onOk: () => {
+                    this.lists.splice(index, 1);
+                    this.$Message.success('操作成功');
+                },
+                onCancel: () => {
+                    this.$Message.info('操作取消');
+                }
+            });
+        },
+        fetchList(){
+            console.log('fetch');
+            // mock data
+            return {
+                then : function(callback){
+                    let data = JSON.parse('{"code":200,"msg":"ok","data":[{"id":"1","education":"","degree":"\u535a\u58eb","education_end_time":"2014-06-06","education_type":"\u5728\u804c\u6559\u80b2","degree_time":"1991-01-19"},{"id":"2","education":"","degree":"\u535a\u58eb","education_end_time":"2014-06-07","education_type":"\u5728\u804c\u6559\u80b2","degree_time":"1991-01-19"}]}');
+                    return callback({
+                        data : data
+                    });
+                }
+            }
+
+            return this.axios({
+                method: 'get',
+                url: '/v1/degree/list',
+                params: {
+                    // uid: id
+                    uid: 1
+                }
+            })
+        },
+        add(){
+            this.$router.push('/dangyuan/modal/post-add')
+        },
+    },
+    mounted(){
+        this.fetchList().then(res => {
+            if (res.data.code == 200) {
+                this.lists = res.data.data
+            };
+        })
+    }
+
+}
+</script>
+<style scoped>
+.memberinfo-post{
+    height: 100%;
+    padding: 8px;
+}
+.drag-table{margin-top: 8px; border-collapse: collapse;text-align: center;width: 100%;color: #333;font-family: "微软雅黑"; border: 1px solid #e2e2e2;}
+.drag-table thead{line-height: 40px;background: #F8F8F9;font-weight: normal;}
+.drag-table thead {border-bottom: 1px solid #e9eaec;border-top: 1px solid #e9eaec;}
+.drag-table thead th{font-weight: bold;}
+.drag-table tbody tr{line-height: 48px;height: 48px;border-bottom: 1px solid #e9eaec;;color: #333;box-sizing: border-box}
+.drag-table tbody tr:hover{background-color: #EBF7FF}
+.drag-table tbody tr.drag:hover{background-color: #eee;cursor: move}
+.drag-table tbody td,.drag-table thead th{ border-right:1px solid #e9eaec;}
+.drag-table tbody td.ready{color: #d73826}
+.drag-table tbody td.out{color: #f07100}
+.drag-table tbody td.in{color: #008df0}
+</style>

@@ -1,0 +1,164 @@
+<template>
+	<Row type="flex">
+		<i-col span="5" class="layout-menu-left">
+			<div class="layout-header" :style="{'backgroundColor':'red'}">
+				<a href="javascript:;"><img src="../assets/logo_djy.png" /></a>
+			</div>
+		</i-col>
+		<i-col span="19">
+			<div class="top-bar start-box">
+				<!-- 一级导航 -->
+				<div class="nav-manage start-box box-align box-flex">
+					<Dropdown trigger="click" style="margin-left: 20px">
+				        <a href="javascript:void(0)">
+				            组织管理
+				            <Icon type="arrow-down-b"></Icon>
+				        </a>
+				        <Dropdown-menu slot="list">
+				            <Dropdown-item>党建基本情况</Dropdown-item>
+				            <Dropdown-item>党组织管理</Dropdown-item>
+				            <Dropdown-item>单位管理</Dropdown-item>
+				        </Dropdown-menu>
+				    </Dropdown>
+				    <Dropdown trigger="click" style="margin-left: 20px" v-on:on-click="routeTo">
+				        <a href="javascript:void(0)">
+				            人员管理
+				            <Icon type="arrow-down-b"></Icon>
+				        </a>
+				        <Dropdown-menu slot="list">
+				            <Dropdown-item name="/dangyuan">党员管理</Dropdown-item>
+				            <Dropdown-item>申请人管理</Dropdown-item>
+				            <Dropdown-item>历史人员管理</Dropdown-item>
+				        </Dropdown-menu>
+				    </Dropdown>
+				    <Dropdown trigger="click" style="margin-left: 20px">
+				        <a href="javascript:void(0)">
+				            业务工作
+				            <Icon type="arrow-down-b"></Icon>
+				        </a>
+				        <Dropdown-menu slot="list">
+				            <Dropdown-item>组织关系转接</Dropdown-item>
+				            <Dropdown-item>流动党员管理</Dropdown-item>
+				        </Dropdown-menu>
+				    </Dropdown>
+				    <a style="margin-left: 20px;">统计报表</a>
+				    <a style="margin-left: 20px;">管理员设置</a>
+				</div>
+				<!-- 用户信息 -->
+				<div class="start-box box-align">
+					<!-- <Avatar src="https://placem.at/people?w=40&h=40" shape="square" icon="person" size="large"  /> -->
+					<img class="avatar" src="https://placem.at/people?w=32&h=42" width="32" height="42" alt="">
+					<!-- <Avatar icon="person" size="large" /> -->
+					<div class="start-box box-orient">
+						<p>李书记</p>
+						<p>天房集团党委管理员</p>
+					</div>
+				</div>
+			</div>
+		</i-col>
+	</Row>
+</template>
+<script>
+	export default {
+		name: 'top',
+		data() {
+			return {
+				userInfo:{
+					real_name : '123',
+				}
+			}
+		},
+		components: {
+		},
+		methods: {
+			logout() {
+				let that = this;
+	           	this.axios({
+	                method: 'post',
+	                url: '/v1/user/logout',
+	            })
+	            .then(res => {
+	                let needData = res.data;
+	                if (needData.code == 200) {
+	                    that.$Message.success('退出成功');
+	                    that.$router.push('/login');
+	                } else {
+	                    that.$Message.error(needData.msg);
+	                }
+	            })
+	            .catch(err => {
+	            	console.log(err)
+	                this.$Message.error('网络请求异常');
+	            }) 
+			},
+			getUserInfo(){
+				var that = this;
+				// this.axios({
+				// 	method: 'post',
+				// 	url: '/v1/fm/getuserinfo',
+				// })
+				// .then(res => {
+				// 	let _data = res.data;
+				// 	if(_data.code==200){
+				// 		let data = _data.data;
+				// 		that.userInfo.real_name = data.real_name;
+				// 	}
+				// })
+				// .catch(error => {
+				// 	console.log('请求失败');
+				// })
+			},
+			routeTo(path) {
+				console.log(path);
+				this.$router.push({path: path})
+			}
+		},
+		created() {
+
+		},
+		mounted() {
+			this.getUserInfo();
+	    },
+	}
+</script>
+<style scope>
+	.text-right{
+		text-align: right;
+	}
+	.layout-header{
+		overflow: hidden;
+		text-align: center;
+	}
+	.layout-header a{
+		display:inline-block;
+		margin-top: 10px;
+	}
+	.layout-header-fav{
+		font-size: 0;
+		margin-top: 15px;
+		padding-right: 20px;
+	}
+	.layout-header-fav img{
+		display: inline-block;
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		margin-right: 20px;
+		vertical-align: middle;
+	}
+	.layout-header-fav p{
+		display: inline-block;
+		font-size: 14px;
+		vertical-align: middle;
+	}
+	.layout-header-fav a{
+		font-size: 14px;
+		color: #4b4b4b;
+		display: inline-block;
+		margin-left: 15px;
+		vertical-align: middle;
+	}
+	.avatar{
+		margin-right: 10px;
+	}
+</style>

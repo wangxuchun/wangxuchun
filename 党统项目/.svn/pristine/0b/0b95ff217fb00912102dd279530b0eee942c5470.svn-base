@@ -1,0 +1,97 @@
+<!--奖惩情况新增的弹窗-->
+<template>
+  <div class="RewardPunishment">
+    <Modal
+      v-model="modal1"
+      title="奖惩情况"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+      @on-ok="handleSubmit('RewardFormItem')"
+      @on-cancel="cancel">
+      <Row>
+        <Col span="15">
+          <Form :model="RewardFormItem" ref="RewardFormItem" :label-width="110" :rules="ruleValidate">
+            <FormItem label="奖励名称：" prop="rewardName">
+              <Input v-model="RewardFormItem.rewardName" placeholder="请输入"></Input>
+            </FormItem>
+            <FormItem label="批准组织：" prop="organization">
+              <Input v-model="RewardFormItem.organization" placeholder="请输入"></Input>
+            </FormItem>
+            <FormItem label="批准日期：" prop="ratifyDate">
+              <Row>
+                <Col span="24">
+                  <DatePicker type="date" placeholder="选择日期" v-model="RewardFormItem.ratifyDate"></DatePicker>
+                </Col>
+              </Row>
+            </FormItem>
+            <FormItem label="奖惩说明" prop="rewardDesc">
+              <Input v-model="RewardFormItem.rewardDesc" type="textarea" :autosize="{minRows: 4,maxRows: 10}" placeholder="请输入..."></Input>
+            </FormItem>
+          </Form>
+        </Col>
+      </Row>
+    </Modal>
+  </div>
+</template>
+<script>
+  export default {
+    name:'RewardPunishment',
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading: true,
+        RewardFormItem: {  //form的绑定
+          rewardName:'',//奖励名称
+          organization:'',//批准组织
+          ratifyDate:'',//批准日期
+          rewardDesc:''//奖惩说明
+        },
+        ruleValidate: {
+          rewardName: [
+            {required: true, message: '姓名不能为空', trigger: 'blur'}
+          ],
+          organization: [
+            {required: true, message: '职务名称不能为空', trigger: 'blur'},
+          ],
+          ratifyDate:[
+            {required: true,type:'date', message: '任职日期不能为空', trigger: 'change'}
+          ],
+          rewardDesc:[
+            {required: true, message: '职务说明不能为空', trigger: 'blur'},
+          ]
+        }
+      }
+    },
+
+    methods: {
+      handleSubmit(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.$Message.success('提交成功!');
+            this.modal1=false;
+          } else {
+            this.loading=false;
+        this.$Message.error('表单验证失败!');
+        setTimeout(() => {
+          this.loading=true;
+      }, 20);
+      }
+      })
+      },
+      cancel () {
+        this.$Message.info('点击了取消');
+      }
+    }
+  }
+</script>
+<style>
+  .TeamMember{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+  /*.TeamMember .ivu-modal{*/
+    /*width: 950px !important;*/
+  /*}*/
+</style>

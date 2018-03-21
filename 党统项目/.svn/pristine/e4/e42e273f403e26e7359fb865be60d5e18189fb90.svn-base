@@ -1,0 +1,22 @@
+import Vue from 'vue'
+import jQuery from 'jquery'
+import axios from '@/store/axios'
+import router from './router/router'
+import store from './store/store'
+import iView from 'iview'
+import 'iview/dist/styles/iview.css'
+import '@/css/comm.css'
+import '@/lib/webuploader-0.1.5/webuploader.css'
+import 'element-ui/lib/theme-default/index.css'
+
+Vue.prototype.axios = axios;
+Vue.use(iView)
+
+window.$ = jQuery
+window.jQuery = jQuery
+window.debug = true
+/* eslint-disable no-new */
+const app = new Vue({
+  router,
+  store,
+}).$mount('#app')

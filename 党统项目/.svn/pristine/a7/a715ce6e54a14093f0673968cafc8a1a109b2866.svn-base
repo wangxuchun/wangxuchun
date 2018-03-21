@@ -1,0 +1,220 @@
+<template>
+    <div class="app-main" :style="{'width':'100%','height':'100%'}">
+        <div class="layout" :style="{'width':'100%','height':'100%'}">
+            <!-- 头部 -->
+            <top></top>
+            <div class="index-box">
+                <div class="index-container">
+                    <div class="index-nav-box">
+                        <div class="index-nav-header">组织管理</div>
+                        <div class="index-nav-list">
+                            <router-link to="/orgManage/0" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-branch"></i>
+                                党组织管理
+                            </router-link>
+                            <router-link to="/unitManage" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-unit"></i>
+                                单位管理
+                            </router-link>
+                        </div>
+                    </div>
+                    <div class="index-nav-box">
+                        <div class="index-nav-header">人员管理</div>
+                        <div class="index-nav-list">
+                            <router-link to="/dangyuan" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-member"></i>
+                                党员管理
+                            </router-link>
+                            <router-link to="/applicantManage" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-apply"></i>
+                                申请人管理
+                            </router-link>
+                            <router-link to="/historyManage" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-history"></i>
+                                历史人员管理
+                            </router-link>
+                        </div>
+                    </div>
+                    <div class="index-nav-box">
+                        <div class="index-nav-header">业务工作</div>
+                        <div class="index-nav-list">
+                            <router-link to="/organizationManage" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-relation"></i>
+                                组织关系转接
+                            </router-link>
+                            <router-link to="/recruitMembers" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-dev"></i>
+                                发展党员
+                            </router-link>
+                            <!-- <router-link class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-devverify"></i>
+                                发展党员审核
+                            </router-link> -->
+                            <router-link to="/interview" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-letter"></i>
+                                介绍信管理
+                            </router-link>
+                            <router-link to="/repeatMembers" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-repeat"></i>
+                                重复人员查询
+                            </router-link>
+                        </div>
+                    </div>
+                    <div class="index-nav-box inline-block">
+                        <div class="index-nav-header">统计报表</div>
+                        <div class="index-nav-list">
+                            <router-link to="/baseSituation" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-info"></i>
+                                党建情况
+                            </router-link>
+                            <router-link to="/countForm/covers/form-5?id=68" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-count"></i>
+                                统计报表
+                            </router-link>
+                            <!-- <router-link to="" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-design"></i>
+                                设计报表
+                            </router-link> -->
+                        </div>
+                    </div>
+                    <div class="index-nav-box inline-block">
+                        <div class="index-nav-header">系统管理</div>
+                        <div class="index-nav-list">
+                            <router-link to="/adminconfig" class="index-nav-item">
+                                <i class="index-nav-icon index-nav-icon-manage"></i>
+                                管理员设置
+                            </router-link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    import top from '@/components/top.vue'
+    import subNav from '@/components/subNav.vue'
+    export default {
+        name: 'index',
+        computed: {
+        },
+        watch: {
+
+        },
+        components: {
+            top,
+            subNav
+        },
+        methods: {
+
+        },
+        created() {
+                
+        },
+        mounted() {             
+
+        },
+    }
+</script>
+<style scope>
+    .index-box{
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background: url('../assets/index/index_bg.png') 100% 100% no-repeat;
+    }
+    .index-container{
+        position: absolute;
+        top: 30px;
+        right: 20px;
+        bottom: 90px;
+        left: 50%;
+        width: 1200px;
+        margin-left: -600px;
+        /* margin: 30px auto 0; */
+        padding: 0px 20px 14px;
+        border: 1px solid #eaeaea;
+        background-color: #fff;
+        box-sizing: border-box;
+        overflow: auto;
+    }
+    .index-nav-header{
+        padding-top: 26px;
+        padding-bottom: 14px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+    .index-nav-item{
+        display: inline-block;
+        width: 216px;
+        height: 80px;
+        margin-right: 14px;
+        line-height: 80px;
+        font-size: 16px;
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        background-color: #fcfcfc;
+        color: #333;
+    }
+    .index-nav-item:hover{
+        color: #ed3f14;
+    }
+    .index-nav-icon{
+        position: relative;
+        top: 10px;
+        display: inline-block;
+        width: 36px;
+        height: 36px;
+        margin-left: 12px;
+        margin-right: 10px;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+    .index-nav-icon-manage{
+        background-image: url('../assets/index/manage.png');
+    }
+    .index-nav-icon-design{
+        background-image: url('../assets/index/design.png');
+    }
+    .index-nav-icon-count{
+        background-image: url('../assets/index/count.png');
+    }
+    .index-nav-icon-info{
+        background-image: url('../assets/index/info.png');
+    }
+    .index-nav-icon-repeat{
+        background-image: url('../assets/index/repeat.png');
+    }
+    .index-nav-icon-letter{
+        background-image: url('../assets/index/letter.png');
+    }
+    .index-nav-icon-devverify{
+        background-image: url('../assets/index/devverify.png');
+    }
+    .index-nav-icon-dev{
+        background-image: url('../assets/index/dev.png');
+    }
+    .index-nav-icon-relation{
+        background-image: url('../assets/index/relation.png');
+    }
+    .index-nav-icon-history{
+        background-image: url('../assets/index/history.png');
+    }
+    .index-nav-icon-apply{
+        background-image: url('../assets/index/apply.png');
+    }
+    .index-nav-icon-member{
+        background-image: url('../assets/index/member.png');
+    }
+    .index-nav-icon-unit{
+        background-image: url('../assets/index/unit.png');
+    }
+    .index-nav-icon-branch{
+        background-image: url('../assets/index/branch.png');
+    }
+    .inline-block{
+        display: inline-block;
+    }
+</style>

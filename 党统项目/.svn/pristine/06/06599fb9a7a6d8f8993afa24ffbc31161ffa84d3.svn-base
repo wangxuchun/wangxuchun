@@ -1,0 +1,79 @@
+<template>
+<div class="memberinfo-rewardinfo">
+    <div class="text-right">
+        <Button type="primary" @click="add">新增</Button>
+    </div>
+    <Table ref="memberinforewardinfotable" :highlight-row="true" :style="{'marginTop':'8px'}" border :columns="tableCol" :data="lists"></Table>
+    <component v-bind:is="modal"></component>
+</div>
+</template>
+<script>
+import add from '../pop/partymember/memberinfo-reward-add.vue';
+export default {
+    name : 'memberinfo-rewardinfo',
+    props: {
+        viewdata : null
+    },
+    components: {
+        'memberinfo-reward-add': add
+    },
+    methods:{
+        add () {
+            // this.$router.push('/dangyuan/modal/reward-add')
+            this.$router.push({ 
+                name: 'dangyuaninfo', 
+                params: { 
+                    uid: this.$route.params.uid
+                },
+                query: { 
+                    tab: this.$route.query.tab,
+                    model: 'memberinfo-reward-add'
+                }
+            });
+        },
+    },
+    data(){
+        return {
+            tableCol :[{
+                title : '奖惩名称',
+                key : 'type'      
+            },{
+                title : '奖惩原因',
+                key : 'edu'      
+            },{
+                title : '批准组织',
+                key : 'date'      
+            },{
+                title : '批准日期',
+                key : 'allow'      
+            },{
+                title : '操作'
+            }],
+            lists:[],
+            modal : null
+        }
+    },
+    mounted(){
+        if (this.$route.query.model) {
+            this.modal = this.$route.query.model
+        };
+    },
+    watch: {
+        '$route' (to, from) {
+            console.log(to);
+            if (to.query.model) {
+                this.modal = to.query.model
+            }
+            else {
+                this.modal = null;
+            }
+        }
+    }
+}
+</script>
+<style scoped>
+.memberinfo-rewardinfo{
+    height: 100%;
+    padding: 8px;
+}
+</style>

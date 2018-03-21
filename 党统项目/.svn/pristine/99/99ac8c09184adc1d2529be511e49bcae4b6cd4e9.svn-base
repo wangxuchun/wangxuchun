@@ -1,0 +1,187 @@
+
+<!--党小组人员分配弹窗-->
+<template>
+  <div class="PartyGroupManage">
+    <Modal
+      v-model="modal1"
+      title="党小组人员分配"
+      width="950"
+      :loading="loading"
+      :mask-closable=false
+        @on-ok="submit"
+      @on-cancel="cancel">
+      <Row>
+         <!-- <Table border :columns="columns1" :data="data1"></Table> -->
+         <div class="tabs">
+         <table>
+             <thead>
+                 <tr>
+                     <th v-for="item in columns1">{{item.title}}</th>
+                 </tr>
+             </thead>
+             <tbody>
+                 <tr v-for="item in data1">
+                    <td>{{item.name}}</td>
+                    <td>{{item.sex}}</td>
+                    <td>{{item.birthday}}</td>
+                    <td>{{item.status}}</td>
+                    <td>
+                        <Select v-model="item.group_num" style="width:100px" @on-change="changeGroup(item)">
+                            <Option v-for="item in groupList"   :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </td>
+                    <td>
+                        <span :class="{active:item.group_leader==0}" @click="toggleGroupleader(item)">{{item.group_leader==0?"设为小组长":"取消小组长"}}</span>
+                    </td>
+                 </tr>
+             </tbody>
+         </table>
+         </div>
+
+      </Row>
+    </Modal>
+  </div>
+</template>
+<script TYPE="text/ecmascript-6">
+  export default {
+    name:'DemocraticReview',
+    data () {
+      return {
+        modal1: true,//是否显示弹窗
+        loading: true,
+         columns1: [
+                {
+                    title: '姓名',
+                    key: 'name'
+                },
+                {
+                    title: '性别',
+                    key: 'sex'
+                },
+                {
+                    title: '出生日期',
+                    key: 'birthday'
+                },
+                {
+                    title: '人员状态',
+                    key: 'status'
+                },
+                {
+                    title: '所在党小组',
+                    key: 'group_num'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                },
+            ],
+            groupList:[],
+            data1: [],
+
+      }
+    },
+
+    methods: {
+        getList(){
+           
+           this.data1 = [
+                    {
+                        name: '王小明',
+                        sex: '男',
+                        birthday: '2014-11-26',
+                        status : '正式党员',
+                        group_num : '1',
+                        group_leader : '0',
+                    },
+                    {   
+                        name: '王小明',
+                        sex: '男',
+                        birthday: '2014-11-26',
+                        status : '正式党员',
+                        group_num : '2',
+                        group_leader : '1',
+                    },
+                    {
+                        name: '王小明',
+                        sex: '男',
+                        birthday: '2014-11-26',
+                        status : '正式党员',
+                        group_num : '3',
+                        group_leader : '1',
+                    },
+                    {   
+                        name: '王小明',
+                        sex: '男',
+                        birthday: '2014-11-26',
+                        status : '正式党员',
+                        group_num : '1',
+                        group_leader : '1',
+                    },   
+                    {
+                        name: '王小明',
+                        sex: '男',
+                        birthday: '2014-11-26',
+                        status : '正式党员',
+                        group_num : '3',
+                        group_leader : '0',
+                    },                 
+                ]; 
+        },
+        getGroupList(){
+
+            this.groupList = [{
+                label:'第一党小组',
+                value:'1',
+            },{
+                label:'第二党小组',
+                value:'2',
+            },{
+                label:'第三党小组',
+                value:'3',
+            },];
+        },
+        submit(){
+            console.log(this.data1);
+            
+        },
+        toggleGroupleader(item){
+           if(item.group_leader==0){
+                let num = item.group_num;
+               this.data1.forEach(function(list) {
+                   if(list.group_num==num){
+                        list.group_leader = 0;   
+                   }
+               });
+           };
+           item.group_leader =  item.group_leader == 1? '0':'1';
+        },
+        changeGroup(item){
+          item.group_leader = '0';
+        },
+        cancel () {
+            this.$Message.info('点击了取消');
+            this.$router.push("/dangyuan");
+        }
+    },
+    mounted(){
+        this.getList();
+        this.getGroupList();
+        
+    },
+  }
+</script>
+<style scoped>
+  td{padding: 0;margin: 0;}
+  .tabs{margin-top: 10px;margin-left: 10px;user-select: none}
+  .tabs table{border-collapse: collapse;text-align: center;width: 100%;color: #333;font-family: "微软雅黑"; border: 1px solid #e2e2e2;}
+  .tabs table thead{line-height: 40px;background: #F8F8F9;font-weight: normal;}
+  .tabs table thead {border-bottom: 1px solid #e9eaec;border-top: 1px solid #e9eaec;}
+  .tabs table thead th{font-weight: normal;}
+  .tabs table tbody tr{line-height: 48px;height: 48px;border-bottom: 1px solid #e9eaec;;color: #333;box-sizing: border-box}
+  .tabs table tbody tr:hover{background-color: #EBF7FF}
+  .tabs table tbody td,.tabs table thead th{ border-right:1px solid #e9eaec;}
+  .tabs table tbody td .active{color: #f07100}
+  .tabs table tbody td span{cursor:pointer;}
+  
+</style>
+

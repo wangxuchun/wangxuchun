@@ -1,0 +1,197 @@
+<!--班子成员form-->
+<template>
+    <div class="box-flex start-box box-orient">
+        <div class="info-detail box-flex">
+          <Row>
+            <Button style="float: right;" @click="newadd">新增</Button>
+          </Row>
+          <Row>
+            <Table border :columns="columns7" :data="data6" style="margin-top: 10px;margin-left: 10px"></Table>
+          </Row>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        name: 'team',
+        data() {
+          return {
+              columns7: [
+                {
+                  title: '姓名',
+                  key: 'name',
+                },
+                  {
+                    title: '职务',
+                      key: 'duty'
+                  },
+                  {
+                    title: '批准日期',
+                      key: 'duty_time'
+                  },
+                  {
+                    title: '操作',
+                      key: 'action',
+                    width: 250,
+                    align: 'center',
+                    render: (h, params) => {
+                    return h('div', [
+                      h('Button', {
+                        props: {
+                          type: 'primary',
+                          size: 'small'
+                        },
+                        style: {
+                          marginRight: '5px'
+                        },
+                        on: {
+                          click: () => {
+                          //this.show(params.index)
+                            console.log(params);
+                          }
+                  }
+                  }, '查看'),
+                    h('Button', {
+                      props: {
+                        type: 'error',
+                        size: 'small'
+                      },
+                      style: {
+                        marginRight: '5px'
+                      },
+                      on: {
+                        click: () => {
+                        //this.remove(params.index)
+                    }
+                  }
+                  }, '删除'),
+                    h('Button', {
+                      props: {
+                        type: 'primary',
+                        size: 'small'
+                      },
+                      style: {
+                        marginRight: '5px'
+                      },
+                      on: {
+                        click: () => {
+                          //this.remove(params.index)
+                        }
+                      }
+                    }, '编辑'),
+                    h('Button', {
+                      props: {
+                        type: 'warning',
+                        size: 'small'
+                      },
+                      style: {
+                        marginRight: '5px'
+                      },
+                      on: {
+                        click: () => {
+                          //this.remove(params.index)
+                        }
+                      }
+                    }, '下移')
+                  ]);
+                  }
+                  }
+                ],
+                data6: [
+                  {
+                    name: '王小明',
+                    duty: '执行委员',
+                    duty_time: '2014-05-12'
+                  },
+                  {
+                    name: '张小刚',
+                    duty: '执行委员',
+                    duty_time: '2014-05-12'
+                  },
+                  {
+                    name: '李小红',
+                    duty: '执行委员',
+                    duty_time: '2014-05-12'
+                  },
+                  {
+                    name: '周小伟',
+                    duty: '执行委员',
+                    duty_time: '2014-05-12'
+                  }
+                ],
+                formValidate: {
+
+                },
+                ruleValidate: {
+
+                },
+                datas: this.infodata,
+            }
+        },
+        props: ['infodata'],
+        components: {
+        },
+        watch: {
+            '$route' (to, from) {
+                if (/copy/.test(to.path)) {
+                    this.initF();
+                } else if(/info/.test(to.path)) {
+                    this.initF();
+                }
+            },
+            // infodata(val) {
+            //     this.datas = val;
+            // }
+        },
+        methods: {
+            newadd() {
+              this.$router.push({name: 'TeamMember', params: {}});
+            },
+            handleSubmit (name) {
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        this.$Message.success('提交成功!');
+                    } else {
+                        this.$Message.error('表单验证失败!');
+                    }
+                })
+            },
+            handleReset (name) {
+                this.$refs[name].resetFields();
+            },
+            initF() {
+            }
+        },
+        created() {
+
+        },
+        mounted() {
+          let that = this;
+          let qs = require('qs');
+          this.axios({
+              method: 'get',
+              url: '/v1/leader/dept-leaders',
+//              data: qs.stringify({
+//                dept_id: that.$route.query.id,
+//              })
+              params: {
+                dept_id: that.$route.query.id,
+              }
+            })
+            .then(res => {
+              let needData = res.data;
+              if (needData.code == 200) {
+
+              } else {
+                that.$Message.error(needData.msg);
+              }
+            })
+            .catch(err => {
+              this.$Message.error('网络请求异常');
+            })
+        },
+    }
+</script>
+<style scope>
+
+</style>

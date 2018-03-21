@@ -1,0 +1,220 @@
+<!--奖惩情况form-->
+<template>
+    <div class="box-flex start-box box-orient">
+        <div class="info-detail box-flex">
+          <Row>
+            <Button style="float: right;">新增</Button>
+          </Row>
+          <Row>
+            <Table border :columns="columns7" :data="data6" style="margin-top: 10px;margin-left: 10px"></Table>
+          </Row>
+        </div>
+    </div>
+</template>
+<script type="text/ecmascript-6">
+    export default {
+        name: 'reward',
+        data() {
+          return {
+              columns7: [
+                {
+                  title: '奖惩名称',
+                  key: 'type_name',
+                },
+                  {
+                    title: '批准组织',
+                      key: 'approval_dept_name'
+                  },
+                  {
+                    title: '批准时间',
+                      key: 'time'
+                  },
+                  {
+                    title: '操作',
+                      key: 'action',
+                    width: 250,
+                    align: 'center',
+                    render: (h, params) => {
+                    return h('div', [
+                      h('Button', {
+                        props: {
+                          type: 'primary',
+                          size: 'small'
+                        },
+                        style: {
+                          marginRight: '5px'
+                        },
+                        on: {
+                          click: () => {
+                          //this.show(params.index)
+                            console.log(params);
+                          }
+                  }
+                  }, '查看'),
+                    h('Button', {
+                      props: {
+                        type: 'error',
+                        size: 'small'
+                      },
+                      style: {
+                        marginRight: '5px'
+                      },
+                      on: {
+                        click: () => {
+                        //this.remove(params.index)
+                    }
+                  }
+                  }, '删除'),
+                    h('Button', {
+                      props: {
+                        type: 'primary',
+                        size: 'small'
+                      },
+                      style: {
+                        marginRight: '5px'
+                      },
+                      on: {
+                        click: () => {
+                          //this.remove(params.index)
+                        }
+                      }
+                    }, '编辑'),
+                  ]);
+                  }
+                  }
+                ],
+                data6: [
+                  {
+                    type_name: '王小明',
+                    approval_dept_name: '和平总支部',
+                    time: '2014-05-12'
+                  },
+                  {
+                    type_name: '王小明',
+                    approval_dept_name: '和平总支部',
+                    time: '2014-05-12'
+                  },
+                  {
+                    type_name: '王小明',
+                    approval_dept_name: '和平总支部',
+                    time: '2014-05-12'
+                  },
+                  {
+                    type_name: '王小明',
+                    approval_dept_name: '和平总支部',
+                    time: '2014-05-12'
+                  }
+                ],
+                formValidate: {
+
+                },
+                ruleValidate: {
+
+                },
+                datas: this.infodata,
+            }
+        },
+        filters:{
+          dateFormat(value){
+            var date = new Date(+value),
+                Y = date.getFullYear(),
+                m = date.getMonth() + 1,
+                d = date.getDate(),
+                H = date.getHours(),
+                i = date.getMinutes(),
+                s = date.getSeconds();
+              if (m < 10) {
+                m = '0' + m;
+              }
+              if (d < 10) {
+                d = '0' + d;
+              }
+              if (H < 10) {
+                H = '0' + H;
+              }
+              if (i < 10) {
+                i = '0' + i;
+              }
+              if (s < 10) {
+                s = '0' + s;
+              }
+              var t = Y + '-' + m + '-' + d;
+              return t;
+          }
+        },
+        props: ['infodata'],
+        components: {
+        },
+        watch: {
+            '$route' (to, from) {
+                if (/copy/.test(to.path)) {
+                    this.initF();
+                } else if(/info/.test(to.path)) {
+                    this.initF();
+                }
+            },
+            // infodata(val) {
+            //     this.datas = val;
+            // }
+        },
+        methods: {
+            handleSubmit (name) {
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        this.$Message.success('提交成功!');
+                    } else {
+                        this.$Message.error('表单验证失败!');
+                    }
+                })
+            },
+            handleReset (name) {
+                this.$refs[name].resetFields();
+            },
+            initF() {
+                let that = this;
+                that.formValidate.opartycodept = that.datas.opartycodept;
+                that.formValidate.name = that.datas.name;
+                that.formValidate.type_id = that.datas.type_id;
+                that.formValidate.affiliation_id = that.datas.affiliation_id;
+                that.formValidate.found_time = that.datas.found_time;
+                that.formValidate.is_flow = that.datas.is_flow;
+                that.formValidate.start_time = that.datas.start_time;
+                that.formValidate.gap = that.datas.gap;
+                that.formValidate.end_time = that.datas.end_time;
+                that.formValidate.vote_way = that.datas.vote_way;
+                that.formValidate.vote_due = that.datas.vote_due;
+                that.formValidate.vote_actual = that.datas.vote_actual;
+                that.formValidate.leadernum = that.datas.leadernum;
+                that.formValidate.haved_leaders = that.datas.haved_leaders;
+            }
+        },
+        created() {
+
+        },
+        mounted() {
+          let that = this;
+          let qs = require('qs');
+          this.axios({
+              method: 'post',
+              url: '/v1/Deptrule/add-leader',
+              params: {
+                dept_id: that.$route.query.id,
+              }
+            })
+            .then(res => {
+              let needData = res.data;
+              if (needData.code == 200) {
+
+              } else {
+                that.$Message.error(needData.msg);
+              }
+            })
+            .catch(err => {
+              this.$Message.error('网络请求异常');
+            })
+        },
+    }
+</script>
+<style scope>
+
+</style>

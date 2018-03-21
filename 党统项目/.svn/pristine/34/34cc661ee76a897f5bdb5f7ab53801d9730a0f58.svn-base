@@ -1,0 +1,151 @@
+<template>
+	<Row type="flex">
+		<i-col span="5" class="layout-menu-left">
+			<div class="layout-header">
+				<a href="javascript:;"><img src="../assets/logo_djy.png" /></a>
+			</div>
+		</i-col>
+		<i-col span="19">
+			<div class="top-bar start-box">
+				<!-- 一级导航 -->
+				<div class="nav-manage box-flex">
+					<Dropdown trigger="click" style="margin-left: 20px" @on-click="selectValue">
+				        <a href="javascript:void(0)">
+				            党组织管理
+				            <Icon type="arrow-down-b"></Icon>
+				        </a>
+				        <Dropdown-menu slot="list">
+				            <Dropdown-item name="hehe">驴打滚</Dropdown-item>
+				            <Dropdown-item>炸酱面</Dropdown-item>
+				            <Dropdown-item>豆汁儿</Dropdown-item>
+				            <Dropdown-item>冰糖葫芦</Dropdown-item>
+				            <Dropdown-item>北京烤鸭</Dropdown-item>
+				        </Dropdown-menu>
+				    </Dropdown>
+				    <Dropdown trigger="click" style="margin-left: 20px">
+				        <a href="javascript:void(0)">
+				            党员管理
+				            <Icon type="arrow-down-b"></Icon>
+				        </a>
+				        <Dropdown-menu slot="list">
+				            <Dropdown-item>驴打滚</Dropdown-item>
+				            <Dropdown-item>炸酱面</Dropdown-item>
+				            <Dropdown-item>豆汁儿</Dropdown-item>
+				            <Dropdown-item>冰糖葫芦</Dropdown-item>
+				            <Dropdown-item>北京烤鸭</Dropdown-item>
+				        </Dropdown-menu>
+				    </Dropdown>
+				</div>
+				<div class="layout-login text-right layout-header-fav">
+					<img src="https://placem.at/people?w=40&h=40" alt="">
+					<p>你好，{{userInfo.real_name}}</p>
+					<a href="javascript:;" @click="logout">登出</a>
+				</div>
+			</div>
+		</i-col>
+	</Row>
+</template>
+<script>
+	import Vue from 'vue'
+	import { Tree } from 'element-ui'
+	Vue.use(Tree)
+
+	export default {
+		name: 'top',
+		data() {
+			return {
+				userInfo:{
+					real_name : '123',
+				}
+			}
+		},
+		components: {
+		},
+		methods: {
+			logout() {
+				let that = this;
+	           	this.axios({
+	                method: 'post',
+	                url: '/v1/user/logout',
+	            })
+	            .then(res => {
+	                let needData = res.data;
+	                if (needData.code == 200) {
+	                    that.$Message.success('退出成功');
+	                    that.$router.push('/login');
+	                } else {
+	                    that.$Message.error(needData.msg);
+	                }
+	            })
+	            .catch(err => {
+	            	console.log(err)
+	                this.$Message.error('网络请求异常');
+	            }) 
+			},
+			getUserInfo(){
+				var that = this;
+				this.axios({
+					method: 'post',
+					url: '/v1/fm/getuserinfo',
+				})
+				.then(res => {
+					let _data = res.data;
+					if(_data.code==200){
+						let data = _data.data;
+						that.userInfo.real_name = data.real_name;
+					}
+				})
+				.catch(error => {
+					console.log('请求失败');
+				})
+			},
+			selectValue(val) {
+				console.log(val)
+			}
+		},
+		created() {
+
+		},
+		mounted() {
+			this.getUserInfo();
+	    },
+	}
+</script>
+<style scope>
+	.text-right{
+		text-align: right;
+	}
+	.layout-header{
+		overflow: hidden;
+		text-align: center;
+	}
+	.layout-header a{
+		display:inline-block;
+		margin-top: 10px;
+	}
+	.layout-header-fav{
+		font-size: 0;
+		margin-top: 15px;
+		padding-right: 20px;
+	}
+	.layout-header-fav img{
+		display: inline-block;
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		margin-right: 20px;
+		vertical-align: middle;
+	}
+	.layout-header-fav p{
+		display: inline-block;
+		font-size: 14px;
+		vertical-align: middle;
+	}
+	.layout-header-fav a{
+		font-size: 14px;
+		color: #4b4b4b;
+		display: inline-block;
+		margin-left: 15px;
+		vertical-align: middle;
+	}
+</style>

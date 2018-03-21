@@ -1,0 +1,158 @@
+<template>
+    <div>
+      <Upload style="float: right;margin-bottom: 10px;"
+              :show-upload-list="false"
+              :before-upload="getToken"
+              :data="postData"
+              action="http://file.djyv4.com/upload.php"
+      >
+        <Button size="large" type="ghost" icon="">上传</Button>
+      </Upload>
+        <table>
+            <thead>
+                <tr>
+                    <th>标题</th>
+                    <th>上传时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in data">
+                    <td>{{item.file_name}}</td>
+                    <td>{{item.createdt}}</td>
+                    <td>
+                        <Button @click="render('1',item)" style="padding: 6px;" type="text"><Icon type="compose"></Icon> 编辑</Button>
+                        <Button @click="render('2',item)" style="padding: 6px;" type="text"><Icon type="search"></Icon> 查看</Button>
+                        <Button @click="remove" style="padding: 6px;" type="text"><Icon type="trash-a"></Icon> 删除</Button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</template>
+
+<script type="text/ecmascript-6">
+    export default {
+      data(){
+        return{
+          token:'',
+          postData:{},
+        }
+      },
+      props:['data'],
+      methods:{
+        //获取文件上传token
+        getToken(file){
+          let that = this;
+          let qs = require('qs');
+//          console.log(file);
+//          that.postData.file = file;
+          that.axios({
+              url:'/v1/file/uptoken',
+              method:'post',
+            })
+            .then((res)=>{
+              let needData = res.data;
+              if(needData.code=='200'){
+                that.postData.uptoken  = needData.data.uptoken;
+                that.postData.size  = file.size;
+                console.log(that.postData)
+//                that.postData.size = file.size
+//                that.postData.file = file;
+              }else{
+                that.$Message.error(needData.msg)
+              }
+            })
+            .catch(err=>{
+              that.$Message.error('网络请求异常');
+            })
+        },
+        render (type,item) {
+          // type: 1是编辑 2是查看
+          let disabled = false;
+          let that = this;
+          let qs = require('qs');
+          if(type=='1'){
+            disabled=false;
+          }else if(type=='2'){
+            disabled=true;
+          }
+          this.$Modal.confirm({
+              render: (h) => {
+                return h('Input', {
+                  props: {
+                    value: item.file_name,
+                    disabled:disabled,
+                    autofocus: true,
+                    placeholder: '请输入修改的标题名'
+                  },
+                  on: {
+                    input: (val) => {
+//                      item.file_name= val;
+                      that.axios({
+                          url:'/v1/recruit/step-normal-user-material-rename',
+                          method:'post',
+                          data:qs.stringify({
+                            id:item.id,
+                            file_name:val,
+                            opt:'1'
+                          })
+                        })
+                        .then((res)=>{
+                        let needData = res.data;
+                        if(needData.code=='200'){
+                          item.file_name= val;
+                        }else{
+                          that.$Message.error(needData.msg)
+                        }
+                      })
+                      .catch(err=>{
+                          that.$Message.error('网络请求异常');
+                      })
+                    }
+                  }
+                })
+              },
+          })
+        },
+        remove(item,index){
+          let id =item.id;
+          var that= this;
+          this.$Modal.confirm({
+            title:'温馨提示:',
+            content:'是否删除该条信息',
+            onOk() {
+//              that.axios({
+//                  url:'/v1/leader/del-leader',
+//                  method:'get',
+//                  params:{
+//                    id:id
+//                  }
+//                })
+//                .then((res)=>{
+//                let needData = res.data;
+//                if(needData.code='200'){
+//                  this.$Message.success('删除成功!');
+//                  that.listData.splice(index, 1);
+//                }
+//              })
+            }
+          })
+        }
+      },
+
+    }
+</script>
+
+<style scoped>
+    table{margin-top: 8px; border-collapse: collapse;text-align: center;width: 100%;color: #333;font-family: "微软雅黑"; border: 1px solid #e2e2e2;}
+    table thead{line-height: 40px;background: #F8F8F9;font-weight: normal;}
+    table thead {border-bottom: 1px solid #e9eaec;border-top: 1px solid #e9eaec;}
+    table thead th{font-weight: bold;background: #f2f2f2;}
+    table tbody tr{line-height: 48px;height: 48px;border-bottom: 1px solid #e9eaec;;color: #333;box-sizing: border-box}
+    table tbody tr:hover{background-color: #EBF7FF}
+    table tbody tr.drag:hover{background-color: #eee;cursor: move}
+    table tbody td,table thead th{ border-right:1px solid #e9eaec;}
+    table tbody td span{display: inline-block;margin-right: 10px;cursor: pointer}
+    table tbody td span:hover{color: #d73826}
+</style>

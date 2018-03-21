@@ -1,0 +1,52 @@
+<template>
+<div class="memberinfo-train">
+    <div class="memberinfo-form">
+        <Form :label-width="120">
+            <FormItem label="申请入党日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="列为积极份子日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="参加培训日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="列为发展对象日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="入党日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="转正日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="转正情况">
+                <Input></Input>
+            </FormItem>
+            <FormItem label="入党介绍人">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+        </Form>
+    </div>
+    <div class="aside-bottom">
+        <Button type="ghost">取消</Button>
+        <Button type="primary">保存</Button>
+    </div>
+</div>
+</template>
+<script>
+export default {
+    name : 'memberinfo-train',
+    props: {
+        viewdata : null
+    },
+}
+</script>
+<style scoped>
+.memberinfo-train{
+    height: 100%;
+}
+</style>

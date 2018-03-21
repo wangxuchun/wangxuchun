@@ -1,0 +1,83 @@
+<template>
+<div class="memberinfo-abroad">
+    <div class="memberinfo-form">
+        <Form :label-width="160">
+            <FormItem label="所至国家(地区)">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="出国(境)日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="出国(境)原因">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="出国党员与党组织联系情况">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="回国情况">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="回国日期">
+                <DatePicker type="date" placeholder="选择日期" style="width: 100%"></DatePicker>
+            </FormItem>
+            <FormItem label="恢复组织生活情况">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="组织关系出国（境）时是否转往过（境）外">
+                <Select>
+                    <Option :value="0">男</Option>
+                    <Option :value="1">女</Option>
+                </Select>
+            </FormItem>
+        </Form>
+    </div>
+    <div class="aside-bottom">
+        <Button type="ghost">取消</Button>
+        <Button type="primary">保存</Button>
+    </div>
+</div>
+</template>
+<script>
+export default {
+    name : 'memberinfo-abroad'
+}
+</script>
+<style scoped>
+.memberinfo-abroad{
+    height: 100%;
+}
+.memberinfo-form{
+    padding: 20px 8px 50px 8px;
+}
+.memberinfo-avatar{
+    display: block;
+    margin: auto;
+    width: 85px;
+    height: 120px;
+    vertical-align: middle;
+}
+.aside-bottom{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #ddd;
+    padding: 8px;
+    text-align: right;
+    background-color: #f8f8f8;
+}
+</style>

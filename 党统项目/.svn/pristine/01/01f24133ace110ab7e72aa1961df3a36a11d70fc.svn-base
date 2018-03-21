@@ -1,0 +1,173 @@
+<template>
+    <div class="check-status">
+        <Dropdown trigger="click" placement="bottom-start"  @on-click="zuzhiChange">
+            <Button type="ghost">党组织维护 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem v-for="item in zuzhiList" :disabled="item.disabled"  :name="item.value" :key="item.value">{{item.label}}</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        <Dropdown trigger="click" placement="bottom-start"  @on-click="zhibuChange">
+            <Button type="ghost">党支部维护 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem v-for="item in zhibuList" :name="item.value" :key="item.value">{{item.label}}</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        <Button type="ghost" @click="updateAll">批量修改</Button>
+        <Dropdown trigger="click" placement="bottom-start" @on-click="searchChange">
+            <Button type="ghost">查询统计 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem v-for="item in serachSet" :name="item.value" :key="item.value">{{item.label}}</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        <Button type="ghost">信息校核</Button>
+        <Dropdown trigger="click" placement="bottom-start" @on-click="prientChange">
+            <Button type="ghost">打印 <Icon type="arrow-down-b"></Icon></Button>
+            <DropdownMenu slot="list">
+                <DropdownItem v-for="item in prientList" :name="item.value"  :key="item.value">{{item.label}}</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        <Checkbox style="margin-left: 20px;" v-model="isHistory">显示历史党支部</Checkbox>
+    </div>
+</template>
+<script>
+	export default {
+		name: 'subnav',
+		data() {
+			return {
+                isHistory: false,
+                zuzhiList: [{value: 1, label: '党组织增加', disabled: false}, {value: 2, label: '党组织删除', disabled: false}, {value: 3, label: '整建制转移', disabled: false}],
+                zuzhiModel: '',
+                zhibuList: [{value: 1, label: '党支部合并'}, {value: 2, label: '党支部拆分'}, {value: 3, label: '党支部撤销'}, {value: 4, label: '设党小组'}],
+                zhibuModel: '',
+                serachSet: [{value: 1, label: '组合查询'}, {value: 2, label: '随机统计'}, {value: 3, label: '一个党组织的组合统计'}, {value: 4, label: '多个党组织的组合统计'}],
+                searchModel: 1,
+                prientList: [{value: 1, label: '打印'}],
+                prientModel: '',
+			}
+		},
+		props: ['tags','remberRow'],
+        computed: {
+            newRow() {
+                return this.remberRow;
+            }
+        },
+		watch: {
+            isHistory(newD, oldD) {
+                if (newD != oldD) {
+                    this.$store.commit('setHistory');
+                };
+            },
+            getNode() {
+                return this.$store.state.remberNode;
+            }
+		},
+		methods: {
+            zuzhiChange(item) {
+                switch(parseInt(item)) {
+                    case 1: this.$router.push({name: 'AddOrganization', params: {}});break;
+                    case 2:
+                    console.log(this);
+                    this.$Modal.confirm({
+                        title: '提示',
+                        content: '确定要删除"'+this.newRow.row['name']+'"吗？',
+                        onOk: () => {
+                            let that = this;
+                            let qs = require('qs');
+                            this.axios({
+                                method: 'post',
+                                url: '/v1/dept/remove',
+                                params: {
+                                    dept_id: this.newRow.row['id'],
+                                }
+                            })
+                            .then(res => {
+                                let needData = res.data;
+                                if (needData.code == 200) {
+
+                                } else {
+                                    that.$Message.error(needData.msg);
+                                }
+                            })
+                            .catch(err => {
+                                this.$Message.error('网络请求异常');
+                            })
+                        },
+                        onCancel: () => {
+                        }
+                    }); break;
+                    case 3: this.$router.push({name: 'InsideTransfer', params: {}});break;
+                }
+            },
+            zhibuChange(item) {
+                switch(parseInt(item)) {
+                    case 1: this.$router.push({name: 'PartyMerge', params: {}}); break;
+                    case 2: this.$router.push({name: 'PartySplit', params: {}});break;
+                    case 3: this.$router.push({name: 'PartyRevoke', params: {}});break;
+                    case 4: this.$router.push({name: 'PartyTeam', params: {}});break;
+                }
+            },
+            searchChange(item) {
+                switch(parseInt(item)) {
+                    case 1: this.$router.push({name: 'CombinationQuery', params: {}}); break;
+                }
+            },
+            prientChange() {
+
+            },
+            updateAll(){
+              this.$router.push({name: 'BatchUpdate', params: {}});
+            }
+		},
+		created() {
+
+		},
+		mounted() {
+            this.$store.state.remberNode
+	    },
+	}
+</script>
+<style scoped>
+	body,html,#app {
+		width: 100%;
+		height: 100%;
+	}
+
+	.layout{
+        border: 1px solid #d7dde4;
+        background: #f5f7f9;
+        position: relative;
+    }
+    .layout-breadcrumb{
+        padding: 10px 15px 0;
+    }
+    .layout-content{
+        min-height: 200px;
+        margin: 15px;
+        overflow: hidden;
+        background: #fff;
+        border-radius: 4px;
+    }
+    .layout-content-main{
+        padding: 10px;
+    }
+    .layout-copy{
+        text-align: center;
+        padding: 10px 0 20px;
+        color: #9ea7b4;
+    }
+    .layout-menu-left{
+        background: #464c5b;
+    }
+    .layout-header{
+        height: 60px;
+        background: #fff;
+        box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    }
+    .layout-logo-left{
+        width: 90%;
+        height: 30px;
+        background: #5b6270;
+        border-radius: 3px;
+        margin: 15px auto;
+    }
+</style>
